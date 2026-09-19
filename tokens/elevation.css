@@ -1,0 +1,13 @@
+/* On a dark ground, elevation reads as a lighter fill + hairline, not a drop shadow.
+   Shadows appear only for true overlays (menus, dialogs, map tooltips). */
+:root{
+--shadow-none:none;
+--shadow-sm:0 1px 2px rgba(0,0,0,.40);
+--shadow-md:0 8px 24px -8px rgba(0,0,0,.55);
+--shadow-lg:0 24px 64px -16px rgba(0,0,0,.70);
+--shadow-accent:0 8px 28px -10px rgba(240,57,43,.55);
+--inset-hairline:inset 0 0 0 1px var(--border-subtle);
+--inset-hairline-strong:inset 0 0 0 1px var(--border-default);
+--blur-glass:blur(16px); /* @kind other */
+--blur-scrim:blur(4px); /* @kind other */
+}

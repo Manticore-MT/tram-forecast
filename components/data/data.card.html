@@ -1,0 +1,22 @@
+<!-- @dsCard group="Components" viewport="700x340" name="Data" subtitle="" -->
+<!doctype html><html lang="ru"><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{padding:20px;background:var(--bg-page)}.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:14px}.lbl{font:var(--type-eyebrow);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--text-muted);width:100%;margin:0 0 2px}</style>
+</head><body><div id="root"></div><script type="text/babel">
+const { Stat, LoadMeter, Timeline, Card } = window.DesignSystem_8e46b6;
+function Demo(){return (<div>
+<div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14,marginBottom:18}}>
+<Stat label="Призовой фонд" value="4 000 000" unit="₽"/>
+<Stat label="MAPE" value="7.4" unit="%" trend={{dir:"down",value:"1.8 п.п."}} caption="за 30 дней"/>
+<Stat label="Маршрутов" value="168" caption="в модели"/>
+<div><p className="lbl">LoadMeter</p><LoadMeter value={0.82}/></div>
+</div>
+<div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18}}>
+<div><p className="lbl">Load scale</p><div style={{display:"flex",flexDirection:"column",gap:10}}><LoadMeter value={0.18}/><LoadMeter value={0.5}/><LoadMeter value={1}/></div></div>
+<div><p className="lbl">Timeline</p><Timeline items={[{date:"25 сентября",title:"Открытие хакатона",done:true},{date:"27 сентября",title:"Дедлайн по загрузке решений",done:true},{date:"3 октября",title:"Финал хакатона"}]}/></div>
+</div></div>);}
+ReactDOM.createRoot(document.getElementById("root")).render(<Demo/>);
+</script></body></html>

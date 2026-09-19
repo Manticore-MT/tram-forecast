@@ -1,0 +1,45 @@
+:root{
+--font-display:"Manrope","Helvetica Neue",Arial,sans-serif;
+--font-sans:"Manrope","Helvetica Neue",Arial,sans-serif;
+--font-mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+
+/* Weights — display copy sits at 800, UI at 600, body at 400/500. */
+--fw-regular:400; /* @kind font */
+--fw-medium:500; /* @kind font */
+--fw-semibold:600; /* @kind font */
+--fw-bold:700; /* @kind font */
+--fw-black:800; /* @kind font */
+
+/* Display: marketing hero + section openers. Tight tracking, tight leading. */
+--type-display-xl:800 clamp(44px,6.2vw,96px)/0.96 var(--font-display);
+--type-display-l:800 clamp(36px,4.4vw,64px)/1.02 var(--font-display);
+--type-display-m:800 clamp(28px,3vw,44px)/1.06 var(--font-display);
+
+/* Headings: product + document structure. */
+--type-h1:700 32px/1.14 var(--font-sans);
+--type-h2:700 24px/1.2 var(--font-sans);
+--type-h3:600 20px/1.3 var(--font-sans);
+--type-h4:600 16px/1.35 var(--font-sans);
+
+/* Body + UI. */
+--type-body-l:400 18px/1.55 var(--font-sans);
+--type-body:400 16px/1.55 var(--font-sans);
+--type-body-s:400 14px/1.5 var(--font-sans);
+--type-ui:600 14px/1 var(--font-sans);
+--type-ui-s:600 13px/1 var(--font-sans);
+--type-caption:500 12px/1.4 var(--font-sans);
+
+/* Numeric / technical — always tabular. */
+--type-metric-xl:700 48px/1 var(--font-mono);
+--type-metric:700 28px/1.1 var(--font-mono);
+--type-mono-s:500 12px/1.4 var(--font-mono);
+
+/* Eyebrow / label: uppercase, wide tracking, muted. */
+--type-eyebrow:700 12px/1.2 var(--font-sans);
+
+--tracking-display:-0.03em; /* @kind other */
+--tracking-tight:-0.01em; /* @kind other */
+--tracking-normal:0; /* @kind other */
+--tracking-wide:0.08em; /* @kind other */
+--tracking-eyebrow:0.14em; /* @kind other */
+}

@@ -1,0 +1,5 @@
+/* Webfonts. SUBSTITUTION: no binaries were supplied with the brand assets.
+   Manrope (geometric grotesque w/ full Cyrillic) stands in for the wordmark face;
+   JetBrains Mono covers tabular/technical numerics. Swap the @font-face srcs when
+   the real files arrive — the token names below never need to change. */
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap");
