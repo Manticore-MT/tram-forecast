@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import DashApp from "./products/forecast-dashboard/DashApp";
 import HackathonSite from "./products/hackathon-site/App";
+import StopDetailCompare from "./mockups/stopDetail/Compare";
 
-type Route = "dashboard" | "hackathon-site";
+type Route = "dashboard" | "hackathon-site" | "mockups";
 
 function currentRoute(): Route {
-  return window.location.hash === "#/hackathon-site" ? "hackathon-site" : "dashboard";
+  if (window.location.hash === "#/hackathon-site") return "hackathon-site";
+  if (window.location.hash === "#/mockups") return "mockups";
+  return "dashboard";
 }
 
 export default function App() {
@@ -17,5 +20,7 @@ export default function App() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  return route === "hackathon-site" ? <HackathonSite /> : <DashApp />;
+  if (route === "hackathon-site") return <HackathonSite />;
+  if (route === "mockups") return <StopDetailCompare />;
+  return <DashApp />;
 }
