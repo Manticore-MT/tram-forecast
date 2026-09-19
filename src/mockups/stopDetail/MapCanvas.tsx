@@ -2,6 +2,7 @@ import React from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../../styles/leaflet-dark.css";
+import { Card } from "../../components";
 import { GEO, hexFor } from "../../products/forecast-dashboard/MapScreens";
 import type { Level } from "./data";
 
@@ -66,7 +67,11 @@ export function MapCanvas({ level, caption, activeIndex, style }: MapCanvasProps
   return (
     <div style={{ position: "relative", isolation: "isolate", zIndex: 0, flex: 1, minHeight: 220, borderRadius: "var(--radius-lg)", overflow: "hidden", boxShadow: "var(--inset-hairline)", ...style }}>
       <div ref={ref} style={{ position: "absolute", inset: 0, background: "var(--ink-800)" }} />
-      <div style={{ position: "absolute", left: 12, bottom: 12, zIndex: 500, padding: "4px 10px", borderRadius: "var(--radius-pill)", background: "var(--overlay-scrim)", font: "var(--type-caption)", color: "var(--text-secondary)" }}>{caption}</div>
+      <div style={{ position: "absolute", left: 12, bottom: 12, zIndex: 500 }}>
+        <Card tone="glass" padding="6px var(--space-3)">
+          <span style={{ font: "var(--type-caption)", color: "var(--text-secondary)" }}>{caption}</span>
+        </Card>
+      </div>
     </div>
   );
 }

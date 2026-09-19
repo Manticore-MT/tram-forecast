@@ -7,18 +7,22 @@ export interface StatProps {
   caption?: React.ReactNode;
   /** up renders amber (worse for load), down renders green */
   trend?: { dir: "up" | "down"; value: string };
+  /** colors the value itself with a status token — same vocabulary as Badge's tone */
+  tone?: "ok" | "warn" | "danger";
   align?: "left" | "center";
   size?: "md" | "lg";
   style?: React.CSSProperties;
 }
 
+const TONE_COLOR: Record<string, string> = { ok: "var(--status-ok)", warn: "var(--status-warn)", danger: "var(--status-danger)" };
+
 /** Metric block — big tabular number with an uppercase eyebrow label. */
-export function Stat({ label, value, unit, caption, trend, align = "left", size = "md", style, ...rest }: StatProps) {
+export function Stat({ label, value, unit, caption, trend, tone, align = "left", size = "md", style, ...rest }: StatProps) {
   const trendColor = trend && trend.dir === "down" ? "var(--status-ok)" : trend && trend.dir === "up" ? "var(--status-warn)" : "var(--text-muted)";
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", alignItems: align === "center" ? "center" : "flex-start", textAlign: align, ...style }} {...rest}>
       {label && <span className="mt-eyebrow" style={{ font: "var(--type-eyebrow)", letterSpacing: "var(--tracking-eyebrow)", textTransform: "uppercase", color: "var(--text-muted)" }}>{label}</span>}
-      <span style={{ display: "flex", alignItems: "baseline", gap: 6, font: size === "lg" ? "var(--type-metric-xl)" : "var(--type-metric)", letterSpacing: "var(--tracking-tight)", fontVariantNumeric: "tabular-nums", color: "var(--text-primary)" }}>
+      <span style={{ display: "flex", alignItems: "baseline", gap: 6, font: size === "lg" ? "var(--type-metric-xl)" : "var(--type-metric)", letterSpacing: "var(--tracking-tight)", fontVariantNumeric: "tabular-nums", color: tone ? TONE_COLOR[tone] : "var(--text-primary)" }}>
         {value}
         {unit && <span style={{ font: "var(--type-h4)", color: "var(--text-secondary)" }}>{unit}</span>}
       </span>

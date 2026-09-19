@@ -11,23 +11,25 @@ export interface AttentionZonesProps {
   style?: React.CSSProperties;
 }
 
-/** Reused as-is across all 3 layout variants and all 3 levels — only the data changes. */
+/** Reused as-is across all 3 layout variants and all 3 levels — only the data changes.
+ *  Each row is a real Card; the "current" row uses the same quiet-accent treatment the
+ *  Sidebar nav uses for its active item (see products/forecast-dashboard/Shell.tsx). */
 export function AttentionZones({ zones, layout = "list", style }: AttentionZonesProps) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)", ...style }}>
       <div className="mt-eyebrow">Зоны внимания</div>
       <div style={{ display: "flex", flexDirection: layout === "table" ? "row" : "column", flexWrap: "wrap", gap: "var(--space-2)" }}>
         {zones.map((z) => (
-          <div key={z.title} style={{
-            flex: layout === "table" ? "1 1 260px" : "none",
-            display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-3)",
-            padding: "var(--space-3) var(--space-4)", borderRadius: "var(--radius-md)",
-            background: z.selected ? "var(--accent-quiet)" : "var(--bg-surface-2)",
-            boxShadow: z.selected ? "inset 0 0 0 1px rgba(240,57,43,.35)" : "var(--inset-hairline)",
-          }}>
+          <Card key={z.title} tone="surface" padding="var(--space-3) var(--space-4)"
+            style={{
+              flex: layout === "table" ? "1 1 260px" : "none",
+              display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-3)",
+              background: z.selected ? "var(--accent-quiet)" : undefined,
+              boxShadow: z.selected ? "inset 0 0 0 1px rgba(240,57,43,.35)" : undefined,
+            }}>
             <span style={{ font: "var(--type-ui-s)", color: z.selected ? "var(--text-accent)" : "var(--text-primary)" }}>{z.title}</span>
             <Badge tone={z.tone}>{z.meta}</Badge>
-          </div>
+          </Card>
         ))}
       </div>
     </div>
@@ -66,14 +68,8 @@ export function DetailPanel({ data, style }: DetailPanelProps) {
     <Card tone="raised" padding="var(--space-6)" style={{ display: "flex", flexDirection: "column", gap: "var(--space-5)", ...style }}>
       <div style={{ font: "var(--type-h4)" }}>{data.panelTitle}</div>
       <Tabs variant="pill" value={tab} onChange={setTab} items={[{ value: "base", label: "базовый" }, { value: "factor", label: "с фактором" }]} />
-      <div>
-        <div className="mt-eyebrow">{data.metricLabel}</div>
-        <Stat value={data.metricValue} unit={data.metricUnit} size="lg" />
-      </div>
-      <div>
-        <div className="mt-eyebrow">отклонение</div>
-        <div style={{ marginTop: 4, font: "var(--type-h3)", color: data.deviationTone === "danger" ? "var(--status-danger)" : data.deviationTone === "warn" ? "var(--status-warn)" : "var(--status-ok)" }}>{data.deviationValue}</div>
-      </div>
+      <Stat label={data.metricLabel} value={data.metricValue} unit={data.metricUnit} size="lg" />
+      <Stat label="отклонение" value={data.deviationValue} tone={data.deviationTone} />
       <div>
         <div className="mt-eyebrow" style={{ marginBottom: "var(--space-2)" }}>динамика</div>
         <Sparkline data={dynamics} />
@@ -91,8 +87,9 @@ export function DetailPanel({ data, style }: DetailPanelProps) {
 export function FooterNote({ variant }: { variant: Variant }) {
   const n = VARIANT_NOTES[variant];
   return (
-    <div style={{ font: "var(--type-caption)", color: "var(--text-muted)" }}>
-      <span style={{ color: "var(--status-ok)" }}>+ {n.pro}</span> · <span style={{ color: "var(--status-warn)" }}>− {n.con}</span>
+    <div style={{ display: "flex", flexWrap: "wrap", gap: "var(--space-2)" }}>
+      <Badge tone="ok">+ {n.pro}</Badge>
+      <Badge tone="warn">− {n.con}</Badge>
     </div>
   );
 }
