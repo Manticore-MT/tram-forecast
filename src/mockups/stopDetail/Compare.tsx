@@ -19,8 +19,8 @@ export default function StopDetailCompare() {
   const data = LEVEL_DATA[level];
 
   return (
-    <div style={{ minHeight: "100vh", background: "var(--bg-page)", color: "var(--text-primary)", padding: "var(--space-6) var(--space-8)" }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", marginBottom: "var(--space-6)" }}>
+    <div style={{ height: "100vh", display: "flex", flexDirection: "column", background: "var(--bg-page)", color: "var(--text-primary)", padding: "var(--space-6) var(--space-8)" }}>
+      <div style={{ flex: "0 0 auto", display: "flex", flexDirection: "column", gap: "var(--space-2)", marginBottom: "var(--space-6)" }}>
         <div className="mt-eyebrow">Поток · Макеты «остановка/маршрут» · 9 вариантов</div>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "var(--space-6)" }}>
           <Tabs value={variant} onChange={(v) => setVariant(v as Variant)} items={VARIANTS.map((v) => ({ value: v.value, label: v.label }))} />
@@ -31,7 +31,9 @@ export default function StopDetailCompare() {
         </div>
       </div>
 
-      <Layout data={data} level={level} />
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <Layout data={data} level={level} />
+      </div>
     </div>
   );
 }
