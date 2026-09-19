@@ -75,7 +75,7 @@ function MapCanvas({ hour, onPick, active }: MapCanvasProps) {
     layerRef.current = g;
   }, [hour, active, onPick]);
 
-  return <div ref={ref} style={{ position: "absolute", inset: 0, background: "var(--ink-800)" }} />;
+  return <div ref={ref} style={{ position: "absolute", inset: 0, isolation: "isolate", background: "var(--ink-800)" }} />;
 }
 
 export interface MapViewProps {
