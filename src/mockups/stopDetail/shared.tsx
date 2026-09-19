@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, Badge, Stat, Tabs } from "../../components";
-import { Sparkline, seedSeries, LOAD_VARS } from "../../products/forecast-dashboard/Charts";
-import type { Level, LevelData, Variant, ZoneItem } from "./data";
+import { Sparkline, seedSeries } from "../../products/forecast-dashboard/Charts";
+import type { LevelData, Variant, ZoneItem } from "./data";
 import { VARIANT_NOTES } from "./data";
 
 export interface AttentionZonesProps {
@@ -30,51 +30,6 @@ export function AttentionZones({ zones, layout = "list", style }: AttentionZones
           </div>
         ))}
       </div>
-    </div>
-  );
-}
-
-export interface MapSchematicProps {
-  level: Level;
-  caption: string;
-  activeIndex: number;
-  style?: React.CSSProperties;
-}
-
-/** Stylised placeholder standing in for the real Leaflet map (see products/forecast-dashboard/MapScreens.tsx for the real one). */
-export function MapSchematic({ level, caption, activeIndex, style }: MapSchematicProps) {
-  const dots = Array.from({ length: 7 });
-  return (
-    <div style={{
-      position: "relative", flex: 1, minHeight: 220, borderRadius: "var(--radius-lg)",
-      background: "var(--ink-800)", boxShadow: "var(--inset-hairline)", display: "flex",
-      flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "var(--space-4)",
-      overflow: "hidden", ...style,
-    }}>
-      {level === "all" ? (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(6,1fr)", gap: 10, padding: "0 var(--space-8)" }}>
-          {Array.from({ length: 18 }).map((_, i) => (
-            <span key={i} style={{ width: 8, height: 8, borderRadius: "var(--radius-pill)", background: LOAD_VARS[i % LOAD_VARS.length], opacity: 0.55 }} />
-          ))}
-        </div>
-      ) : (
-        <div style={{ display: "flex", alignItems: "center", gap: 4, padding: "0 var(--space-8)" }}>
-          {dots.map((_, i) => {
-            const on = level === "stop" && i === activeIndex;
-            return (
-              <React.Fragment key={i}>
-                {i > 0 && <span style={{ width: 20, height: 2, background: LOAD_VARS[i % LOAD_VARS.length] }} />}
-                <span style={{
-                  width: on ? 18 : 10, height: on ? 18 : 10, borderRadius: "var(--radius-pill)",
-                  background: LOAD_VARS[i % LOAD_VARS.length],
-                  boxShadow: on ? "0 0 0 4px var(--accent-quiet)" : "none",
-                }} />
-              </React.Fragment>
-            );
-          })}
-        </div>
-      )}
-      <div style={{ font: "var(--type-caption)", color: "var(--text-muted)" }}>{caption}</div>
     </div>
   );
 }

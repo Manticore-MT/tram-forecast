@@ -1,4 +1,5 @@
-import { AttentionZones, MapSchematic, TimeControls, DetailPanel, FooterNote } from "./shared";
+import { AttentionZones, TimeControls, DetailPanel, FooterNote } from "./shared";
+import { MapCanvas } from "./MapCanvas";
 import type { LevelData } from "./data";
 
 export interface LayoutProps {
@@ -13,7 +14,7 @@ export function ColumnsLayout({ data, level }: LayoutProps) {
       <div style={{ display: "grid", gridTemplateColumns: "240px 1fr 300px", gap: "var(--space-4)", alignItems: "stretch" }}>
         <AttentionZones zones={data.zones} />
         <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
-          <MapSchematic level={level} caption={data.mapCaption} activeIndex={data.activeIndex} />
+          <MapCanvas level={level} caption={data.mapCaption} activeIndex={data.activeIndex} />
           <TimeControls />
         </div>
         <DetailPanel data={data} />

@@ -1,6 +1,7 @@
 import React from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import "../../styles/leaflet-dark.css";
 import { Card, Badge, Button, Icon, Stat, LoadMeter, Switch } from "../../components";
 import { Panel, LoadLegend } from "./Shell";
 
@@ -17,8 +18,8 @@ export const GEO: { name: string; ll: [number, number]; load: number }[] = [
   { name: "Лефортово", ll: [55.7660, 37.7050], load: 0.29 },
 ];
 
-const LOAD_HEX = ["#2ED47A", "#A3E635", "#FFB020", "#FB7B3C", "#F0392B"];
-const hexFor = (v: number) => LOAD_HEX[Math.min(4, Math.floor(v * 5))];
+export const LOAD_HEX = ["#2ED47A", "#A3E635", "#FFB020", "#FB7B3C", "#F0392B"];
+export const hexFor = (v: number) => LOAD_HEX[Math.min(4, Math.floor(v * 5))];
 
 interface MapCanvasProps {
   hour: number;
