@@ -1,25 +1,59 @@
 import React from "react";
-import { Button, Icon, Badge, Stat, LoadMeter, Switch, Card } from "../../components";
+import { Button, Icon, Badge, Stat, LoadMeter, Switch, Card, Select, Timeline } from "../../components";
 import { seedSeries, ForecastChart, Sparkline, Heatmap, RouteStrip, Stop } from "./Charts";
 import { Panel, LoadLegend } from "./Shell";
+import { TRAM_ROUTES, DEFAULT_ROUTE, DemandMap } from "./MapScreens";
 
-export const STOPS: Stop[] = [
-  { name: "Метро Сокольники", load: 0.34 }, { name: "Стромынка", load: 0.52 }, { name: "Матросская Тишина", load: 0.61 },
-  { name: "Электрозаводская", load: 0.86 }, { name: "Площадь Журавлёва", load: 0.74 }, { name: "Госпитальный Вал", load: 0.48 },
-  { name: "Лефортово", load: 0.29 },
-];
+export const STOPS: Stop[] = TRAM_ROUTES[DEFAULT_ROUTE].stops
+  .filter((_, i) => i % 4 === 0)
+  .slice(0, 7)
+  .map((s) => ({ name: s.name, load: s.load }));
 
 export interface OverviewProps {
   horizon: string;
   route: string;
 }
 
+const MONTHS = ["Янв", "Фев", "Мар", "Апр", "Май", "Июн", "Июл", "Авг", "Сен", "Окт", "Ноя", "Дек"];
+
+const ATTENTION_ZONES: [string, string, number, string][] = [
+  ["Электрозаводская", "маршрут 17", 92, "3 дня подряд · 18:00–19:30"],
+  ["Семёновская", "маршрут 7", 87, "2 дня подряд · 08:00–09:00"],
+  ["Бауманская", "маршрут А", 81, "разово · 18:40"],
+];
+
+const BASELINE_DEVIATION: [string, number][] = [["17", 12], ["27", -4], ["А", 18], ["7", -7], ["1", 3]];
+
+const QUALITY_HISTORY = [
+  { date: "13.09", title: "v14 · MAPE 7.4 %", note: "в проде", done: true },
+  { date: "06.09", title: "v13 · MAPE 8.1 %", note: "архив" },
+  { date: "30.08", title: "v12 · MAPE 9.6 %", note: "архив" },
+];
+
+const EXTERNAL_FACTORS: [string, string, "ok" | "warn" | "info", string][] = [
+  ["Календарь", "calendar", "info", "Праздничные дни — трафик выше на 14 %"],
+  ["Погода", "cloud-rain", "warn", "Осадки завтра — +6 % на маршрутах А, 7"],
+  ["События города", "party-popper", "info", "Матч на стадионе — пик 19:00–21:00"],
+  ["ВСМ", "train-front", "ok", "Влияние на пересадочные узлы — низкое"],
+];
+
+const PERIOD_OPTIONS = [
+  { value: "month-1", label: "Август 2026" },
+  { value: "month-2", label: "Сентябрь 2026" },
+  { value: "week-1", label: "Неделя 36" },
+  { value: "week-2", label: "Неделя 37" },
+];
+
 export function Overview({ horizon, route }: OverviewProps) {
   const [band, setBand] = React.useState(true);
+  const [periodA, setPeriodA] = React.useState("month-1");
+  const [periodB, setPeriodB] = React.useState("month-2");
   const actual = seedSeries(11, 60, 120, 480);
   const forecast = seedSeries(29, 40, 130, 520);
   const conf = forecast.map((_, i) => 0.04 + (i / forecast.length) * 0.16);
-  const routes: [string, number][] = [["3", 0.58], ["17", 0.86], ["27", 0.41], ["А", 0.72], ["10", 0.33], ["7", 0.65]];
+  const routes: [string, number][] = [["1", 0.58], ["17", 0.86], ["27", 0.41], ["А", 0.72], ["11", 0.33], ["7", 0.65]];
+  const longTerm = seedSeries(41, 12, 15000, 6000).map((v, i) => v * (1 + i * 0.015));
+  const maxLongTerm = Math.max(...longTerm);
   return (
     <div style={{ display: "grid", gap: "var(--space-5)" }}>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "var(--space-5)" }}>
@@ -51,6 +85,91 @@ export function Overview({ horizon, route }: OverviewProps) {
               </div>
             ))}
           </div>
+        </Panel>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: "var(--space-5)" }}>
+        <Panel title="Долгосрочный прогноз · 12 месяцев" action={<Badge tone="info">горизонт: год</Badge>}>
+          <div style={{ display: "flex", alignItems: "flex-end", gap: "var(--space-2)" }}>
+            {longTerm.map((v, i) => (
+              <div key={MONTHS[i]} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <span style={{ width: "100%", borderRadius: "2px 2px 0 0", background: i === longTerm.length - 1 ? "var(--accent)" : "var(--cyan-500)", opacity: i === longTerm.length - 1 ? 1 : 0.55, height: `${Math.round((v / maxLongTerm) * 100)}px` }} />
+                <span style={{ font: "var(--type-caption)", color: "var(--text-muted)" }}>{MONTHS[i]}</span>
+              </div>
+            ))}
+          </div>
+          <div style={{ marginTop: "var(--space-4)", display: "flex", gap: "var(--space-6)" }}>
+            <Stat label="Прогноз к декабрю" value={Math.round(longTerm[longTerm.length - 1]).toLocaleString("ru-RU")} unit="пасс/ч" />
+            <Stat label="Рост за год" value="18" unit="%" trend={{ dir: "up", value: "18 %" }} caption="к текущему уровню" />
+          </div>
+        </Panel>
+        <Panel title="Карта прогнозируемого спроса" action={<LoadLegend />}>
+          <DemandMap route={route} height={220} />
+        </Panel>
+      </div>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-5)" }}>
+        <Panel title="Зоны внимания" action={<Badge tone="danger">{ATTENTION_ZONES.length} зоны</Badge>}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+            {ATTENTION_ZONES.map(([name, r, rating, note]) => (
+              <div key={name} style={{ display: "grid", gridTemplateColumns: "1fr 96px", gap: "var(--space-4)", alignItems: "center", padding: "var(--space-4)", background: "var(--bg-surface-2)", borderRadius: "var(--radius-md)", boxShadow: "var(--inset-hairline)" }}>
+                <div>
+                  <div style={{ font: "var(--type-ui-s)", color: "var(--text-primary)" }}>{name}</div>
+                  <div style={{ marginTop: 2, font: "var(--type-caption)", color: "var(--text-muted)" }}>{r} · {note}</div>
+                </div>
+                <Badge tone={rating >= 90 ? "danger" : rating >= 80 ? "warn" : "info"}>{rating} рейтинг</Badge>
+              </div>
+            ))}
+          </div>
+        </Panel>
+        <Panel title="Отклонение от базового уровня" action={<Badge tone="info">за 7 дней</Badge>}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
+            {BASELINE_DEVIATION.map(([r, d]) => (
+              <div key={r} style={{ display: "grid", gridTemplateColumns: "56px 1fr 64px", gap: "var(--space-4)", alignItems: "center" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, font: "var(--type-ui-s)" }}><Icon name="tram-front" size={14} />{r}</span>
+                <span style={{ position: "relative", height: 8, borderRadius: 2, background: "var(--ink-600)", overflow: "hidden" }}>
+                  <span style={{ position: "absolute", top: 0, bottom: 0, left: d > 0 ? "50%" : `${50 - Math.min(50, Math.abs(d))}%`, width: `${Math.min(50, Math.abs(d))}%`, background: d > 0 ? "var(--status-warn)" : "var(--status-ok)" }} />
+                </span>
+                <span style={{ font: "var(--type-mono-s)", color: d > 0 ? "var(--status-warn)" : "var(--status-ok)", textAlign: "right" }}>{d > 0 ? "+" : ""}{d} %</span>
+              </div>
+            ))}
+          </div>
+        </Panel>
+      </div>
+
+      <Panel title="Сравнение периодов" action={<Badge tone="neutral">пассажиропоток</Badge>}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "var(--space-5)", alignItems: "end" }}>
+          <Select label="Период A" value={periodA} onChange={(e) => setPeriodA(e.target.value)} options={PERIOD_OPTIONS} />
+          <Select label="Период B" value={periodB} onChange={(e) => setPeriodB(e.target.value)} options={PERIOD_OPTIONS} />
+          <Stat label="Разница" value="9.4" unit="%" trend={{ dir: "up", value: "9.4 %" }}
+            caption={`${PERIOD_OPTIONS.find((p) => p.value === periodA)?.label} → ${PERIOD_OPTIONS.find((p) => p.value === periodB)?.label}`} />
+        </div>
+      </Panel>
+
+      <Panel title="Учёт внешних факторов" action={<Badge tone="info">в модели прогноза</Badge>}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: "var(--space-4)" }}>
+          {EXTERNAL_FACTORS.map(([name, icon, tone, note]) => (
+            <div key={name} style={{ padding: "var(--space-4)", background: "var(--bg-surface-2)", borderRadius: "var(--radius-md)", boxShadow: "var(--inset-hairline)", display: "flex", flexDirection: "column", gap: "var(--space-3)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <span style={{ display: "inline-flex", alignItems: "center", gap: 6, font: "var(--type-ui-s)" }}><Icon name={icon} size={16} />{name}</span>
+                <Badge tone={tone} dot />
+              </div>
+              <span style={{ font: "var(--type-caption)", color: "var(--text-secondary)" }}>{note}</span>
+            </div>
+          ))}
+        </div>
+      </Panel>
+
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-5)" }}>
+        <Panel title="Качество прогноза">
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "var(--space-5)" }}>
+            <Stat label="MAPE" value="7.4" unit="%" trend={{ dir: "down", value: "1.8 п.п." }} />
+            <Stat label="RMSE" value="48.2" />
+            <Stat label="R²" value="0.91" />
+          </div>
+        </Panel>
+        <Panel title="История качества прогнозирования">
+          <Timeline items={QUALITY_HISTORY} />
         </Panel>
       </div>
     </div>

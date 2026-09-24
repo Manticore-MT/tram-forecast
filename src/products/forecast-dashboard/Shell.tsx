@@ -63,7 +63,7 @@ export function TopBar({ horizon, onHorizon, route, onRoute, onExport }: TopBarP
   return (
     <header style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", padding: "var(--space-5) var(--space-8)", boxShadow: "inset 0 -1px 0 var(--border-subtle)" }}>
       <div style={{ display: "flex", gap: "var(--space-2)" }}>
-        {["3", "17", "27", "А"].map((r) => <Tag key={r} selected={r === route} onClick={() => onRoute(r)} icon={<Icon name="tram-front" size={14} />}>{r}</Tag>)}
+        {["17", "27", "А", "7"].map((r) => <Tag key={r} selected={r === route} onClick={() => onRoute(r)} icon={<Icon name="tram-front" size={14} />}>{r}</Tag>)}
       </div>
       <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
         <Tabs value={horizon} onChange={onHorizon} items={[{ value: "day", label: "1 день" }, { value: "month", label: "1 месяц" }, { value: "year", label: "1 год" }]} />

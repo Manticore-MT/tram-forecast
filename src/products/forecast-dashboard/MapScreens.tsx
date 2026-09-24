@@ -4,30 +4,66 @@ import "leaflet/dist/leaflet.css";
 import "../../styles/leaflet-dark.css";
 import { Card, Badge, Button, Icon, Stat, LoadMeter, Switch } from "../../components";
 import { Panel, LoadLegend } from "./Shell";
+import tramNetworkRaw from "../../data/tram-network.json";
 
-/** Real OSM basemap of Moscow. Stop positions are approximate coordinates of the named
- *  landmarks; the connector line is a straight-segment stand-in, NOT surveyed track geometry.
- *  Replace GEO with real route geometry when ЕДЦ provides it. */
-export const GEO: { name: string; ll: [number, number]; load: number }[] = [
-  { name: "Метро Сокольники", ll: [55.7893, 37.6797], load: 0.34 },
-  { name: "Стромынка", ll: [55.7867, 37.6945], load: 0.52 },
-  { name: "Матросская Тишина", ll: [55.7842, 37.7000], load: 0.61 },
-  { name: "Электрозаводская", ll: [55.7820, 37.7053], load: 0.86 },
-  { name: "Площадь Журавлёва", ll: [55.7789, 37.7085], load: 0.74 },
-  { name: "Госпитальный Вал", ll: [55.7735, 37.7010], load: 0.48 },
-  { name: "Лефортово", ll: [55.7660, 37.7050], load: 0.29 },
-];
+export interface TramStop {
+  name: string;
+  ll: [number, number];
+  load: number;
+}
+
+export interface TramRoute {
+  number: string;
+  name: string;
+  stops: TramStop[];
+}
+
+interface RawStop {
+  name: string;
+  ll: [number, number];
+}
+
+interface RawRoute {
+  number: string;
+  name: string;
+  stops: RawStop[];
+}
+
+/** Deterministic pseudo-load per stop (0.2–0.85) — stands in for real ridership until
+ *  ЕДЦ provides one; stable across renders so the same stop always looks the same. */
+function loadFor(name: string, seed: number): number {
+  let h = seed >>> 0;
+  for (let i = 0; i < name.length; i++) h = (Math.imul(h, 31) + name.charCodeAt(i)) >>> 0;
+  return 0.2 + ((h % 1000) / 1000) * 0.65;
+}
+
+/** Real Moscow tram network — stop positions and track order sourced from data.mos.ru
+ *  (остановки + расписание рейсов), joined by scripts/build-tram-network.mjs into
+ *  src/data/tram-network.json. The connector between consecutive stops is still a
+ *  straight segment, not surveyed track geometry; load values are synthetic. */
+export const TRAM_ROUTES: Record<string, TramRoute> = Object.fromEntries(
+  (tramNetworkRaw as RawRoute[]).map((r) => [
+    r.number,
+    { number: r.number, name: r.name, stops: r.stops.map((s, i) => ({ ...s, load: loadFor(s.name, i * 7 + r.number.length) })) },
+  ]),
+);
+
+export const TRAM_ROUTE_NUMBERS = Object.keys(TRAM_ROUTES);
+export const DEFAULT_ROUTE = "17";
+/** @deprecated kept for callers that render one fixed route without a selector — prefer TRAM_ROUTES[route].stops */
+export const GEO = TRAM_ROUTES[DEFAULT_ROUTE].stops;
 
 export const LOAD_HEX = ["#2ED47A", "#A3E635", "#FFB020", "#FB7B3C", "#F0392B"];
 export const hexFor = (v: number) => LOAD_HEX[Math.min(4, Math.floor(v * 5))];
 
 interface MapCanvasProps {
+  route: string;
   hour: number;
   active: number;
   onPick?: (i: number) => void;
 }
 
-function MapCanvas({ hour, onPick, active }: MapCanvasProps) {
+export function MapCanvas({ route, hour, onPick, active }: MapCanvasProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const mapRef = React.useRef<L.Map | null>(null);
   const layerRef = React.useRef<L.LayerGroup | null>(null);
@@ -61,8 +97,9 @@ function MapCanvas({ hour, onPick, active }: MapCanvasProps) {
     const map = mapRef.current; if (!map) return;
     if (layerRef.current) layerRef.current.remove();
     const g = L.layerGroup();
+    const stops = (TRAM_ROUTES[route] ?? TRAM_ROUTES[DEFAULT_ROUTE]).stops;
     const shift = Math.exp(-Math.pow((hour - 8.5) / 3, 2)) + 0.9 * Math.exp(-Math.pow((hour - 18.5) / 3.2, 2));
-    const pts = GEO.map((s) => ({ ...s, v: Math.max(0.05, Math.min(1, s.load * (0.35 + 0.8 * shift))) }));
+    const pts = stops.map((s) => ({ ...s, v: Math.max(0.05, Math.min(1, s.load * (0.35 + 0.8 * shift))) }));
     for (let i = 0; i < pts.length - 1; i++) {
       L.polyline([pts[i].ll, pts[i + 1].ll], { color: hexFor(pts[i].v), weight: 6, opacity: 0.85, dashArray: "1 0" }).addTo(g);
     }
@@ -73,7 +110,13 @@ function MapCanvas({ hour, onPick, active }: MapCanvasProps) {
     });
     g.addTo(map);
     layerRef.current = g;
-  }, [hour, active, onPick]);
+  }, [route, hour, active, onPick]);
+
+  React.useEffect(() => {
+    const map = mapRef.current; if (!map) return;
+    const stops = (TRAM_ROUTES[route] ?? TRAM_ROUTES[DEFAULT_ROUTE]).stops;
+    map.fitBounds(stops.map((s) => s.ll), { padding: [48, 48], maxZoom: 15 });
+  }, [route]);
 
   return <div ref={ref} style={{ position: "absolute", inset: 0, isolation: "isolate", background: "var(--ink-800)" }} />;
 }
@@ -84,13 +127,15 @@ export interface MapViewProps {
 
 export function MapView({ route }: MapViewProps) {
   const [hour, setHour] = React.useState(18);
-  const [active, setActive] = React.useState(3);
+  const [active, setActive] = React.useState(0);
   const [live, setLive] = React.useState(true);
-  const s = GEO[active];
+  const stops = (TRAM_ROUTES[route] ?? TRAM_ROUTES[DEFAULT_ROUTE]).stops;
+  React.useEffect(() => { setActive(0); }, [route]);
+  const s = stops[Math.min(active, stops.length - 1)];
   const label = `${String(Math.floor(hour)).padStart(2, "0")}:${hour % 1 ? "30" : "00"}`;
   return (
     <div style={{ position: "relative", height: "100%", minHeight: 620, borderRadius: "var(--radius-xl)", overflow: "hidden", boxShadow: "var(--inset-hairline)" }}>
-      <MapCanvas hour={hour} active={active} onPick={setActive} />
+      <MapCanvas route={route} hour={hour} active={active} onPick={setActive} />
       <div style={{ position: "absolute", top: 16, left: 16, width: 320, display: "flex", flexDirection: "column", gap: "var(--space-3)", zIndex: 500 }}>
         <Card tone="glass" padding="var(--space-5)">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-3)" }}>
@@ -120,7 +165,26 @@ export function MapView({ route }: MapViewProps) {
       </div>
       <div style={{ position: "absolute", top: 16, right: 16, zIndex: 500 }}>
         <Card tone="glass" padding="var(--space-4)" style={{ maxWidth: 260 }}>
-          <div style={{ font: "var(--type-caption)", color: "var(--text-secondary)" }}>Геометрия трассы — прямые отрезки между остановками. Подставьте реальные данные ЕДЦ.</div>
+          <div style={{ font: "var(--type-caption)", color: "var(--text-secondary)" }}>Остановки и их порядок — реальные (data.mos.ru). Линия между ними — прямая, не путь по рельсам.</div>
+        </Card>
+      </div>
+    </div>
+  );
+}
+
+export interface DemandMapProps {
+  route: string;
+  height?: number;
+}
+
+/** Compact, read-only variant of MapCanvas — the predicted-demand strip for the Overview screen. */
+export function DemandMap({ route, height = 260 }: DemandMapProps) {
+  return (
+    <div style={{ position: "relative", height, borderRadius: "var(--radius-lg)", overflow: "hidden", boxShadow: "var(--inset-hairline)" }}>
+      <MapCanvas route={route} hour={18.5} active={-1} />
+      <div style={{ position: "absolute", top: 12, left: 12, zIndex: 500 }}>
+        <Card tone="glass" padding="var(--space-3) var(--space-4)">
+          <span style={{ font: "var(--type-caption)", color: "var(--text-secondary)" }}>Прогноз спроса · 18:30</span>
         </Card>
       </div>
     </div>
