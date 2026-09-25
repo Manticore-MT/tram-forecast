@@ -1,6 +1,15 @@
 # Caddy terminates HTTPS (it obtains and renews the certificate for $DOMAIN by itself, which needs
-# ports 80 and 443 open and $DOMAIN pointing at this server) and forwards everything to the backend.
+# ports 80 and 443 open and $DOMAIN pointing at this server), routes the API and docs to the
+# backend, and everything else to the static frontend.
 {$DOMAIN} {
 	encode zstd gzip
-	reverse_proxy backend:8080
+
+	@backend path /api/* /actuator/* /swagger-ui* /v3/api-docs*
+	handle @backend {
+		reverse_proxy backend:8080
+	}
+
+	handle {
+		reverse_proxy frontend:80
+	}
 }
