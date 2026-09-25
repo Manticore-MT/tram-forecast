@@ -1,0 +1,14 @@
+.leaflet-container {
+  background: var(--ink-800);
+}
+.leaflet-tile-pane {
+  filter: grayscale(1) invert(0.92) hue-rotate(180deg) brightness(0.86) contrast(0.92);
+}
+.leaflet-control-attribution {
+  background: rgba(14, 17, 19, 0.7) !important;
+  color: var(--slate-300) !important;
+  font: 11px var(--font-sans);
+}
+.leaflet-control-attribution a {
+  color: var(--slate-200) !important;
+}

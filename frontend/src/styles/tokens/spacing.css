@@ -1,0 +1,11 @@
+/* 4px base grid. Marketing sections use --space-section-*; product UI stops at 32. */
+:root{
+--space-0:0px;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;
+--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;--space-16:64px;
+--space-20:80px;--space-24:96px;--space-32:128px;--space-40:160px;
+
+--space-section-s:64px;--space-section:96px;--space-section-l:160px;
+--gutter:24px;
+--src-container-max:1240px;
+--src-container-narrow:760px;
+}
