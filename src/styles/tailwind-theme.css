@@ -75,14 +75,16 @@
   --color-glass-stroke: var(--glass-stroke);
 
   /* ── Type ────────────────────────────────────────────────── */
-  --font-display: var(--font-display);
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --tracking-display: var(--tracking-display);
-  --tracking-tight: var(--tracking-tight);
-  --tracking-normal: var(--tracking-normal);
-  --tracking-wide: var(--tracking-wide);
-  --tracking-eyebrow: var(--tracking-eyebrow);
+  /* Aliased via --src- prefixed tokens (renamed in tokens/*.css) to avoid
+     colliding with these exact names in Tailwind's own default theme. */
+  --font-display: var(--src-font-display);
+  --font-sans: var(--src-font-sans);
+  --font-mono: var(--src-font-mono);
+  --tracking-display: var(--src-tracking-display);
+  --tracking-tight: var(--src-tracking-tight);
+  --tracking-normal: var(--src-tracking-normal);
+  --tracking-wide: var(--src-tracking-wide);
+  --tracking-eyebrow: var(--src-tracking-eyebrow);
 
   /* ── Spacing ─────────────────────────────────────────────── */
   /* The 4px-grid tokens (--space-1..40) already line up with Tailwind's
@@ -92,26 +94,28 @@
   --spacing-section: var(--space-section);
   --spacing-section-l: var(--space-section-l);
   --spacing-gutter: var(--gutter);
-  --container-max: var(--container-max);
-  --container-narrow: var(--container-narrow);
+  --container-max: var(--src-container-max);
+  --container-narrow: var(--src-container-narrow);
 
   /* ── Radius ──────────────────────────────────────────────── */
-  --radius-xs: var(--radius-xs);
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
-  --radius-2xl: var(--radius-2xl);
-  --radius-pill: var(--radius-pill);
-  --radius-pin: var(--radius-pin);
+  /* Aliased via --src- prefixed tokens (renamed in tokens/*.css) to avoid
+     colliding with these exact names in Tailwind's own default theme. */
+  --radius-xs: var(--src-radius-xs);
+  --radius-sm: var(--src-radius-sm);
+  --radius-md: var(--src-radius-md);
+  --radius-lg: var(--src-radius-lg);
+  --radius-xl: var(--src-radius-xl);
+  --radius-2xl: var(--src-radius-2xl);
+  --radius-pill: var(--src-radius-pill);
+  --radius-pin: var(--src-radius-pin);
 
   /* ── Elevation ───────────────────────────────────────────── */
-  --shadow-sm: var(--shadow-sm);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
-  --shadow-accent: var(--shadow-accent);
-  --blur-glass: var(--blur-glass);
-  --blur-scrim: var(--blur-scrim);
+  --shadow-sm: var(--src-shadow-sm);
+  --shadow-md: var(--src-shadow-md);
+  --shadow-lg: var(--src-shadow-lg);
+  --shadow-accent: var(--src-shadow-accent);
+  --blur-glass: var(--src-blur-glass);
+  --blur-scrim: var(--src-blur-scrim);
 
   /* ── Motion ──────────────────────────────────────────────── */
   --duration-instant: var(--dur-instant);
@@ -119,9 +123,9 @@
   --duration-base: var(--dur-base);
   --duration-slow: var(--dur-slow);
   --duration-reveal: var(--dur-reveal);
-  --ease-standard: var(--ease-standard);
-  --ease-out: var(--ease-out);
-  --ease-in: var(--ease-in);
+  --ease-standard: var(--src-ease-standard);
+  --ease-out: var(--src-ease-out);
+  --ease-in: var(--src-ease-in);
 }
 
 /* Composite type tokens are a single `font` shorthand (weight/size/line-height/

@@ -6,6 +6,6 @@
 
 --space-section-s:64px;--space-section:96px;--space-section-l:160px;
 --gutter:24px;
---container-max:1240px;
---container-narrow:760px;
+--src-container-max:1240px;
+--src-container-narrow:760px;
 }

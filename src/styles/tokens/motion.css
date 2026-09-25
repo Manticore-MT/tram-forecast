@@ -5,10 +5,10 @@
 --dur-base:220ms; /* @kind other */
 --dur-slow:400ms; /* @kind other */
 --dur-reveal:640ms; /* @kind other */
---ease-standard:cubic-bezier(.2,.6,.2,1); /* @kind other */
---ease-out:cubic-bezier(0,.6,.3,1); /* @kind other */
---ease-in:cubic-bezier(.6,0,1,.5); /* @kind other */
---transition-ui:color var(--dur-fast) var(--ease-standard),background-color var(--dur-fast) var(--ease-standard),border-color var(--dur-fast) var(--ease-standard),transform var(--dur-fast) var(--ease-standard),opacity var(--dur-fast) var(--ease-standard); /* @kind other */
+--src-ease-standard:cubic-bezier(.2,.6,.2,1); /* @kind other */
+--src-ease-out:cubic-bezier(0,.6,.3,1); /* @kind other */
+--src-ease-in:cubic-bezier(.6,0,1,.5); /* @kind other */
+--transition-ui:color var(--dur-fast) var(--src-ease-standard),background-color var(--dur-fast) var(--src-ease-standard),border-color var(--dur-fast) var(--src-ease-standard),transform var(--dur-fast) var(--src-ease-standard),opacity var(--dur-fast) var(--src-ease-standard); /* @kind other */
 --press-scale:0.98; /* @kind other */
 }
 @media (prefers-reduced-motion:reduce){:root{

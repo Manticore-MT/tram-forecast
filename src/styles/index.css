@@ -6,12 +6,25 @@
 @import url("tokens/elevation.css");
 @import url("tokens/motion.css");
 @import url("tokens/base.css");
+@import "tailwind-theme.css";
 
 @import "tailwindcss";
-@import url("tailwind-theme.css");
 @import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* shadcn's generated components use these as shorthand for Radix's
+   data-state/data-orientation attributes, but Tailwind's own data-*
+   variant syntax only matches a literal boolean attribute of that name
+   (e.g. [data-active]) — so without these overrides, none of Radix's
+   open/active/checked/orientation states ever match. */
+@custom-variant data-active (&[data-state="active"]);
+@custom-variant data-open (&[data-state="open"]);
+@custom-variant data-closed (&[data-state="closed"]);
+@custom-variant data-checked (&[data-state="checked"]);
+@custom-variant data-unchecked (&[data-state="unchecked"]);
+@custom-variant data-horizontal (&[data-orientation="horizontal"]);
+@custom-variant data-vertical (&[data-orientation="vertical"]);
 
 /* shadcn/ui's canonical variable names, aliased onto this project's own
    brand tokens (defined in ./tokens/*.css) instead of shadcn's generic
@@ -50,11 +63,6 @@
     --color-card: var(--card);
     --color-foreground: var(--foreground);
     --color-background: var(--background);
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
 }
@@ -83,7 +91,12 @@
     --chart-3: var(--teal-500);
     --chart-4: var(--amber-500);
     --chart-5: var(--orange-500);
-    --radius: var(--radius-md);
+    /* Not var(--radius-md) — that name is also claimed by the @theme inline
+       block above (--radius-md: calc(var(--radius) * 0.8)), which makes the
+       two circularly reference each other. Browsers treat a circular custom
+       property as invalid, so every rounded-* utility derived from --radius
+       silently collapsed to square corners. */
+    --radius: 14px;
     --sidebar: var(--bg-surface);
     --sidebar-foreground: var(--text-primary);
     --sidebar-primary: var(--brand-accent);
