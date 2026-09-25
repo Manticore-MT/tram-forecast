@@ -1,0 +1,8 @@
+# Internal only — the edge Caddy (repo-root Caddyfile) terminates HTTPS and reverse-proxies here.
+:80 {
+	encode zstd gzip
+	root * /srv
+	# SPA fallback: unknown paths (client-side routes) still resolve to index.html.
+	try_files {path} /index.html
+	file_server
+}

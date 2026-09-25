@@ -46,6 +46,13 @@ services:
     mem_limit: 1536m
     # No published ports: the backend is reachable only through Caddy.
 
+  frontend:
+    image: ghcr.io/manticore-mt/tram-forecast/frontend:${IMAGE_TAG:-latest}
+    container_name: tram-frontend
+    restart: unless-stopped
+    # Static build served by its own internal Caddy; no published ports, reachable only via the
+    # edge Caddy below.
+
   caddy:
     image: caddy:2-alpine
     container_name: tram-caddy
@@ -61,6 +68,7 @@ services:
       - caddy_config:/config
     depends_on:
       - backend
+      - frontend
 
 volumes:
   tram_postgres_data:
