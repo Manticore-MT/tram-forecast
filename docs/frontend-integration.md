@@ -4,11 +4,19 @@ The frontend draws the map and the routes/stops from its own static data (OpenDa
 backend never returns geometry, only values keyed by `routeId` and `stopId`, so those IDs must match
 the ones used by the ML service and the backend.
 
-The endpoint list and parameters are in the [README](../README.md#эндпоинты); real sample responses
-(one file per endpoint, including the error shapes) are in [`examples/`](examples). They were taken
-from the synthetic `stub` data, so the numbers mean nothing but the shapes are the real ones. A
-formal API description (field-by-field contract) is still to be written, tell us what you need
-changed in the shapes. The points that matter for the UI:
+The formal contract is [`openapi.json`](openapi.json) (OpenAPI 3.1). It is generated from the
+backend code, and a CI test fails when the file is out of date, so it always matches what the
+backend really does. With the backend running there is also an interactive page at
+<http://localhost:8080/swagger-ui.html>. To generate TypeScript types from it, for example:
+
+```bash
+npx openapi-typescript https://raw.githubusercontent.com/Manticore-MT/tram-forecast/main/docs/openapi.json -o src/api/schema.d.ts
+```
+
+Real sample responses (one file per endpoint, including the error shapes) are in
+[`examples/`](examples). They were taken from the synthetic `stub` data, so the numbers mean
+nothing but the shapes are the real ones. Tell us what you want changed in the shapes. The points
+that matter for the UI:
 
 - **One request per view, then the slider is local.** Every forecast response contains the whole
   horizon (24 hours for a day, the days of a month, the 12 months of a year). Moving the time slider

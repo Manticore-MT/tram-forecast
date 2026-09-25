@@ -1,5 +1,7 @@
 package ru.tramforecast.api.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,7 +13,7 @@ import ru.tramforecast.api.web.dto.Responses;
  * Forecast quality endpoint.
  */
 @RestController
-@RequestMapping("/api/model")
+@RequestMapping(value = "/api/model", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ModelController {
 
     private final GetModelStatsUseCase stats;
@@ -34,6 +36,7 @@ public class ModelController {
      * @param days how many recent days to include, 1 to 90, default 30
      * @return overall and per-day accuracy
      */
+    @Operation(summary = "Forecast quality: WAPE of the initial daily forecasts against the facts")
     @GetMapping("/stats")
     public Responses.ModelStats stats(@RequestParam(defaultValue = "30") int days) {
         return mapper.toResponse(stats.get(days));

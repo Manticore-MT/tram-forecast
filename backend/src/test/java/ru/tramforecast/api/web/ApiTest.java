@@ -205,6 +205,7 @@ class ApiTest {
     void errorsAreReadable() throws Exception {
         mvc.perform(get("/api/routes").param("horizon", "week"))
                 .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
                 .andExpect(jsonPath("$.detail").value(containsString("horizon = day|month|year")));
         mvc.perform(get("/api/routes").param("date", "2030-01-01"))
                 .andExpect(status().isBadRequest())

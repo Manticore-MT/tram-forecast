@@ -42,6 +42,10 @@ curl "http://localhost:8080/api/routes?horizon=day"
 | `GET /api/model/stats` | качество прогноза: WAPE по исходным прогнозам дня против факта |
 | `GET /api/export` | выгрузка прогноза в CSV |
 
+Формальный контракт: [`docs/openapi.json`](docs/openapi.json) (OpenAPI 3.1). Он генерируется из кода, а тест в CI
+проверяет, что файл не устарел. Интерактивная документация при запущенном бэкенде:
+<http://localhost:8080/swagger-ui.html>.
+
 Общие необязательные параметры: `horizon` (`day` по умолчанию, `month`, `year`), `date` (`YYYY-MM-DD`,
 по умолчанию сегодня, не дальше года вперёд), `snapshot` (`latest` или `initial`), поправочные
 коэффициенты `weather`, `event`, `season` (0.1–3.0), интервал `from` и `to`. Шаг точек задаётся
@@ -80,7 +84,9 @@ curl "http://localhost:8080/api/routes?horizon=day"
 cd backend && ./mvnw test
 ```
 
-Тесты SQL идут на настоящем Postgres в контейнере (Testcontainers) и пропускаются, если Docker недоступен.
+Тесты SQL и проверка контракта идут на настоящем Postgres в контейнере (Testcontainers) и пропускаются, если Docker
+недоступен. Если изменились эндпоинты или поля ответов, обновите контракт:
+`./mvnw test -Dtest=OpenApiSpecTest -Dopenapi.update=true`.
 
 ## Известные ограничения
 

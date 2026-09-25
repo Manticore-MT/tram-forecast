@@ -1,9 +1,11 @@
 package ru.tramforecast.api.web;
 
+import io.swagger.v3.oas.annotations.Operation;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.List;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +17,7 @@ import ru.tramforecast.api.domain.model.Horizon;
  * Service metadata: lets the frontend bound its calendar and label demo data honestly.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class MetaController {
 
     private final GetMetaUseCase meta;
@@ -37,6 +39,7 @@ public class MetaController {
      *
      * @return the metadata
      */
+    @Operation(summary = "Service metadata: current moment, selectable dates, horizons, data source")
     @GetMapping("/meta")
     public Meta meta() {
         ServiceMeta value = meta.get();
