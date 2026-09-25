@@ -1,0 +1,50 @@
+spring:
+  application:
+    name: tram-forecast-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/tram_forecast}
+    username: ${SPRING_DATASOURCE_USERNAME:tram_forecast}
+    password: ${SPRING_DATASOURCE_PASSWORD:tram_forecast}
+  flyway:
+    enabled: true
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+tram:
+  # IANA zone all API timestamps are rendered in (ISO 8601 with explicit offset).
+  zone: Europe/Moscow
+  clock:
+    # Optional fixed "now" (ISO instant) to emulate current time on historical data.
+    fixed-instant: ${TRAM_CLOCK_FIXED_INSTANT:}
+  ml:
+    # "stub" serves deterministic synthetic forecasts, "http" calls the ML service.
+    mode: ${TRAM_ML_MODE:stub}
+    base-url: ${TRAM_ML_BASE_URL:http://ml:8000}
+    connect-timeout: 2s
+    read-timeout: 10s
+    stub:
+      routes: 3
+      stops-per-route: 5
+  attention:
+    # Deviation thresholds in percent of the baseline. Values are provisional (to confirm).
+    warning-pct: 10
+    critical-pct: 25
+  forecast:
+    # Forecasts further ahead than this are rejected (challenge brief: max 1 year).
+    max-years-ahead: 1
+  cache:
+    # Short read caches in front of the storage (aggregating a year of facts is the expensive query).
+    forecast-ttl: 30s
+    actual-ttl: 5m
+    max-entries: 512
+  refresh:
+    # Optional warm-up of today's forecasts on a schedule. Requests fill the cache lazily anyway.
+    enabled: false
+    cron: "0 */15 * * * *"

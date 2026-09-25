@@ -1,0 +1,382 @@
+{
+  "horizon": "day",
+  "date": "2026-09-25",
+  "lastUpdated": "2026-09-25T11:59:48.271449+03:00",
+  "routes": [
+    {
+      "routeId": "R1",
+      "points": [
+        {
+          "periodStart": "2026-09-25T00:00:00+03:00",
+          "baseline": 341.4,
+          "forecast": 353.3
+        },
+        {
+          "periodStart": "2026-09-25T01:00:00+03:00",
+          "baseline": 341.4,
+          "forecast": 349.8
+        },
+        {
+          "periodStart": "2026-09-25T02:00:00+03:00",
+          "baseline": 343.0,
+          "forecast": 340.1
+        },
+        {
+          "periodStart": "2026-09-25T03:00:00+03:00",
+          "baseline": 353.7,
+          "forecast": 341.9
+        },
+        {
+          "periodStart": "2026-09-25T04:00:00+03:00",
+          "baseline": 407.4,
+          "forecast": 396.9
+        },
+        {
+          "periodStart": "2026-09-25T05:00:00+03:00",
+          "baseline": 592.3,
+          "forecast": 599.4
+        },
+        {
+          "periodStart": "2026-09-25T06:00:00+03:00",
+          "baseline": 1023.6,
+          "forecast": 1079.8
+        },
+        {
+          "periodStart": "2026-09-25T07:00:00+03:00",
+          "baseline": 1670.3,
+          "forecast": 1796.6
+        },
+        {
+          "periodStart": "2026-09-25T08:00:00+03:00",
+          "baseline": 2196.2,
+          "forecast": 2336.4
+        },
+        {
+          "periodStart": "2026-09-25T09:00:00+03:00",
+          "baseline": 2196.2,
+          "forecast": 2268.8
+        },
+        {
+          "periodStart": "2026-09-25T10:00:00+03:00",
+          "baseline": 1670.9,
+          "forecast": 1689.8
+        },
+        {
+          "periodStart": "2026-09-25T11:00:00+03:00",
+          "baseline": 1027.4,
+          "forecast": 1044.1
+        },
+        {
+          "periodStart": "2026-09-25T12:00:00+03:00",
+          "baseline": 611.2,
+          "forecast": 632.8
+        },
+        {
+          "periodStart": "2026-09-25T13:00:00+03:00",
+          "baseline": 482.5,
+          "forecast": 501.7
+        },
+        {
+          "periodStart": "2026-09-25T14:00:00+03:00",
+          "baseline": 584.7,
+          "forecast": 596.8
+        },
+        {
+          "periodStart": "2026-09-25T15:00:00+03:00",
+          "baseline": 896.9,
+          "forecast": 895.8
+        },
+        {
+          "periodStart": "2026-09-25T16:00:00+03:00",
+          "baseline": 1376.3,
+          "forecast": 1381.4
+        },
+        {
+          "periodStart": "2026-09-25T17:00:00+03:00",
+          "baseline": 1847.0,
+          "forecast": 1923.0
+        },
+        {
+          "periodStart": "2026-09-25T18:00:00+03:00",
+          "baseline": 2047.5,
+          "forecast": 2217.8
+        },
+        {
+          "periodStart": "2026-09-25T19:00:00+03:00",
+          "baseline": 1847.0,
+          "forecast": 2019.0
+        },
+        {
+          "periodStart": "2026-09-25T20:00:00+03:00",
+          "baseline": 1376.2,
+          "forecast": 1458.6
+        },
+        {
+          "periodStart": "2026-09-25T21:00:00+03:00",
+          "baseline": 895.2,
+          "forecast": 901.9
+        },
+        {
+          "periodStart": "2026-09-25T22:00:00+03:00",
+          "baseline": 572.1,
+          "forecast": 557.0
+        },
+        {
+          "periodStart": "2026-09-25T23:00:00+03:00",
+          "baseline": 416.2,
+          "forecast": 407.3
+        }
+      ]
+    },
+    {
+      "routeId": "R2",
+      "points": [
+        {
+          "periodStart": "2026-09-25T00:00:00+03:00",
+          "baseline": 401.4,
+          "forecast": 401.0
+        },
+        {
+          "periodStart": "2026-09-25T01:00:00+03:00",
+          "baseline": 401.4,
+          "forecast": 389.1
+        },
+        {
+          "periodStart": "2026-09-25T02:00:00+03:00",
+          "baseline": 403.2,
+          "forecast": 390.3
+        },
+        {
+          "periodStart": "2026-09-25T03:00:00+03:00",
+          "baseline": 416.0,
+          "forecast": 414.3
+        },
+        {
+          "periodStart": "2026-09-25T04:00:00+03:00",
+          "baseline": 479.1,
+          "forecast": 493.3
+        },
+        {
+          "periodStart": "2026-09-25T05:00:00+03:00",
+          "baseline": 696.5,
+          "forecast": 725.5
+        },
+        {
+          "periodStart": "2026-09-25T06:00:00+03:00",
+          "baseline": 1203.6,
+          "forecast": 1239.5
+        },
+        {
+          "periodStart": "2026-09-25T07:00:00+03:00",
+          "baseline": 1963.9,
+          "forecast": 1995.5
+        },
+        {
+          "periodStart": "2026-09-25T08:00:00+03:00",
+          "baseline": 2582.2,
+          "forecast": 2636.0
+        },
+        {
+          "periodStart": "2026-09-25T09:00:00+03:00",
+          "baseline": 2582.3,
+          "forecast": 2691.2
+        },
+        {
+          "periodStart": "2026-09-25T10:00:00+03:00",
+          "baseline": 1964.7,
+          "forecast": 2083.5
+        },
+        {
+          "periodStart": "2026-09-25T11:00:00+03:00",
+          "baseline": 1208.0,
+          "forecast": 1276.4
+        },
+        {
+          "periodStart": "2026-09-25T12:00:00+03:00",
+          "baseline": 718.7,
+          "forecast": 738.0
+        },
+        {
+          "periodStart": "2026-09-25T13:00:00+03:00",
+          "baseline": 567.0,
+          "forecast": 560.9
+        },
+        {
+          "periodStart": "2026-09-25T14:00:00+03:00",
+          "baseline": 687.4,
+          "forecast": 668.6
+        },
+        {
+          "periodStart": "2026-09-25T15:00:00+03:00",
+          "baseline": 1054.6,
+          "forecast": 1050.8
+        },
+        {
+          "periodStart": "2026-09-25T16:00:00+03:00",
+          "baseline": 1618.3,
+          "forecast": 1693.9
+        },
+        {
+          "periodStart": "2026-09-25T17:00:00+03:00",
+          "baseline": 2171.9,
+          "forecast": 2359.4
+        },
+        {
+          "periodStart": "2026-09-25T18:00:00+03:00",
+          "baseline": 2407.5,
+          "forecast": 2611.9
+        },
+        {
+          "periodStart": "2026-09-25T19:00:00+03:00",
+          "baseline": 2171.8,
+          "forecast": 2270.6
+        },
+        {
+          "periodStart": "2026-09-25T20:00:00+03:00",
+          "baseline": 1618.1,
+          "forecast": 1621.9
+        },
+        {
+          "periodStart": "2026-09-25T21:00:00+03:00",
+          "baseline": 1052.6,
+          "forecast": 1041.6
+        },
+        {
+          "periodStart": "2026-09-25T22:00:00+03:00",
+          "baseline": 672.8,
+          "forecast": 678.8
+        },
+        {
+          "periodStart": "2026-09-25T23:00:00+03:00",
+          "baseline": 489.4,
+          "forecast": 505.7
+        }
+      ]
+    },
+    {
+      "routeId": "R3",
+      "points": [
+        {
+          "periodStart": "2026-09-25T00:00:00+03:00",
+          "baseline": 461.4,
+          "forecast": 445.3
+        },
+        {
+          "periodStart": "2026-09-25T01:00:00+03:00",
+          "baseline": 461.4,
+          "forecast": 456.0
+        },
+        {
+          "periodStart": "2026-09-25T02:00:00+03:00",
+          "baseline": 463.5,
+          "forecast": 473.8
+        },
+        {
+          "periodStart": "2026-09-25T03:00:00+03:00",
+          "baseline": 478.1,
+          "forecast": 495.3
+        },
+        {
+          "periodStart": "2026-09-25T04:00:00+03:00",
+          "baseline": 550.7,
+          "forecast": 560.8
+        },
+        {
+          "periodStart": "2026-09-25T05:00:00+03:00",
+          "baseline": 800.5,
+          "forecast": 791.6
+        },
+        {
+          "periodStart": "2026-09-25T06:00:00+03:00",
+          "baseline": 1383.6,
+          "forecast": 1359.4
+        },
+        {
+          "periodStart": "2026-09-25T07:00:00+03:00",
+          "baseline": 2257.6,
+          "forecast": 2291.6
+        },
+        {
+          "periodStart": "2026-09-25T08:00:00+03:00",
+          "baseline": 2968.3,
+          "forecast": 3156.2
+        },
+        {
+          "periodStart": "2026-09-25T09:00:00+03:00",
+          "baseline": 2968.5,
+          "forecast": 3221.0
+        },
+        {
+          "periodStart": "2026-09-25T10:00:00+03:00",
+          "baseline": 2258.4,
+          "forecast": 2395.0
+        },
+        {
+          "periodStart": "2026-09-25T11:00:00+03:00",
+          "baseline": 1388.5,
+          "forecast": 1402.3
+        },
+        {
+          "periodStart": "2026-09-25T12:00:00+03:00",
+          "baseline": 826.2,
+          "forecast": 804.2
+        },
+        {
+          "periodStart": "2026-09-25T13:00:00+03:00",
+          "baseline": 652.0,
+          "forecast": 636.4
+        },
+        {
+          "periodStart": "2026-09-25T14:00:00+03:00",
+          "baseline": 790.3,
+          "forecast": 798.9
+        },
+        {
+          "periodStart": "2026-09-25T15:00:00+03:00",
+          "baseline": 1212.3,
+          "forecast": 1271.5
+        },
+        {
+          "periodStart": "2026-09-25T16:00:00+03:00",
+          "baseline": 1860.3,
+          "forecast": 1976.6
+        },
+        {
+          "periodStart": "2026-09-25T17:00:00+03:00",
+          "baseline": 2496.5,
+          "forecast": 2615.0
+        },
+        {
+          "periodStart": "2026-09-25T18:00:00+03:00",
+          "baseline": 2767.5,
+          "forecast": 2830.4
+        },
+        {
+          "periodStart": "2026-09-25T19:00:00+03:00",
+          "baseline": 2496.5,
+          "forecast": 2528.2
+        },
+        {
+          "periodStart": "2026-09-25T20:00:00+03:00",
+          "baseline": 1860.1,
+          "forecast": 1906.5
+        },
+        {
+          "periodStart": "2026-09-25T21:00:00+03:00",
+          "baseline": 1210.0,
+          "forecast": 1262.0
+        },
+        {
+          "periodStart": "2026-09-25T22:00:00+03:00",
+          "baseline": 773.4,
+          "forecast": 805.7
+        },
+        {
+          "periodStart": "2026-09-25T23:00:00+03:00",
+          "baseline": 562.6,
+          "forecast": 570.3
+        }
+      ]
+    }
+  ]
+}

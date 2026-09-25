@@ -1,0 +1,925 @@
+{
+  "routeId": "R1",
+  "horizon": "day",
+  "date": "2026-09-25",
+  "lastUpdated": "2026-09-25T11:59:48.271449+03:00",
+  "points": [
+    {
+      "periodStart": "2026-09-25T00:00:00+03:00",
+      "baseline": 341.4,
+      "forecast": 353.3,
+      "actual": 332.8,
+      "deviationAbs": 11.9,
+      "deviationPct": 3.49
+    },
+    {
+      "periodStart": "2026-09-25T01:00:00+03:00",
+      "baseline": 341.4,
+      "forecast": 349.8,
+      "actual": 334.1,
+      "deviationAbs": 8.4,
+      "deviationPct": 2.46
+    },
+    {
+      "periodStart": "2026-09-25T02:00:00+03:00",
+      "baseline": 343.0,
+      "forecast": 340.1,
+      "actual": 337.4,
+      "deviationAbs": -2.9,
+      "deviationPct": -0.85
+    },
+    {
+      "periodStart": "2026-09-25T03:00:00+03:00",
+      "baseline": 353.7,
+      "forecast": 341.9,
+      "actual": 350.3,
+      "deviationAbs": -11.8,
+      "deviationPct": -3.34
+    },
+    {
+      "periodStart": "2026-09-25T04:00:00+03:00",
+      "baseline": 407.4,
+      "forecast": 396.9,
+      "actual": 406.3,
+      "deviationAbs": -10.5,
+      "deviationPct": -2.58
+    },
+    {
+      "periodStart": "2026-09-25T05:00:00+03:00",
+      "baseline": 592.3,
+      "forecast": 599.4,
+      "actual": 595.3,
+      "deviationAbs": 7.1,
+      "deviationPct": 1.2
+    },
+    {
+      "periodStart": "2026-09-25T06:00:00+03:00",
+      "baseline": 1023.6,
+      "forecast": 1079.8,
+      "actual": 1036.0,
+      "deviationAbs": 56.2,
+      "deviationPct": 5.49
+    },
+    {
+      "periodStart": "2026-09-25T07:00:00+03:00",
+      "baseline": 1670.3,
+      "forecast": 1796.6,
+      "actual": 1700.3,
+      "deviationAbs": 126.3,
+      "deviationPct": 7.56
+    },
+    {
+      "periodStart": "2026-09-25T08:00:00+03:00",
+      "baseline": 2196.2,
+      "forecast": 2336.4,
+      "actual": 2245.6,
+      "deviationAbs": 140.2,
+      "deviationPct": 6.38
+    },
+    {
+      "periodStart": "2026-09-25T09:00:00+03:00",
+      "baseline": 2196.2,
+      "forecast": 2268.8,
+      "actual": 2251.2,
+      "deviationAbs": 72.6,
+      "deviationPct": 3.31
+    },
+    {
+      "periodStart": "2026-09-25T10:00:00+03:00",
+      "baseline": 1670.9,
+      "forecast": 1689.8,
+      "actual": 1713.6,
+      "deviationAbs": 18.9,
+      "deviationPct": 1.13
+    },
+    {
+      "periodStart": "2026-09-25T11:00:00+03:00",
+      "baseline": 1027.4,
+      "forecast": 1044.1,
+      "actual": 1051.8,
+      "deviationAbs": 16.7,
+      "deviationPct": 1.63
+    },
+    {
+      "periodStart": "2026-09-25T12:00:00+03:00",
+      "baseline": 611.2,
+      "forecast": 632.8,
+      "actual": 623.5,
+      "deviationAbs": 21.6,
+      "deviationPct": 3.53
+    },
+    {
+      "periodStart": "2026-09-25T13:00:00+03:00",
+      "baseline": 482.5,
+      "forecast": 501.7,
+      "actual": 489.6,
+      "deviationAbs": 19.2,
+      "deviationPct": 3.98
+    },
+    {
+      "periodStart": "2026-09-25T14:00:00+03:00",
+      "baseline": 584.7,
+      "forecast": 596.8,
+      "actual": 589.4,
+      "deviationAbs": 12.1,
+      "deviationPct": 2.07
+    },
+    {
+      "periodStart": "2026-09-25T15:00:00+03:00",
+      "baseline": 896.9,
+      "forecast": 895.8,
+      "actual": 897.4,
+      "deviationAbs": -1.1,
+      "deviationPct": -0.12
+    },
+    {
+      "periodStart": "2026-09-25T16:00:00+03:00",
+      "baseline": 1376.3,
+      "forecast": 1381.4,
+      "actual": 1367.0,
+      "deviationAbs": 5.1,
+      "deviationPct": 0.37
+    },
+    {
+      "periodStart": "2026-09-25T17:00:00+03:00",
+      "baseline": 1847.0,
+      "forecast": 1923.0,
+      "actual": 1822.0,
+      "deviationAbs": 76.0,
+      "deviationPct": 4.11
+    },
+    {
+      "periodStart": "2026-09-25T18:00:00+03:00",
+      "baseline": 2047.5,
+      "forecast": 2217.8,
+      "actual": 2008.1,
+      "deviationAbs": 170.3,
+      "deviationPct": 8.32
+    },
+    {
+      "periodStart": "2026-09-25T19:00:00+03:00",
+      "baseline": 1847.0,
+      "forecast": 2019.0,
+      "actual": 1804.0,
+      "deviationAbs": 172.0,
+      "deviationPct": 9.31
+    },
+    {
+      "periodStart": "2026-09-25T20:00:00+03:00",
+      "baseline": 1376.2,
+      "forecast": 1458.6,
+      "actual": 1341.2,
+      "deviationAbs": 82.4,
+      "deviationPct": 5.99
+    },
+    {
+      "periodStart": "2026-09-25T21:00:00+03:00",
+      "baseline": 895.2,
+      "forecast": 901.9,
+      "actual": 872.5,
+      "deviationAbs": 6.7,
+      "deviationPct": 0.75
+    },
+    {
+      "periodStart": "2026-09-25T22:00:00+03:00",
+      "baseline": 572.1,
+      "forecast": 557.0,
+      "actual": 558.8,
+      "deviationAbs": -15.1,
+      "deviationPct": -2.64
+    },
+    {
+      "periodStart": "2026-09-25T23:00:00+03:00",
+      "baseline": 416.2,
+      "forecast": 407.3,
+      "actual": 408.2,
+      "deviationAbs": -8.9,
+      "deviationPct": -2.14
+    }
+  ],
+  "lastYear": [
+    {
+      "periodStart": "2026-09-25T00:00:00+03:00",
+      "value": 348.6
+    },
+    {
+      "periodStart": "2026-09-25T01:00:00+03:00",
+      "value": 349.8
+    },
+    {
+      "periodStart": "2026-09-25T02:00:00+03:00",
+      "value": 351.8
+    },
+    {
+      "periodStart": "2026-09-25T03:00:00+03:00",
+      "value": 362.5
+    },
+    {
+      "periodStart": "2026-09-25T04:00:00+03:00",
+      "value": 416.0
+    },
+    {
+      "periodStart": "2026-09-25T05:00:00+03:00",
+      "value": 602.0
+    },
+    {
+      "periodStart": "2026-09-25T06:00:00+03:00",
+      "value": 1033.7
+    },
+    {
+      "periodStart": "2026-09-25T07:00:00+03:00",
+      "value": 1674.8
+    },
+    {
+      "periodStart": "2026-09-25T08:00:00+03:00",
+      "value": 2185.6
+    },
+    {
+      "periodStart": "2026-09-25T09:00:00+03:00",
+      "value": 2170.1
+    },
+    {
+      "periodStart": "2026-09-25T10:00:00+03:00",
+      "value": 1641.0
+    },
+    {
+      "periodStart": "2026-09-25T11:00:00+03:00",
+      "value": 1004.3
+    },
+    {
+      "periodStart": "2026-09-25T12:00:00+03:00",
+      "value": 595.9
+    },
+    {
+      "periodStart": "2026-09-25T13:00:00+03:00",
+      "value": 470.0
+    },
+    {
+      "periodStart": "2026-09-25T14:00:00+03:00",
+      "value": 570.6
+    },
+    {
+      "periodStart": "2026-09-25T15:00:00+03:00",
+      "value": 878.7
+    },
+    {
+      "periodStart": "2026-09-25T16:00:00+03:00",
+      "value": 1355.8
+    },
+    {
+      "periodStart": "2026-09-25T17:00:00+03:00",
+      "value": 1831.7
+    },
+    {
+      "periodStart": "2026-09-25T18:00:00+03:00",
+      "value": 2045.7
+    },
+    {
+      "periodStart": "2026-09-25T19:00:00+03:00",
+      "value": 1859.0
+    },
+    {
+      "periodStart": "2026-09-25T20:00:00+03:00",
+      "value": 1394.4
+    },
+    {
+      "periodStart": "2026-09-25T21:00:00+03:00",
+      "value": 912.2
+    },
+    {
+      "periodStart": "2026-09-25T22:00:00+03:00",
+      "value": 585.5
+    },
+    {
+      "periodStart": "2026-09-25T23:00:00+03:00",
+      "value": 426.8
+    }
+  ],
+  "stops": [
+    {
+      "stopId": "R1-S1",
+      "points": [
+        {
+          "periodStart": "2026-09-25T00:00:00+03:00",
+          "baseline": 60.8,
+          "forecast": 62.9
+        },
+        {
+          "periodStart": "2026-09-25T01:00:00+03:00",
+          "baseline": 60.8,
+          "forecast": 60.9
+        },
+        {
+          "periodStart": "2026-09-25T02:00:00+03:00",
+          "baseline": 61.1,
+          "forecast": 59.1
+        },
+        {
+          "periodStart": "2026-09-25T03:00:00+03:00",
+          "baseline": 63.0,
+          "forecast": 60.8
+        },
+        {
+          "periodStart": "2026-09-25T04:00:00+03:00",
+          "baseline": 72.5,
+          "forecast": 72.8
+        },
+        {
+          "periodStart": "2026-09-25T05:00:00+03:00",
+          "baseline": 105.4,
+          "forecast": 113.0
+        },
+        {
+          "periodStart": "2026-09-25T06:00:00+03:00",
+          "baseline": 182.2,
+          "forecast": 210.8
+        },
+        {
+          "periodStart": "2026-09-25T07:00:00+03:00",
+          "baseline": 297.3,
+          "forecast": 369.6
+        },
+        {
+          "periodStart": "2026-09-25T08:00:00+03:00",
+          "baseline": 391.0,
+          "forecast": 506.6
+        },
+        {
+          "periodStart": "2026-09-25T09:00:00+03:00",
+          "baseline": 391.0,
+          "forecast": 500.5
+        },
+        {
+          "periodStart": "2026-09-25T10:00:00+03:00",
+          "baseline": 297.5,
+          "forecast": 360.0
+        },
+        {
+          "periodStart": "2026-09-25T11:00:00+03:00",
+          "baseline": 182.9,
+          "forecast": 208.1
+        },
+        {
+          "periodStart": "2026-09-25T12:00:00+03:00",
+          "baseline": 108.8,
+          "forecast": 118.3
+        },
+        {
+          "periodStart": "2026-09-25T13:00:00+03:00",
+          "baseline": 85.9,
+          "forecast": 90.2
+        },
+        {
+          "periodStart": "2026-09-25T14:00:00+03:00",
+          "baseline": 104.1,
+          "forecast": 107.5
+        },
+        {
+          "periodStart": "2026-09-25T15:00:00+03:00",
+          "baseline": 159.7,
+          "forecast": 170.7
+        },
+        {
+          "periodStart": "2026-09-25T16:00:00+03:00",
+          "baseline": 245.0,
+          "forecast": 287.7
+        },
+        {
+          "periodStart": "2026-09-25T17:00:00+03:00",
+          "baseline": 328.8,
+          "forecast": 428.5
+        },
+        {
+          "periodStart": "2026-09-25T18:00:00+03:00",
+          "baseline": 364.5,
+          "forecast": 499.8
+        },
+        {
+          "periodStart": "2026-09-25T19:00:00+03:00",
+          "baseline": 328.8,
+          "forecast": 436.0
+        },
+        {
+          "periodStart": "2026-09-25T20:00:00+03:00",
+          "baseline": 245.0,
+          "forecast": 293.7
+        },
+        {
+          "periodStart": "2026-09-25T21:00:00+03:00",
+          "baseline": 159.4,
+          "forecast": 171.0
+        },
+        {
+          "periodStart": "2026-09-25T22:00:00+03:00",
+          "baseline": 101.9,
+          "forecast": 102.9
+        },
+        {
+          "periodStart": "2026-09-25T23:00:00+03:00",
+          "baseline": 74.1,
+          "forecast": 75.0
+        }
+      ]
+    },
+    {
+      "stopId": "R1-S2",
+      "points": [
+        {
+          "periodStart": "2026-09-25T00:00:00+03:00",
+          "baseline": 64.5,
+          "forecast": 67.0
+        },
+        {
+          "periodStart": "2026-09-25T01:00:00+03:00",
+          "baseline": 64.5,
+          "forecast": 65.5
+        },
+        {
+          "periodStart": "2026-09-25T02:00:00+03:00",
+          "baseline": 64.8,
+          "forecast": 63.4
+        },
+        {
+          "periodStart": "2026-09-25T03:00:00+03:00",
+          "baseline": 66.9,
+          "forecast": 64.2
+        },
+        {
+          "periodStart": "2026-09-25T04:00:00+03:00",
+          "baseline": 77.0,
+          "forecast": 75.7
+        },
+        {
+          "periodStart": "2026-09-25T05:00:00+03:00",
+          "baseline": 111.9,
+          "forecast": 115.6
+        },
+        {
+          "periodStart": "2026-09-25T06:00:00+03:00",
+          "baseline": 193.5,
+          "forecast": 208.8
+        },
+        {
+          "periodStart": "2026-09-25T07:00:00+03:00",
+          "baseline": 315.7,
+          "forecast": 347.8
+        },
+        {
+          "periodStart": "2026-09-25T08:00:00+03:00",
+          "baseline": 415.1,
+          "forecast": 454.1
+        },
+        {
+          "periodStart": "2026-09-25T09:00:00+03:00",
+          "baseline": 415.1,
+          "forecast": 443.3
+        },
+        {
+          "periodStart": "2026-09-25T10:00:00+03:00",
+          "baseline": 315.8,
+          "forecast": 330.7
+        },
+        {
+          "periodStart": "2026-09-25T11:00:00+03:00",
+          "baseline": 194.2,
+          "forecast": 203.2
+        },
+        {
+          "periodStart": "2026-09-25T12:00:00+03:00",
+          "baseline": 115.5,
+          "forecast": 121.6
+        },
+        {
+          "periodStart": "2026-09-25T13:00:00+03:00",
+          "baseline": 91.2,
+          "forecast": 95.0
+        },
+        {
+          "periodStart": "2026-09-25T14:00:00+03:00",
+          "baseline": 110.5,
+          "forecast": 112.1
+        },
+        {
+          "periodStart": "2026-09-25T15:00:00+03:00",
+          "baseline": 169.5,
+          "forecast": 169.8
+        },
+        {
+          "periodStart": "2026-09-25T16:00:00+03:00",
+          "baseline": 260.1,
+          "forecast": 268.4
+        },
+        {
+          "periodStart": "2026-09-25T17:00:00+03:00",
+          "baseline": 349.1,
+          "forecast": 381.9
+        },
+        {
+          "periodStart": "2026-09-25T18:00:00+03:00",
+          "baseline": 387.0,
+          "forecast": 442.1
+        },
+        {
+          "periodStart": "2026-09-25T19:00:00+03:00",
+          "baseline": 349.1,
+          "forecast": 396.6
+        },
+        {
+          "periodStart": "2026-09-25T20:00:00+03:00",
+          "baseline": 260.1,
+          "forecast": 280.2
+        },
+        {
+          "periodStart": "2026-09-25T21:00:00+03:00",
+          "baseline": 169.2,
+          "forecast": 170.7
+        },
+        {
+          "periodStart": "2026-09-25T22:00:00+03:00",
+          "baseline": 108.1,
+          "forecast": 105.5
+        },
+        {
+          "periodStart": "2026-09-25T23:00:00+03:00",
+          "baseline": 78.7,
+          "forecast": 77.9
+        }
+      ]
+    },
+    {
+      "stopId": "R1-S3",
+      "points": [
+        {
+          "periodStart": "2026-09-25T00:00:00+03:00",
+          "baseline": 68.3,
+          "forecast": 71.0
+        },
+        {
+          "periodStart": "2026-09-25T01:00:00+03:00",
+          "baseline": 68.3,
+          "forecast": 70.1
+        },
+        {
+          "periodStart": "2026-09-25T02:00:00+03:00",
+          "baseline": 68.6,
+          "forecast": 67.8
+        },
+        {
+          "periodStart": "2026-09-25T03:00:00+03:00",
+          "baseline": 70.7,
+          "forecast": 68.0
+        },
+        {
+          "periodStart": "2026-09-25T04:00:00+03:00",
+          "baseline": 81.5,
+          "forecast": 78.7
+        },
+        {
+          "periodStart": "2026-09-25T05:00:00+03:00",
+          "baseline": 118.5,
+          "forecast": 117.4
+        },
+        {
+          "periodStart": "2026-09-25T06:00:00+03:00",
+          "baseline": 204.7,
+          "forecast": 204.1
+        },
+        {
+          "periodStart": "2026-09-25T07:00:00+03:00",
+          "baseline": 334.1,
+          "forecast": 319.8
+        },
+        {
+          "periodStart": "2026-09-25T08:00:00+03:00",
+          "baseline": 439.2,
+          "forecast": 392.5
+        },
+        {
+          "periodStart": "2026-09-25T09:00:00+03:00",
+          "baseline": 439.2,
+          "forecast": 377.7
+        },
+        {
+          "periodStart": "2026-09-25T10:00:00+03:00",
+          "baseline": 334.2,
+          "forecast": 296.4
+        },
+        {
+          "periodStart": "2026-09-25T11:00:00+03:00",
+          "baseline": 205.5,
+          "forecast": 196.1
+        },
+        {
+          "periodStart": "2026-09-25T12:00:00+03:00",
+          "baseline": 122.2,
+          "forecast": 124.0
+        },
+        {
+          "periodStart": "2026-09-25T13:00:00+03:00",
+          "baseline": 96.5,
+          "forecast": 99.3
+        },
+        {
+          "periodStart": "2026-09-25T14:00:00+03:00",
+          "baseline": 116.9,
+          "forecast": 116.4
+        },
+        {
+          "periodStart": "2026-09-25T15:00:00+03:00",
+          "baseline": 179.4,
+          "forecast": 168.2
+        },
+        {
+          "periodStart": "2026-09-25T16:00:00+03:00",
+          "baseline": 275.3,
+          "forecast": 245.8
+        },
+        {
+          "periodStart": "2026-09-25T17:00:00+03:00",
+          "baseline": 369.4,
+          "forecast": 327.0
+        },
+        {
+          "periodStart": "2026-09-25T18:00:00+03:00",
+          "baseline": 409.5,
+          "forecast": 372.8
+        },
+        {
+          "periodStart": "2026-09-25T19:00:00+03:00",
+          "baseline": 369.4,
+          "forecast": 347.9
+        },
+        {
+          "periodStart": "2026-09-25T20:00:00+03:00",
+          "baseline": 275.2,
+          "forecast": 262.6
+        },
+        {
+          "periodStart": "2026-09-25T21:00:00+03:00",
+          "baseline": 179.0,
+          "forecast": 169.6
+        },
+        {
+          "periodStart": "2026-09-25T22:00:00+03:00",
+          "baseline": 114.4,
+          "forecast": 108.2
+        },
+        {
+          "periodStart": "2026-09-25T23:00:00+03:00",
+          "baseline": 83.2,
+          "forecast": 80.7
+        }
+      ]
+    },
+    {
+      "stopId": "R1-S4",
+      "points": [
+        {
+          "periodStart": "2026-09-25T00:00:00+03:00",
+          "baseline": 72.0,
+          "forecast": 74.6
+        },
+        {
+          "periodStart": "2026-09-25T01:00:00+03:00",
+          "baseline": 72.0,
+          "forecast": 74.5
+        },
+        {
+          "periodStart": "2026-09-25T02:00:00+03:00",
+          "baseline": 72.4,
+          "forecast": 72.5
+        },
+        {
+          "periodStart": "2026-09-25T03:00:00+03:00",
+          "baseline": 74.6,
+          "forecast": 72.0
+        },
+        {
+          "periodStart": "2026-09-25T04:00:00+03:00",
+          "baseline": 86.0,
+          "forecast": 81.8
+        },
+        {
+          "periodStart": "2026-09-25T05:00:00+03:00",
+          "baseline": 125.0,
+          "forecast": 118.6
+        },
+        {
+          "periodStart": "2026-09-25T06:00:00+03:00",
+          "baseline": 216.0,
+          "forecast": 196.8
+        },
+        {
+          "periodStart": "2026-09-25T07:00:00+03:00",
+          "baseline": 352.4,
+          "forecast": 285.3
+        },
+        {
+          "periodStart": "2026-09-25T08:00:00+03:00",
+          "baseline": 463.4,
+          "forecast": 321.2
+        },
+        {
+          "periodStart": "2026-09-25T09:00:00+03:00",
+          "baseline": 463.4,
+          "forecast": 303.7
+        },
+        {
+          "periodStart": "2026-09-25T10:00:00+03:00",
+          "baseline": 352.5,
+          "forecast": 257.6
+        },
+        {
+          "periodStart": "2026-09-25T11:00:00+03:00",
+          "baseline": 216.8,
+          "forecast": 187.1
+        },
+        {
+          "periodStart": "2026-09-25T12:00:00+03:00",
+          "baseline": 129.0,
+          "forecast": 125.5
+        },
+        {
+          "periodStart": "2026-09-25T13:00:00+03:00",
+          "baseline": 101.8,
+          "forecast": 103.2
+        },
+        {
+          "periodStart": "2026-09-25T14:00:00+03:00",
+          "baseline": 123.4,
+          "forecast": 120.4
+        },
+        {
+          "periodStart": "2026-09-25T15:00:00+03:00",
+          "baseline": 189.2,
+          "forecast": 165.9
+        },
+        {
+          "periodStart": "2026-09-25T16:00:00+03:00",
+          "baseline": 290.4,
+          "forecast": 220.2
+        },
+        {
+          "periodStart": "2026-09-25T17:00:00+03:00",
+          "baseline": 389.7,
+          "forecast": 264.3
+        },
+        {
+          "periodStart": "2026-09-25T18:00:00+03:00",
+          "baseline": 432.0,
+          "forecast": 292.1
+        },
+        {
+          "periodStart": "2026-09-25T19:00:00+03:00",
+          "baseline": 389.7,
+          "forecast": 289.7
+        },
+        {
+          "periodStart": "2026-09-25T20:00:00+03:00",
+          "baseline": 290.4,
+          "forecast": 240.7
+        },
+        {
+          "periodStart": "2026-09-25T21:00:00+03:00",
+          "baseline": 188.9,
+          "forecast": 167.7
+        },
+        {
+          "periodStart": "2026-09-25T22:00:00+03:00",
+          "baseline": 120.7,
+          "forecast": 111.0
+        },
+        {
+          "periodStart": "2026-09-25T23:00:00+03:00",
+          "baseline": 87.8,
+          "forecast": 83.5
+        }
+      ]
+    },
+    {
+      "stopId": "R1-S5",
+      "points": [
+        {
+          "periodStart": "2026-09-25T00:00:00+03:00",
+          "baseline": 75.8,
+          "forecast": 77.8
+        },
+        {
+          "periodStart": "2026-09-25T01:00:00+03:00",
+          "baseline": 75.8,
+          "forecast": 78.8
+        },
+        {
+          "periodStart": "2026-09-25T02:00:00+03:00",
+          "baseline": 76.1,
+          "forecast": 77.3
+        },
+        {
+          "periodStart": "2026-09-25T03:00:00+03:00",
+          "baseline": 78.5,
+          "forecast": 76.9
+        },
+        {
+          "periodStart": "2026-09-25T04:00:00+03:00",
+          "baseline": 90.4,
+          "forecast": 87.9
+        },
+        {
+          "periodStart": "2026-09-25T05:00:00+03:00",
+          "baseline": 131.5,
+          "forecast": 134.8
+        },
+        {
+          "periodStart": "2026-09-25T06:00:00+03:00",
+          "baseline": 227.2,
+          "forecast": 259.3
+        },
+        {
+          "periodStart": "2026-09-25T07:00:00+03:00",
+          "baseline": 370.8,
+          "forecast": 474.1
+        },
+        {
+          "periodStart": "2026-09-25T08:00:00+03:00",
+          "baseline": 487.5,
+          "forecast": 662.0
+        },
+        {
+          "periodStart": "2026-09-25T09:00:00+03:00",
+          "baseline": 487.5,
+          "forecast": 643.6
+        },
+        {
+          "periodStart": "2026-09-25T10:00:00+03:00",
+          "baseline": 370.9,
+          "forecast": 445.1
+        },
+        {
+          "periodStart": "2026-09-25T11:00:00+03:00",
+          "baseline": 228.0,
+          "forecast": 249.6
+        },
+        {
+          "periodStart": "2026-09-25T12:00:00+03:00",
+          "baseline": 135.7,
+          "forecast": 143.4
+        },
+        {
+          "periodStart": "2026-09-25T13:00:00+03:00",
+          "baseline": 107.1,
+          "forecast": 114.0
+        },
+        {
+          "periodStart": "2026-09-25T14:00:00+03:00",
+          "baseline": 129.8,
+          "forecast": 140.4
+        },
+        {
+          "periodStart": "2026-09-25T15:00:00+03:00",
+          "baseline": 199.1,
+          "forecast": 221.2
+        },
+        {
+          "periodStart": "2026-09-25T16:00:00+03:00",
+          "baseline": 305.5,
+          "forecast": 359.3
+        },
+        {
+          "periodStart": "2026-09-25T17:00:00+03:00",
+          "baseline": 410.0,
+          "forecast": 521.3
+        },
+        {
+          "periodStart": "2026-09-25T18:00:00+03:00",
+          "baseline": 454.5,
+          "forecast": 611.0
+        },
+        {
+          "periodStart": "2026-09-25T19:00:00+03:00",
+          "baseline": 410.0,
+          "forecast": 548.8
+        },
+        {
+          "periodStart": "2026-09-25T20:00:00+03:00",
+          "baseline": 305.5,
+          "forecast": 381.4
+        },
+        {
+          "periodStart": "2026-09-25T21:00:00+03:00",
+          "baseline": 198.7,
+          "forecast": 222.9
+        },
+        {
+          "periodStart": "2026-09-25T22:00:00+03:00",
+          "baseline": 127.0,
+          "forecast": 129.4
+        },
+        {
+          "periodStart": "2026-09-25T23:00:00+03:00",
+          "baseline": 92.4,
+          "forecast": 90.2
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "detail": "Forecasts are available at most 1 year(s) ahead, latest date is 2027-09-25",
+  "instance": "/api/routes",
+  "status": 400,
+  "title": "Invalid request"
+}

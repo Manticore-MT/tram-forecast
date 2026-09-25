@@ -1,0 +1,382 @@
+{
+  "routeId": "R1",
+  "stopId": "R1-S2",
+  "horizon": "month",
+  "date": "2026-09-25",
+  "lastUpdated": "2026-09-25T12:06:32.793784+03:00",
+  "modelVersion": "stub",
+  "status": "WARNING",
+  "peakAt": "2026-09-07T00:00:00+03:00",
+  "maxDeviationAt": "2026-09-26T00:00:00+03:00",
+  "recommendation": {
+    "action": "ADD_VEHICLE",
+    "vehicles": 1
+  },
+  "points": [
+    {
+      "periodStart": "2026-09-01T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5936.9,
+      "actual": 4747.4,
+      "deviationAbs": 776.9,
+      "deviationPct": 15.06
+    },
+    {
+      "periodStart": "2026-09-02T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5813.2,
+      "actual": 4722.3,
+      "deviationAbs": 653.2,
+      "deviationPct": 12.66
+    },
+    {
+      "periodStart": "2026-09-03T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5616.4,
+      "actual": 4709.9,
+      "deviationAbs": 456.4,
+      "deviationPct": 8.84
+    },
+    {
+      "periodStart": "2026-09-04T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5527.4,
+      "actual": 4715.2,
+      "deviationAbs": 367.4,
+      "deviationPct": 7.12
+    },
+    {
+      "periodStart": "2026-09-05T00:00:00+03:00",
+      "baseline": 3612.0,
+      "forecast": 3939.7,
+      "actual": 3315.6,
+      "deviationAbs": 327.7,
+      "deviationPct": 9.07
+    },
+    {
+      "periodStart": "2026-09-06T00:00:00+03:00",
+      "baseline": 3612.0,
+      "forecast": 4078.1,
+      "actual": 3334.1,
+      "deviationAbs": 466.1,
+      "deviationPct": 12.9
+    },
+    {
+      "periodStart": "2026-09-07T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5938.9,
+      "actual": 4782.2,
+      "deviationAbs": 778.9,
+      "deviationPct": 15.09
+    },
+    {
+      "periodStart": "2026-09-08T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5863.2,
+      "actual": 4783.5,
+      "deviationAbs": 703.2,
+      "deviationPct": 13.63
+    },
+    {
+      "periodStart": "2026-09-09T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5668.5,
+      "actual": 4767.2,
+      "deviationAbs": 508.5,
+      "deviationPct": 9.85
+    },
+    {
+      "periodStart": "2026-09-10T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5533.7,
+      "actual": 4741.1,
+      "deviationAbs": 373.7,
+      "deviationPct": 7.24
+    },
+    {
+      "periodStart": "2026-09-11T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5582.7,
+      "actual": 4717.8,
+      "deviationAbs": 422.7,
+      "deviationPct": 8.19
+    },
+    {
+      "periodStart": "2026-09-12T00:00:00+03:00",
+      "baseline": 3612.0,
+      "forecast": 4039.4,
+      "actual": 3296.7,
+      "deviationAbs": 427.4,
+      "deviationPct": 11.83
+    },
+    {
+      "periodStart": "2026-09-13T00:00:00+03:00",
+      "baseline": 3612.0,
+      "forecast": 4147.1,
+      "actual": 3303.3,
+      "deviationAbs": 535.1,
+      "deviationPct": 14.81
+    },
+    {
+      "periodStart": "2026-09-14T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5903.0,
+      "actual": 4743.2,
+      "deviationAbs": 743.0,
+      "deviationPct": 14.4
+    },
+    {
+      "periodStart": "2026-09-15T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5725.8,
+      "actual": 4768.8,
+      "deviationAbs": 565.8,
+      "deviationPct": 10.97
+    },
+    {
+      "periodStart": "2026-09-16T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5555.9,
+      "actual": 4783.9,
+      "deviationAbs": 395.9,
+      "deviationPct": 7.67
+    },
+    {
+      "periodStart": "2026-09-17T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5549.4,
+      "actual": 4781.1,
+      "deviationAbs": 389.4,
+      "deviationPct": 7.55
+    },
+    {
+      "periodStart": "2026-09-18T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5712.4,
+      "actual": 4761.4,
+      "deviationAbs": 552.4,
+      "deviationPct": 10.71
+    },
+    {
+      "periodStart": "2026-09-19T00:00:00+03:00",
+      "baseline": 3612.0,
+      "forecast": 4126.4,
+      "actual": 3314.4,
+      "deviationAbs": 514.4,
+      "deviationPct": 14.24
+    },
+    {
+      "periodStart": "2026-09-20T00:00:00+03:00",
+      "baseline": 3612.0,
+      "forecast": 4150.5,
+      "actual": 3299.8,
+      "deviationAbs": 538.5,
+      "deviationPct": 14.91
+    },
+    {
+      "periodStart": "2026-09-21T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5783.7,
+      "actual": 4710.0,
+      "deviationAbs": 623.7,
+      "deviationPct": 12.09
+    },
+    {
+      "periodStart": "2026-09-22T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5592.2,
+      "actual": 4724.0,
+      "deviationAbs": 432.2,
+      "deviationPct": 8.38
+    },
+    {
+      "periodStart": "2026-09-23T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5530.8,
+      "actual": 4749.3,
+      "deviationAbs": 370.8,
+      "deviationPct": 7.19
+    },
+    {
+      "periodStart": "2026-09-24T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5655.8,
+      "actual": 4773.6,
+      "deviationAbs": 495.8,
+      "deviationPct": 9.61
+    },
+    {
+      "periodStart": "2026-09-25T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5852.5,
+      "actual": 4784.9,
+      "deviationAbs": 692.5,
+      "deviationPct": 13.42
+    },
+    {
+      "periodStart": "2026-09-26T00:00:00+03:00",
+      "baseline": 3612.0,
+      "forecast": 4157.9,
+      "actual": null,
+      "deviationAbs": 545.9,
+      "deviationPct": 15.11
+    },
+    {
+      "periodStart": "2026-09-27T00:00:00+03:00",
+      "baseline": 3612.0,
+      "forecast": 4086.4,
+      "actual": null,
+      "deviationAbs": 474.4,
+      "deviationPct": 13.13
+    },
+    {
+      "periodStart": "2026-09-28T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5639.9,
+      "actual": null,
+      "deviationAbs": 479.9,
+      "deviationPct": 9.3
+    },
+    {
+      "periodStart": "2026-09-29T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5528.3,
+      "actual": null,
+      "deviationAbs": 368.3,
+      "deviationPct": 7.14
+    },
+    {
+      "periodStart": "2026-09-30T00:00:00+03:00",
+      "baseline": 5160.0,
+      "forecast": 5605.5,
+      "actual": null,
+      "deviationAbs": 445.5,
+      "deviationPct": 8.63
+    }
+  ],
+  "lastYear": [
+    {
+      "periodStart": "2026-09-01T00:00:00+03:00",
+      "value": 4717.5
+    },
+    {
+      "periodStart": "2026-09-02T00:00:00+03:00",
+      "value": 4740.6
+    },
+    {
+      "periodStart": "2026-09-03T00:00:00+03:00",
+      "value": 4767.0
+    },
+    {
+      "periodStart": "2026-09-04T00:00:00+03:00",
+      "value": 4783.5
+    },
+    {
+      "periodStart": "2026-09-05T00:00:00+03:00",
+      "value": 4782.0
+    },
+    {
+      "periodStart": "2026-09-06T00:00:00+03:00",
+      "value": 3334.5
+    },
+    {
+      "periodStart": "2026-09-07T00:00:00+03:00",
+      "value": 3316.0
+    },
+    {
+      "periodStart": "2026-09-08T00:00:00+03:00",
+      "value": 4715.5
+    },
+    {
+      "periodStart": "2026-09-09T00:00:00+03:00",
+      "value": 4709.4
+    },
+    {
+      "periodStart": "2026-09-10T00:00:00+03:00",
+      "value": 4722.2
+    },
+    {
+      "periodStart": "2026-09-11T00:00:00+03:00",
+      "value": 4746.9
+    },
+    {
+      "periodStart": "2026-09-12T00:00:00+03:00",
+      "value": 4772.2
+    },
+    {
+      "periodStart": "2026-09-13T00:00:00+03:00",
+      "value": 3349.6
+    },
+    {
+      "periodStart": "2026-09-14T00:00:00+03:00",
+      "value": 3345.5
+    },
+    {
+      "periodStart": "2026-09-15T00:00:00+03:00",
+      "value": 4757.9
+    },
+    {
+      "periodStart": "2026-09-16T00:00:00+03:00",
+      "value": 4731.0
+    },
+    {
+      "periodStart": "2026-09-17T00:00:00+03:00",
+      "value": 4712.5
+    },
+    {
+      "periodStart": "2026-09-18T00:00:00+03:00",
+      "value": 4711.0
+    },
+    {
+      "periodStart": "2026-09-19T00:00:00+03:00",
+      "value": 4727.3
+    },
+    {
+      "periodStart": "2026-09-20T00:00:00+03:00",
+      "value": 3327.3
+    },
+    {
+      "periodStart": "2026-09-21T00:00:00+03:00",
+      "value": 3343.4
+    },
+    {
+      "periodStart": "2026-09-22T00:00:00+03:00",
+      "value": 4785.4
+    },
+    {
+      "periodStart": "2026-09-23T00:00:00+03:00",
+      "value": 4775.1
+    },
+    {
+      "periodStart": "2026-09-24T00:00:00+03:00",
+      "value": 4751.8
+    },
+    {
+      "periodStart": "2026-09-25T00:00:00+03:00",
+      "value": 4725.7
+    },
+    {
+      "periodStart": "2026-09-26T00:00:00+03:00",
+      "value": 4710.4
+    },
+    {
+      "periodStart": "2026-09-27T00:00:00+03:00",
+      "value": 3299.5
+    },
+    {
+      "periodStart": "2026-09-28T00:00:00+03:00",
+      "value": 3313.1
+    },
+    {
+      "periodStart": "2026-09-29T00:00:00+03:00",
+      "value": 4759.6
+    },
+    {
+      "periodStart": "2026-09-30T00:00:00+03:00",
+      "value": 4780.1
+    }
+  ],
+  "factors": [
+    "working day"
+  ]
+}

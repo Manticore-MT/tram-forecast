@@ -1,0 +1,6 @@
+{
+  "detail": "One of the request parameters is missing or has the wrong format. Expected: horizon = day|month|year, date = YYYY-MM-DD, snapshot = latest|initial, from/to = ISO 8601 with offset, coefficients = numbers between 0.1 and 3.",
+  "instance": "/api/routes",
+  "status": 400,
+  "title": "Invalid parameter"
+}

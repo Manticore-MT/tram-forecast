@@ -1,0 +1,25 @@
+# Build output
+target/
+build/
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Local configuration and secrets
+.env
+*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Organizers dataset and any raw data never go into the repo (size, license); load facts through scripts/
+data/
+dataset*.zip
+*.zip

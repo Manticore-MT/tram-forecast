@@ -1,0 +1,202 @@
+{
+  "horizon": "day",
+  "date": "2026-09-25",
+  "lastUpdated": "2026-09-25T11:59:48.271449+03:00",
+  "zones": [
+    {
+      "routeId": "R2",
+      "stopId": "R2-S5",
+      "level": "CRITICAL",
+      "deviationAbs": 200.2,
+      "deviationPct": 38.02,
+      "peakAt": "2026-09-25T09:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T18:00:00+03:00",
+      "recommendation": {
+        "action": "ADD_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R3",
+      "stopId": "R3-S4",
+      "level": "CRITICAL",
+      "deviationAbs": -214.3,
+      "deviationPct": -37.2,
+      "peakAt": "2026-09-25T09:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T18:00:00+03:00",
+      "recommendation": {
+        "action": "REMOVE_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R1",
+      "stopId": "R1-S1",
+      "level": "CRITICAL",
+      "deviationAbs": 135.3,
+      "deviationPct": 37.12,
+      "peakAt": "2026-09-25T08:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T18:00:00+03:00",
+      "recommendation": {
+        "action": "ADD_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R2",
+      "stopId": "R2-S4",
+      "level": "CRITICAL",
+      "deviationAbs": -198.1,
+      "deviationPct": -36.64,
+      "peakAt": "2026-09-25T18:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T08:00:00+03:00",
+      "recommendation": {
+        "action": "REMOVE_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R1",
+      "stopId": "R1-S5",
+      "level": "CRITICAL",
+      "deviationAbs": 174.5,
+      "deviationPct": 35.79,
+      "peakAt": "2026-09-25T08:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T08:00:00+03:00",
+      "recommendation": {
+        "action": "ADD_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R3",
+      "stopId": "R3-S5",
+      "level": "CRITICAL",
+      "deviationAbs": 222.9,
+      "deviationPct": 34.72,
+      "peakAt": "2026-09-25T09:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T09:00:00+03:00",
+      "recommendation": {
+        "action": "ADD_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R1",
+      "stopId": "R1-S4",
+      "level": "CRITICAL",
+      "deviationAbs": -159.7,
+      "deviationPct": -34.46,
+      "peakAt": "2026-09-25T08:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T09:00:00+03:00",
+      "recommendation": {
+        "action": "REMOVE_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R3",
+      "stopId": "R3-S1",
+      "level": "CRITICAL",
+      "deviationAbs": 186.3,
+      "deviationPct": 34.16,
+      "peakAt": "2026-09-25T09:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T09:00:00+03:00",
+      "recommendation": {
+        "action": "ADD_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R2",
+      "stopId": "R2-S1",
+      "level": "CRITICAL",
+      "deviationAbs": 144.9,
+      "deviationPct": 33.2,
+      "peakAt": "2026-09-25T09:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T18:00:00+03:00",
+      "recommendation": {
+        "action": "ADD_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R3",
+      "stopId": "R3-S3",
+      "level": "WARNING",
+      "deviationAbs": -87.8,
+      "deviationPct": -15.86,
+      "peakAt": "2026-09-25T09:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T18:00:00+03:00",
+      "recommendation": {
+        "action": "REMOVE_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R2",
+      "stopId": "R2-S3",
+      "level": "WARNING",
+      "deviationAbs": -78.8,
+      "deviationPct": -15.26,
+      "peakAt": "2026-09-25T09:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T08:00:00+03:00",
+      "recommendation": {
+        "action": "REMOVE_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R1",
+      "stopId": "R1-S2",
+      "level": "WARNING",
+      "deviationAbs": 55.1,
+      "deviationPct": 14.24,
+      "peakAt": "2026-09-25T08:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T18:00:00+03:00",
+      "recommendation": {
+        "action": "ADD_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R1",
+      "stopId": "R1-S3",
+      "level": "WARNING",
+      "deviationAbs": -61.5,
+      "deviationPct": -14.0,
+      "peakAt": "2026-09-25T08:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T09:00:00+03:00",
+      "recommendation": {
+        "action": "REMOVE_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R3",
+      "stopId": "R3-S2",
+      "level": "WARNING",
+      "deviationAbs": 75.4,
+      "deviationPct": 13.24,
+      "peakAt": "2026-09-25T09:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T09:00:00+03:00",
+      "recommendation": {
+        "action": "ADD_VEHICLE",
+        "vehicles": 1
+      }
+    },
+    {
+      "routeId": "R2",
+      "stopId": "R2-S2",
+      "level": "WARNING",
+      "deviationAbs": 54.5,
+      "deviationPct": 13.16,
+      "peakAt": "2026-09-25T09:00:00+03:00",
+      "maxDeviationAt": "2026-09-25T17:00:00+03:00",
+      "recommendation": {
+        "action": "ADD_VEHICLE",
+        "vehicles": 1
+      }
+    }
+  ]
+}

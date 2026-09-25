@@ -1,0 +1,46 @@
+# One command runs the whole backend side:  docker compose up --build
+# The backend answers on http://localhost:8080 (see README.md for entry points).
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tram_forecast
+      POSTGRES_USER: tram_forecast
+      # Demo default so a fresh clone runs with zero setup. Override through .env on any real server.
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-tram_forecast}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tram_forecast -d tram_forecast"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tram_forecast
+      SPRING_DATASOURCE_USERNAME: tram_forecast
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-tram_forecast}
+      # "stub" serves synthetic forecasts. "http" calls the ML service at TRAM_ML_BASE_URL
+      # (contract: docs/ml-contract.md); the ML container is not part of this compose file.
+      TRAM_ML_MODE: ${TRAM_ML_MODE:-stub}
+      TRAM_ML_BASE_URL: ${TRAM_ML_BASE_URL:-http://ml:8000}
+      # Size of the synthetic network in stub mode (match scripts/seed-demo-actuals.sql).
+      TRAM_ML_STUB_ROUTES: ${TRAM_ML_STUB_ROUTES:-3}
+      TRAM_ML_STUB_STOPS_PER_ROUTE: ${TRAM_ML_STUB_STOPS_PER_ROUTE:-5}
+      # Optional: freeze "now" to emulate a moment inside the historical dataset, e.g. 2026-09-25T09:00:00Z
+      TRAM_CLOCK_FIXED_INSTANT: ${TRAM_CLOCK_FIXED_INSTANT:-}
+    # The size the challenge brief benchmarks against (one container, 2-4 vCPU / 2-4 GB).
+    cpus: "2"
+    mem_limit: 2g
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres_data:

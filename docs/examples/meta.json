@@ -1,0 +1,21 @@
+{
+  "now": "2026-09-25T12:06:31.115068359+03:00",
+  "today": "2026-09-25",
+  "latestDate": "2027-09-25",
+  "zone": "Europe/Moscow",
+  "dataSource": "stub",
+  "horizons": [
+    {
+      "horizon": "day",
+      "step": "hour"
+    },
+    {
+      "horizon": "month",
+      "step": "day"
+    },
+    {
+      "horizon": "year",
+      "step": "month"
+    }
+  ]
+}

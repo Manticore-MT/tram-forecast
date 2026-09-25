@@ -1,0 +1,845 @@
+{
+  "routeId": "R1",
+  "cells": [
+    {
+      "dayOfWeek": 1,
+      "hour": 0,
+      "value": 341.3299999999999
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 1,
+      "value": 341.4816666666668
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 2,
+      "value": 342.9899999999999
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 3,
+      "value": 353.78
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 4,
+      "value": 407.44500000000005
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 5,
+      "value": 592.2666666666668
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 6,
+      "value": 1023.5399999999997
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 7,
+      "value": 1670.0816666666663
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 8,
+      "value": 2195.7366666666667
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 9,
+      "value": 2195.7466666666664
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 10,
+      "value": 1670.5566666666664
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 11,
+      "value": 1027.145
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 12,
+      "value": 611.1399999999999
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 13,
+      "value": 482.33000000000004
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 14,
+      "value": 584.6249999999999
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 15,
+      "value": 896.8583333333337
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 16,
+      "value": 1376.3499999999997
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 17,
+      "value": 1847.1850000000004
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 18,
+      "value": 2047.7683333333334
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 19,
+      "value": 1847.303333333333
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 20,
+      "value": 1376.4000000000008
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 21,
+      "value": 895.3566666666667
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 22,
+      "value": 572.255
+    },
+    {
+      "dayOfWeek": 1,
+      "hour": 23,
+      "value": 416.26500000000004
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 0,
+      "value": 341.3050000000002
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 1,
+      "value": 341.4366666666668
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 2,
+      "value": 342.9316666666666
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 3,
+      "value": 353.7383333333333
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 4,
+      "value": 407.37833333333333
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 5,
+      "value": 592.193333333333
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 6,
+      "value": 1023.44
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 7,
+      "value": 1669.985
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 8,
+      "value": 2195.671666666666
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 9,
+      "value": 2195.7750000000005
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 10,
+      "value": 1670.6333333333334
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 11,
+      "value": 1027.2350000000001
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 12,
+      "value": 611.2066666666669
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 13,
+      "value": 482.38499999999993
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 14,
+      "value": 584.6983333333335
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 15,
+      "value": 896.9783333333329
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 16,
+      "value": 1376.4966666666671
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 17,
+      "value": 1847.3533333333335
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 18,
+      "value": 2047.8866666666665
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 19,
+      "value": 1847.3566666666666
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 20,
+      "value": 1376.3616666666667
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 21,
+      "value": 895.3050000000003
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 22,
+      "value": 572.2233333333334
+    },
+    {
+      "dayOfWeek": 2,
+      "hour": 23,
+      "value": 416.2383333333333
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 0,
+      "value": 341.26000000000005
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 1,
+      "value": 341.39666666666676
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 2,
+      "value": 342.8883333333333
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 3,
+      "value": 353.70166666666665
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 4,
+      "value": 407.3599999999999
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 5,
+      "value": 592.1700000000001
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 6,
+      "value": 1023.4099999999997
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 7,
+      "value": 1670.0299999999997
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 8,
+      "value": 2195.816666666667
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 9,
+      "value": 2195.9783333333335
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 10,
+      "value": 1670.8249999999998
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 11,
+      "value": 1027.358333333333
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 12,
+      "value": 611.2666666666668
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 13,
+      "value": 482.44166666666655
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 14,
+      "value": 584.7616666666667
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 15,
+      "value": 897.0516666666667
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 16,
+      "value": 1376.5616666666667
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 17,
+      "value": 1847.3600000000001
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 18,
+      "value": 2047.813333333334
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 19,
+      "value": 1847.2216666666661
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 20,
+      "value": 1376.2466666666664
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 21,
+      "value": 895.195
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 22,
+      "value": 572.1399999999999
+    },
+    {
+      "dayOfWeek": 3,
+      "hour": 23,
+      "value": 416.21000000000004
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 0,
+      "value": 341.21833333333325
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 1,
+      "value": 341.3666666666666
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 2,
+      "value": 342.86500000000007
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 3,
+      "value": 353.68500000000006
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 4,
+      "value": 407.35499999999996
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 5,
+      "value": 592.1866666666665
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 6,
+      "value": 1023.4950000000002
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 7,
+      "value": 1670.2083333333333
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 8,
+      "value": 2196.076666666666
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 9,
+      "value": 2196.2716666666665
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 10,
+      "value": 1671.0483333333332
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 11,
+      "value": 1027.4833333333331
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 12,
+      "value": 611.3383333333331
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 13,
+      "value": 482.48333333333323
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 14,
+      "value": 584.7683333333333
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 15,
+      "value": 897.0383333333338
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 16,
+      "value": 1376.491666666667
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 17,
+      "value": 1847.195
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 18,
+      "value": 2047.5916666666674
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 19,
+      "value": 1847.0066666666671
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 20,
+      "value": 1376.041666666667
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 21,
+      "value": 895.0983333333332
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 22,
+      "value": 572.0849999999999
+    },
+    {
+      "dayOfWeek": 4,
+      "hour": 23,
+      "value": 416.15499999999986
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 0,
+      "value": 341.10491803278677
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 1,
+      "value": 341.2852459016393
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 2,
+      "value": 342.87540983606556
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 3,
+      "value": 353.71967213114755
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 4,
+      "value": 407.4491803278689
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 5,
+      "value": 592.4295081967214
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 6,
+      "value": 1024.011475409836
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 7,
+      "value": 1671.1081967213117
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 8,
+      "value": 2197.2819672131154
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 9,
+      "value": 2197.3672131147537
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 10,
+      "value": 1671.744262295082
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 11,
+      "value": 1027.791803278689
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 12,
+      "value": 611.4311475409838
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 13,
+      "value": 482.49836065573754
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 14,
+      "value": 584.6737704918033
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 15,
+      "value": 896.7524590163936
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 16,
+      "value": 1375.913114754098
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 17,
+      "value": 1846.2639344262298
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 18,
+      "value": 2046.4655737704918
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 19,
+      "value": 1846.0032786885247
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 20,
+      "value": 1375.3901639344258
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 21,
+      "value": 894.7229508196723
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 22,
+      "value": 571.9278688524591
+    },
+    {
+      "dayOfWeek": 5,
+      "hour": 23,
+      "value": 416.0918032786885
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 0,
+      "value": 238.90499999999994
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 1,
+      "value": 239.04333333333324
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 2,
+      "value": 240.09666666666672
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 3,
+      "value": 247.67500000000007
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 4,
+      "value": 285.2516666666666
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 5,
+      "value": 414.66500000000013
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 6,
+      "value": 716.645
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 7,
+      "value": 1169.3583333333338
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 8,
+      "value": 1537.3799999999999
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 9,
+      "value": 1537.3500000000001
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 10,
+      "value": 1169.5783333333331
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 11,
+      "value": 719.0900000000001
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 12,
+      "value": 427.81
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 13,
+      "value": 337.6233333333333
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 14,
+      "value": 409.17166666666674
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 15,
+      "value": 627.7066666666668
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 16,
+      "value": 963.2600000000001
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 17,
+      "value": 1292.7083333333333
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 18,
+      "value": 1433.09
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 19,
+      "value": 1292.8199999999997
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 20,
+      "value": 963.2900000000001
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 21,
+      "value": 626.6516666666666
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 22,
+      "value": 400.54833333333335
+    },
+    {
+      "dayOfWeek": 6,
+      "hour": 23,
+      "value": 291.38833333333326
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 0,
+      "value": 238.92500000000007
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 1,
+      "value": 239.04333333333332
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 2,
+      "value": 240.11166666666662
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 3,
+      "value": 247.69
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 4,
+      "value": 285.2316666666667
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 5,
+      "value": 414.63000000000005
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 6,
+      "value": 716.5599999999998
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 7,
+      "value": 1169.2133333333327
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 8,
+      "value": 1537.191666666667
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 9,
+      "value": 1537.1483333333333
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 10,
+      "value": 1169.4433333333332
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 11,
+      "value": 719.0183333333332
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 12,
+      "value": 427.78333333333325
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 13,
+      "value": 337.61166666666657
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 14,
+      "value": 409.1766666666666
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 15,
+      "value": 627.7316666666667
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 16,
+      "value": 963.318333333333
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 17,
+      "value": 1292.8616666666665
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 18,
+      "value": 1433.2566666666664
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 19,
+      "value": 1292.9883333333335
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 20,
+      "value": 963.385
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 21,
+      "value": 626.7233333333332
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 22,
+      "value": 400.59499999999997
+    },
+    {
+      "dayOfWeek": 7,
+      "hour": 23,
+      "value": 291.39333333333343
+    }
+  ]
+}
