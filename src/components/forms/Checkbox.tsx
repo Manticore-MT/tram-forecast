@@ -1,4 +1,6 @@
 import React from "react";
+import { cn } from "@/lib/utils";
+import { Checkbox as ShadcnCheckbox } from "@/components/ui/checkbox";
 
 export interface CheckboxProps {
   label?: React.ReactNode;
@@ -11,16 +13,25 @@ export interface CheckboxProps {
 /** 20px square checkbox; checked state fills signal red with a white tick. */
 export function Checkbox({ label, checked = false, onChange, disabled = false, style, ...rest }: CheckboxProps) {
   return (
-    <label style={{ display: "inline-flex", alignItems: "center", gap: "var(--space-3)", cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.45 : 1, font: "var(--type-body-s)", color: "var(--text-secondary)", ...style }}>
-      <input type="checkbox" checked={checked} onChange={onChange} disabled={disabled} style={{ position: "absolute", opacity: 0, width: 0, height: 0 }} {...rest} />
-      <span aria-hidden="true" style={{
-        display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, flex: "0 0 auto",
-        borderRadius: "var(--radius-xs)", transition: "var(--transition-ui)",
-        background: checked ? "var(--accent)" : "transparent",
-        boxShadow: checked ? "none" : "inset 0 0 0 1.5px var(--border-strong)",
-      }}>
-        {checked && <span style={{ width: 10, height: 6, marginTop: -3, borderLeft: "2px solid var(--on-accent)", borderBottom: "2px solid var(--on-accent)", transform: "rotate(-45deg)" }} />}
-      </span>
+    <label
+      style={style}
+      className={cn(
+        "inline-flex items-center gap-3 text-body-s text-text-secondary",
+        disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer"
+      )}
+    >
+      <ShadcnCheckbox
+        checked={checked}
+        onCheckedChange={(newChecked) => {
+          if (onChange) {
+            const event = { target: { checked: newChecked } } as any;
+            onChange(event);
+          }
+        }}
+        disabled={disabled}
+        className={cn("size-5 rounded-xs border-border-strong!")}
+        {...rest}
+      />
       {label}
     </label>
   );

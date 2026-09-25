@@ -1,4 +1,6 @@
 import React from "react";
+import { cn } from "@/lib/utils";
+import { RadioGroup as ShadcnRadioGroup, RadioGroupItem as ShadcnRadioGroupItem } from "@/components/ui/radio-group";
 
 export interface RadioProps {
   label?: React.ReactNode;
@@ -11,15 +13,37 @@ export interface RadioProps {
 }
 
 /** Single-choice control; selected state is a 6px red ring-fill. */
-export function Radio({ label, checked = false, onChange, disabled = false, name, value, style, ...rest }: RadioProps) {
+export function Radio({ label, checked = false, onChange, disabled = false, name, value = "on", style, ...rest }: RadioProps) {
   return (
-    <label style={{ display: "inline-flex", alignItems: "center", gap: "var(--space-3)", cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.45 : 1, font: "var(--type-body-s)", color: "var(--text-secondary)", ...style }}>
-      <input type="radio" name={name} value={value} checked={checked} onChange={onChange} disabled={disabled} style={{ position: "absolute", opacity: 0, width: 0, height: 0 }} {...rest} />
-      <span aria-hidden="true" style={{
-        display: "inline-flex", alignItems: "center", justifyContent: "center", width: 20, height: 20, flex: "0 0 auto",
-        borderRadius: "var(--radius-pill)", transition: "var(--transition-ui)",
-        boxShadow: checked ? "inset 0 0 0 6px var(--accent)" : "inset 0 0 0 1.5px var(--border-strong)",
-      }} />
+    <label
+      style={style}
+      className={cn(
+        "inline-flex items-center gap-3 text-body-s text-text-secondary",
+        disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer"
+      )}
+    >
+      <ShadcnRadioGroup
+        value={checked ? value : ""}
+        onValueChange={(newValue) => {
+          if (onChange) {
+            const event = { target: { checked: newValue === value, value, name } } as any;
+            onChange(event);
+          }
+        }}
+        disabled={disabled}
+      >
+        <ShadcnRadioGroupItem
+          value={value}
+          disabled={disabled}
+          className={cn(
+            "size-5 rounded-full transition-ui",
+            checked
+              ? "shadow-[inset_0_0_0_6px_var(--brand-accent)]"
+              : "shadow-[inset_0_0_0_1.5px_var(--border-strong)]"
+          )}
+          {...rest}
+        />
+      </ShadcnRadioGroup>
       {label}
     </label>
   );

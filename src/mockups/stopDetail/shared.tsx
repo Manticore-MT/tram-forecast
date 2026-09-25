@@ -24,7 +24,7 @@ export function AttentionZones({ zones, layout = "list", style }: AttentionZones
             style={{
               flex: layout === "table" ? "1 1 260px" : "none",
               display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-3)",
-              background: z.selected ? "var(--accent-quiet)" : undefined,
+              background: z.selected ? "var(--brand-accent-quiet)" : undefined,
               boxShadow: z.selected ? "inset 0 0 0 1px rgba(240,57,43,.35)" : undefined,
             }}>
             <span style={{ font: "var(--type-ui-s)", color: z.selected ? "var(--text-accent)" : "var(--text-primary)" }}>{z.title}</span>
@@ -50,7 +50,7 @@ export function TimeControls({ style }: TimeControlsProps) {
         <span style={{ font: "var(--type-mono-s)", color: "var(--text-secondary)" }}>{String(hour).padStart(2, "0")}:00</span>
       </div>
       <input type="range" min={5} max={23} step={1} value={hour} onChange={(e) => setHour(+e.target.value)}
-        style={{ width: "100%", accentColor: "var(--accent)" }} />
+        style={{ width: "100%", accentColor: "var(--brand-accent)" }} />
     </div>
   );
 }

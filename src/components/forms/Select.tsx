@@ -1,4 +1,12 @@
 import React from "react";
+import { cn } from "@/lib/utils";
+import {
+  Select as ShadcnSelectRoot,
+  SelectValue,
+  SelectTrigger,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 export interface SelectProps {
   label?: string;
@@ -13,29 +21,41 @@ export interface SelectProps {
 
 /** Native select with the brand chevron; used for route, stop and horizon pickers. */
 export function Select({ label, hint, options = [], value, onChange, disabled = false, id, style, ...rest }: SelectProps) {
-  const [focus, setFocus] = React.useState(false);
   return (
-    <label htmlFor={id} style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", ...style }}>
-      {label && <span style={{ font: "var(--type-ui-s)", color: "var(--text-secondary)" }}>{label}</span>}
-      <span style={{ position: "relative", display: "block" }}>
-        <select id={id} value={value} onChange={onChange} disabled={disabled}
-          onFocus={() => setFocus(true)} onBlur={() => setFocus(false)}
-          style={{
-            width: "100%", height: 48, padding: "0 44px 0 16px", appearance: "none",
-            background: "var(--bg-surface-2)", color: "var(--text-primary)", font: "var(--type-body-s)",
-            border: "none", borderRadius: "var(--radius-md)", outline: "none", cursor: disabled ? "not-allowed" : "pointer",
-            boxShadow: `inset 0 0 0 ${focus ? 2 : 1}px ${focus ? "var(--focus-ring)" : "var(--border-default)"}`,
-            opacity: disabled ? 0.45 : 1, transition: "var(--transition-ui)",
-          }} {...rest}>
-          {options.map((o) => <option key={o.value} value={o.value} style={{ color: "#000" }}>{o.label}</option>)}
-        </select>
-        <span aria-hidden="true" style={{
-          position: "absolute", right: 16, top: "50%", width: 10, height: 10, marginTop: -7,
-          borderRight: "2px solid var(--text-muted)", borderBottom: "2px solid var(--text-muted)",
-          transform: "rotate(45deg)", pointerEvents: "none",
-        }} />
-      </span>
-      {hint && <span style={{ font: "var(--type-caption)", color: "var(--text-muted)" }}>{hint}</span>}
+    <label htmlFor={id} className="flex flex-col gap-2" style={style}>
+      {label && <span className="text-ui-s text-text-secondary">{label}</span>}
+      <ShadcnSelectRoot
+        value={value || ""}
+        onValueChange={(newValue) => {
+          if (onChange) {
+            const event = { target: { value: newValue } } as React.ChangeEvent<HTMLSelectElement>;
+            onChange(event);
+          }
+        }}
+        disabled={disabled}
+        {...rest}
+      >
+        <SelectTrigger
+          id={id}
+          className={cn(
+            "h-12 w-full rounded-md border-none bg-bg-surface-2 px-4 py-0 text-body-s text-text-primary",
+            "shadow-(--inset-hairline-strong) transition-ui",
+            "focus-visible:shadow-[inset_0_0_0_2px_var(--focus-ring)] focus-visible:ring-0",
+            "data-[state=open]:shadow-[inset_0_0_0_2px_var(--focus-ring)] data-[state=open]:ring-0 data-[state=closed]:ring-0",
+            disabled && "cursor-not-allowed opacity-45"
+          )}
+        >
+          <SelectValue placeholder="Выбрать..." />
+        </SelectTrigger>
+        <SelectContent className="bg-bg-surface-2 border-border-default">
+          {options.map((option) => (
+            <SelectItem key={option.value} value={option.value} className="text-text-primary">
+              {option.label}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </ShadcnSelectRoot>
+      {hint && <span className="text-caption text-text-muted">{hint}</span>}
     </label>
   );
 }

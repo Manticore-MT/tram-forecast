@@ -146,7 +146,7 @@ export function MapView({ route }: MapViewProps) {
             <Badge tone={live ? "ok" : "neutral"} dot>{live ? "live" : "пауза"}</Badge>
           </div>
           <input type="range" min="5" max="23.5" step="0.5" value={hour} onChange={(e) => setHour(+e.target.value)}
-            style={{ width: "100%", marginTop: "var(--space-4)", accentColor: "var(--accent)" }} />
+            style={{ width: "100%", marginTop: "var(--space-4)", accentColor: "var(--brand-accent)" }} />
           <div style={{ display: "flex", justifyContent: "space-between", font: "var(--type-mono-s)", color: "var(--text-muted)" }}><span>05:00</span><span>23:30</span></div>
           <div style={{ marginTop: "var(--space-4)" }}><Switch checked={live} onChange={() => setLive(!live)} label="Обновлять в реальном времени" /></div>
         </Card>

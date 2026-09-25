@@ -1,4 +1,33 @@
 import React from "react";
+import {
+  Activity,
+  ArrowRight,
+  Brain,
+  Calendar,
+  Check,
+  ChevronDown,
+  ChevronRight,
+  Clock,
+  CloudRain,
+  Download,
+  Info,
+  Layers,
+  Mail,
+  MapPin,
+  MessagesSquare,
+  PartyPopper,
+  Play,
+  RefreshCw,
+  Route,
+  Send,
+  TrainFront,
+  TramFront,
+  TrendingUp,
+  TriangleAlert,
+  Trophy,
+  Users,
+  type LucideIcon,
+} from "lucide-react";
 
 export interface IconProps {
   /** Lucide icon id, e.g. "tram-front", "arrow-right", "calendar" */
@@ -9,44 +38,49 @@ export interface IconProps {
   style?: React.CSSProperties;
 }
 
-/**
- * Lucide glyph inlined as real SVG geometry so it inherits currentColor.
- * The source SVG is fetched once per name and cached; no CSS mask is involved
- * (cross-origin mask images are dropped by some renderers, which painted solid squares).
- */
-const CACHE = new Map<string, string>();
-const WAITING = new Map<string, Promise<string>>();
+/** Glyphs used across this design system — bundled at build time, keyed by the same
+ *  kebab-case ids Lucide's own icon-name convention uses. */
+const GLYPHS: Record<string, LucideIcon> = {
+  "tram-front": TramFront,
+  "train-front": TrainFront,
+  route: Route,
+  "map-pin": MapPin,
+  layers: Layers,
+  activity: Activity,
+  "trending-up": TrendingUp,
+  brain: Brain,
+  "refresh-cw": RefreshCw,
+  download: Download,
+  send: Send,
+  mail: Mail,
+  users: Users,
+  calendar: Calendar,
+  clock: Clock,
+  trophy: Trophy,
+  check: Check,
+  "triangle-alert": TriangleAlert,
+  "arrow-right": ArrowRight,
+  "chevron-down": ChevronDown,
+  "chevron-right": ChevronRight,
+  "messages-square": MessagesSquare,
+  play: Play,
+  info: Info,
+  "cloud-rain": CloudRain,
+  "party-popper": PartyPopper,
+};
 
-function load(name: string): Promise<string> {
-  if (CACHE.has(name)) return Promise.resolve(CACHE.get(name)!);
-  if (WAITING.has(name)) return WAITING.get(name)!;
-  const p = fetch(`https://unpkg.com/lucide-static@0.544.0/icons/${name}.svg`)
-    .then((r) => (r.ok ? r.text() : ""))
-    .then((t) => {
-      const inner = t ? t.slice(t.indexOf(">") + 1).replace("</svg>", "").trim() : "";
-      CACHE.set(name, inner);
-      return inner;
-    })
-    .catch(() => { CACHE.set(name, ""); return ""; });
-  WAITING.set(name, p);
-  return p;
-}
-
-/** Glyphs used across this design system — warmed at load so captures aren't empty. */
-export const ICON_SET = ["tram-front", "train-front", "route", "map-pin", "layers", "activity", "trending-up", "brain", "refresh-cw", "download", "send", "mail", "users", "calendar", "clock", "trophy", "check", "triangle-alert", "arrow-right", "chevron-down", "messages-square", "play", "info"];
-if (typeof fetch === "function") ICON_SET.forEach(load);
+export const ICON_SET = Object.keys(GLYPHS);
 
 export function Icon({ name, size = 18, strokeAccent, style, ...rest }: IconProps) {
-  const [inner, setInner] = React.useState(() => CACHE.get(name) || "");
-  React.useEffect(() => {
-    let live = true;
-    load(name).then((h) => { if (live && h) setInner(h); });
-    return () => { live = false; };
-  }, [name]);
+  const Glyph = GLYPHS[name];
+  if (!Glyph) return null;
   return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" width={size} height={size} fill="none"
-      stroke={strokeAccent || "currentColor"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+    <Glyph
+      aria-hidden="true"
+      size={size}
+      stroke={strokeAccent || "currentColor"}
       style={{ display: "block", flex: "0 0 auto", ...style }}
-      dangerouslySetInnerHTML={{ __html: inner }} {...rest} />
+      {...rest}
+    />
   );
 }

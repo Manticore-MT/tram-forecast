@@ -1,35 +1,61 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 export interface CardProps {
   children?: React.ReactNode;
   tone?: "surface" | "raised" | "glass" | "accent" | "outline";
   /** use the pin silhouette: three 40px corners + one 6px corner */
   pin?: boolean;
+  /** escape hatch: raw CSS value (e.g. "var(--space-4)", "8px 16px") — Tailwind's padding scale can't express asymmetric or token-driven padding in one prop */
   padding?: string;
   /** lift 2px on hover */
   interactive?: boolean;
+  className?: string;
   style?: React.CSSProperties;
   onClick?: (e: React.MouseEvent) => void;
 }
 
-const TONES: Record<string, React.CSSProperties> = {
-  surface: { background: "var(--bg-surface)", boxShadow: "var(--inset-hairline)" },
-  raised: { background: "var(--bg-surface-2)", boxShadow: "var(--inset-hairline-strong), var(--shadow-md)" },
-  glass: { background: "var(--glass-fill)", backdropFilter: "var(--blur-glass)", boxShadow: "inset 0 0 0 1px var(--glass-stroke)" },
-  accent: { background: "var(--accent)", color: "var(--on-accent)", boxShadow: "none" },
-  outline: { background: "transparent", boxShadow: "inset 0 0 0 1px var(--border-default)" },
-};
-
 /** Rounded container. The dark system expresses elevation as a lighter fill + hairline, not shadow. */
-export function Card({ children, tone = "surface", pin = false, padding = "var(--space-6)", interactive = false, style, ...rest }: CardProps) {
-  const [hover, setHover] = React.useState(false);
+export function Card({
+  children,
+  tone = "surface",
+  pin = false,
+  padding = "var(--space-6)",
+  interactive = false,
+  className,
+  style,
+  onClick,
+  ...rest
+}: CardProps) {
+  const toneClasses =
+    tone === "surface"
+      ? "bg-bg-surface ring-1 ring-inset ring-border-default"
+      : tone === "raised"
+        ? "bg-bg-surface-2 ring-1 ring-inset ring-border-default shadow-md"
+        : tone === "glass"
+          ? "bg-glass-fill ring-1 ring-inset ring-glass-stroke backdrop-blur-[16px]"
+          : tone === "accent"
+            ? "bg-brand text-on-accent"
+            : tone === "outline"
+              ? "bg-transparent ring-1 ring-inset ring-border-default"
+              : "bg-bg-surface ring-1 ring-inset ring-border-default";
+
+  const radiusClass = pin ? "rounded-pin" : "rounded-xl";
+
   return (
-    <div onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-      style={{
-        borderRadius: pin ? "var(--radius-pin)" : "var(--radius-xl)", padding, transition: "var(--transition-ui)",
-        ...(TONES[tone] || TONES.surface),
-        ...(interactive && hover ? { transform: "translateY(-2px)", boxShadow: "var(--inset-hairline-strong), var(--shadow-lg)" } : null),
-        ...style,
-      }} {...rest}>{children}</div>
+    <div
+      onClick={onClick}
+      style={{ padding, ...style }}
+      className={cn(
+        radiusClass,
+        "transition-ui",
+        toneClasses,
+        interactive && "hover:shadow-lg hover:ring-border-strong hover:-translate-y-0.5",
+        className
+      )}
+      {...rest}
+    >
+      {children}
+    </div>
   );
 }

@@ -1,4 +1,10 @@
 import React from "react";
+import {
+  Accordion as AccordionRoot,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 export interface AccordionProps {
   items: { question: React.ReactNode; answer: React.ReactNode }[];
@@ -9,22 +15,31 @@ export interface AccordionProps {
 
 /** Disclosure list — the FAQ pattern from the hackathon site ("Ответы на вопросы"). */
 export function Accordion({ items = [], defaultOpen = -1, style, ...rest }: AccordionProps) {
-  const [open, setOpen] = React.useState(defaultOpen);
+  const defaultValue = defaultOpen >= 0 ? String(defaultOpen) : undefined;
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", ...style }} {...rest}>
-      {items.map((it, i) => {
-        const on = i === open;
-        return (
-          <div key={i} style={{ background: on ? "var(--bg-surface-2)" : "var(--bg-surface)", borderRadius: "var(--radius-lg)", boxShadow: "var(--inset-hairline)", transition: "var(--transition-ui)" }}>
-            <button onClick={() => setOpen(on ? -1 : i)} aria-expanded={on}
-              style={{ display: "flex", width: "100%", alignItems: "center", justifyContent: "space-between", gap: "var(--space-4)", padding: "20px 24px", background: "none", border: "none", cursor: "pointer", textAlign: "left", font: "var(--type-h4)", color: "var(--text-primary)" }}>
-              {it.question}
-              <span aria-hidden="true" style={{ width: 10, height: 10, flex: "0 0 auto", marginTop: on ? 4 : -4, borderRight: "2px solid var(--text-muted)", borderBottom: "2px solid var(--text-muted)", transform: on ? "rotate(-135deg)" : "rotate(45deg)", transition: "transform var(--dur-base) var(--ease-standard)" }} />
-            </button>
-            {on && <div style={{ padding: "0 24px 24px", font: "var(--type-body-s)", color: "var(--text-secondary)", maxWidth: 720 }}>{it.answer}</div>}
-          </div>
-        );
-      })}
-    </div>
+    <AccordionRoot
+      type="single"
+      collapsible
+      defaultValue={defaultValue}
+      className="flex flex-col gap-2"
+      style={style}
+      {...rest}
+    >
+      {items.map((it, i) => (
+        <AccordionItem
+          key={i}
+          value={String(i)}
+          className="rounded-lg border-none bg-bg-surface shadow-(--inset-hairline) transition-ui"
+        >
+          <AccordionTrigger className="px-6 py-5 text-h4 text-text-primary no-underline hover:no-underline">
+            {it.question}
+          </AccordionTrigger>
+          <AccordionContent className="max-w-180 px-6 pb-6 text-body-s text-text-secondary">
+            {it.answer}
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </AccordionRoot>
   );
 }

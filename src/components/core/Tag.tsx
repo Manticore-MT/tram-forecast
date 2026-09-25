@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 export interface TagProps {
   children?: React.ReactNode;
@@ -10,20 +11,35 @@ export interface TagProps {
 }
 
 /** Selectable filter chip — track pickers, route filters, forecast horizons. */
-export function Tag({ children, selected = false, onClick, icon, style, ...rest }: TagProps) {
-  const [hover, setHover] = React.useState(false);
+export function Tag({
+  children,
+  selected = false,
+  onClick,
+  icon,
+  style,
+  ...rest
+}: TagProps) {
   const clickable = typeof onClick === "function";
+
   return (
-    <button type="button" onClick={onClick} disabled={!clickable}
-      onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
-      style={{
-        display: "inline-flex", alignItems: "center", gap: "var(--space-2)", height: 36, padding: "0 16px",
-        font: "var(--type-ui-s)", letterSpacing: "var(--tracking-tight)", border: "none",
-        borderRadius: "var(--radius-pill)", cursor: clickable ? "pointer" : "default",
-        transition: "var(--transition-ui)",
-        background: selected ? "var(--bg-inverse)" : hover && clickable ? "rgba(255,255,255,.10)" : "var(--glass-fill)",
-        color: selected ? "var(--text-inverse)" : "var(--text-secondary)",
-        boxShadow: selected ? "none" : "inset 0 0 0 1px var(--border-subtle)", ...style,
-      }} {...rest}>{icon}{children}</button>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={!clickable}
+      style={style}
+      className={cn(
+        "inline-flex items-center gap-2 h-9 px-4",
+        "text-ui-s tracking-tight rounded-pill",
+        "transition-ui",
+        selected
+          ? "bg-bg-inverse text-text-inverse ring-0"
+          : "bg-glass-fill text-text-secondary ring-1 ring-inset ring-border-subtle enabled:hover:bg-white/10",
+        !clickable && "cursor-default"
+      )}
+      {...rest}
+    >
+      {icon}
+      {children}
+    </button>
   );
 }

@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 import { Badge, Stat, Select } from "../../components";
 import { Sparkline } from "../../products/forecast-dashboard/Charts";
 import { Panel } from "../../products/forecast-dashboard/Shell";
@@ -19,7 +20,11 @@ export function MetricCard({ label, value, unit, caption, trend, spark }: Metric
   return (
     <div>
       <Stat label={label} value={value} unit={unit} caption={caption} trend={trend} size="lg" />
-      {spark && <div style={{ marginTop: "var(--space-4)" }}><Sparkline data={spark} /></div>}
+      {spark && (
+        <div className="mt-4">
+          <Sparkline data={spark} />
+        </div>
+      )}
     </div>
   );
 }
@@ -38,27 +43,29 @@ export interface DeviationListProps {
  *  selection and interactivity are carried by a left accent bar and a hairline divider instead. */
 export function DeviationList({ title, items, layout = "list", style, onSelect }: DeviationListProps) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-3)", ...style }}>
+    <div className="flex flex-col gap-3" style={style}>
       <div className="mt-eyebrow">{title}</div>
-      <div style={{ display: "flex", flexDirection: layout === "table" ? "row" : "column", flexWrap: "wrap" }}>
+      <div className={cn("flex flex-wrap", layout === "table" ? "flex-row" : "flex-col")}>
         {items.map((z, i) => (
-          <div key={z.title} role={z.drillTo ? "button" : undefined}
+          <div
+            key={z.title}
+            role={z.drillTo ? "button" : undefined}
             onClick={z.drillTo ? () => onSelect && onSelect(z.drillTo) : undefined}
-            style={{
-              flex: layout === "table" ? "1 1 260px" : "none",
-              display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-3)",
-              padding: "var(--space-3) var(--space-2) var(--space-3) var(--space-3)",
-              borderLeft: `3px solid ${z.selected ? "var(--accent)" : "transparent"}`,
-              borderBottom: layout === "table" || i === items.length - 1 ? "none" : "1px solid var(--border-subtle)",
-              cursor: z.drillTo ? "pointer" : undefined,
-            }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
-              <span style={{ font: "var(--type-ui-s)", color: z.selected ? "var(--text-accent)" : "var(--text-primary)" }}>{z.title}</span>
-              <span style={{ font: "var(--type-caption)", color: "var(--text-muted)" }}>пик {z.peakTime}</span>
+            className={cn(
+              "flex items-center justify-between gap-3 py-3 pr-2 pl-3",
+              layout === "table" ? "flex-[1_1_260px]" : "flex-none",
+              z.selected ? "border-l-[3px] border-l-brand" : "border-l-[3px] border-l-transparent",
+              layout !== "table" && i !== items.length - 1 && "border-b border-b-border-subtle",
+              z.drillTo && "cursor-pointer"
+            )}
+          >
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <span className={cn("text-ui-s", z.selected ? "text-brand" : "text-text-primary")}>{z.title}</span>
+              <span className="text-caption text-text-muted">пик {z.peakTime}</span>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 2, flex: "0 0 auto" }}>
+            <div className="flex flex-none flex-col items-end gap-0.5">
               <Badge tone={z.tone}>{z.relDeviation}</Badge>
-              <span style={{ font: "var(--type-mono-s)", color: "var(--text-muted)" }}>{z.absDeviation}</span>
+              <span className="text-mono-s text-text-muted">{z.absDeviation}</span>
             </div>
           </div>
         ))}
@@ -76,13 +83,13 @@ export interface FactorsCardProps {
 /** Reusable card type "факторы" — учтённые факторы прогноза, с деталью (например, по ВСМ). */
 export function FactorsCard({ title = "Учтённые факторы", factors, style }: FactorsCardProps) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", ...style }}>
+    <div className="flex flex-col gap-2" style={style}>
       <div className="mt-eyebrow">{title}</div>
-      <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+      <div className="flex flex-col gap-2">
         {factors.map((f) => (
-          <div key={f.label} style={{ display: "flex", flexDirection: "column", gap: 2, padding: "var(--space-2) 0" }}>
-            <span style={{ font: "var(--type-body-s)", color: "var(--text-primary)" }}>{f.label}</span>
-            {f.detail && <span style={{ font: "var(--type-caption)", color: "var(--text-muted)" }}>{f.detail}</span>}
+          <div key={f.label} className="flex flex-col gap-0.5 py-2">
+            <span className="text-body-s text-text-primary">{f.label}</span>
+            {f.detail && <span className="text-caption text-text-muted">{f.detail}</span>}
           </div>
         ))}
       </div>
@@ -102,7 +109,7 @@ export function PeriodCompare({ options, style }: PeriodCompareProps) {
   const [b, setB] = React.useState(options[1]?.value ?? options[0]?.value);
   const labelFor = (v?: string) => options.find((o) => o.value === v)?.label ?? "";
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr auto", gap: "var(--space-5)", alignItems: "end", ...style }}>
+    <div className="grid grid-cols-[1fr_1fr_auto] items-end gap-5" style={style}>
       <Select label="Период A" value={a} onChange={(e) => setA(e.target.value)} options={options} />
       <Select label="Период B" value={b} onChange={(e) => setB(e.target.value)} options={options} />
       <Stat label="Разница" value="9.4" unit="%" trend={{ dir: "up", value: "9.4 %" }} caption={`${labelFor(a)} → ${labelFor(b)}`} />
@@ -119,11 +126,9 @@ export interface PlaceholderCardProps {
 export function PlaceholderCard({ title, note }: PlaceholderCardProps) {
   return (
     <Panel title={title} action={<Badge tone="neutral">черновик</Badge>}>
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "center", minHeight: 140,
-        borderRadius: "var(--radius-md)", border: "1px dashed var(--border-default)",
-        font: "var(--type-body-s)", color: "var(--text-muted)", textAlign: "center", padding: "var(--space-6)",
-      }}>{note}</div>
+      <div className="flex min-h-35 items-center justify-center rounded-md border border-dashed border-border-default p-6 text-center text-body-s text-text-muted">
+        {note}
+      </div>
     </Panel>
   );
 }

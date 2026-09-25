@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 import { Badge, Timeline } from "../../components";
 import { seedSeries, ForecastChart } from "../../products/forecast-dashboard/Charts";
 import { Panel } from "../../products/forecast-dashboard/Shell";
@@ -14,11 +15,11 @@ export function OverviewScreen() {
   const zones = React.useMemo(() => networkZones(), []);
 
   return (
-    <div style={{ display: "grid", gap: "var(--space-6)" }}>
+    <div className="grid gap-6">
       <Panel title="Прогноз по сети">
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-5)" }}>
-          <div style={{ display: "grid", gap: "var(--space-5)" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--space-5)" }}>
+        <div className="grid grid-cols-2 gap-5">
+          <div className="grid gap-5">
+            <div className="grid grid-cols-2 gap-5">
               <MetricCard label="Прогноз за период" value="18 420" unit="чел/ч" trend={{ dir: "up", value: "6.2 %" }} caption="к прошлой неделе" />
               <MetricCard label="Долгосрочный прогноз" value="21 300" unit="чел/ч" caption="на конец года" />
             </div>
@@ -30,16 +31,16 @@ export function OverviewScreen() {
       </Panel>
 
       <Panel title="Проблемные места">
-        <div style={{ display: "grid", gridTemplateColumns: "1.2fr 1fr", gap: "var(--space-5)" }}>
+        <div className="grid grid-cols-[1.2fr_1fr] gap-5">
           <DeviationList title="Рейтинг зон внимания" items={zones} />
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+          <div className="flex flex-col gap-2">
             <div className="mt-eyebrow">Детализация по маршрутам/остановкам</div>
-            <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)" }}>
+            <div className="flex flex-col gap-2">
               {ROUTE_BREAKDOWN.map(([name, dev, time]) => (
-                <div key={name} style={{ display: "grid", gridTemplateColumns: "1fr 80px 70px", alignItems: "center", gap: "var(--space-3)", padding: "var(--space-3) var(--space-4)", background: "var(--bg-surface-2)", borderRadius: "var(--radius-sm)", boxShadow: "var(--inset-hairline)" }}>
-                  <span style={{ font: "var(--type-body-s)", color: "var(--text-secondary)" }}>{name}</span>
-                  <span style={{ font: "var(--type-mono-s)", color: dev.startsWith("+") ? "var(--status-warn)" : "var(--status-ok)", textAlign: "right" }}>{dev}</span>
-                  <span style={{ font: "var(--type-mono-s)", color: "var(--text-muted)", textAlign: "right" }}>{time}</span>
+                <div key={name} className="grid grid-cols-[1fr_80px_70px] items-center gap-3 py-3 px-4 bg-bg-surface-2 rounded-sm shadow-(--inset-hairline)">
+                  <span className="text-body-s text-text-secondary">{name}</span>
+                  <span className={cn("text-mono-s text-right", dev.startsWith("+") ? "text-status-warn" : "text-status-ok")}>{dev}</span>
+                  <span className="text-mono-s text-text-muted text-right">{time}</span>
                 </div>
               ))}
             </div>
@@ -52,19 +53,19 @@ export function OverviewScreen() {
       </Panel>
 
       <Panel title="Качество прогноза">
-        <div style={{ display: "grid", gridTemplateColumns: "1.6fr 1fr", gap: "var(--space-5)" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-4)" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "var(--space-5)" }}>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, font: "var(--type-caption)", color: "var(--text-muted)" }}><span style={{ width: 14, height: 2, background: "var(--cyan-500)" }} />факт</span>
-              <span style={{ display: "inline-flex", alignItems: "center", gap: 6, font: "var(--type-caption)", color: "var(--text-muted)" }}><span style={{ width: 14, height: 2, background: "var(--accent)" }} />прогноз</span>
+        <div className="grid grid-cols-[1.6fr_1fr] gap-5">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-5">
+              <span className="inline-flex items-center gap-1.5 text-caption text-text-muted"><span className="w-3.5 h-0.5 bg-cyan-500" />факт</span>
+              <span className="inline-flex items-center gap-1.5 text-caption text-text-muted"><span className="w-3.5 h-0.5 bg-brand" />прогноз</span>
             </div>
             <ForecastChart actual={actual} forecast={forecast} height={240} />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "var(--space-4)" }}>
+          <div className="grid grid-cols-1 gap-4">
             {QUALITY_METRICS.map(([label, value, unit]) => (
-              <div key={label} style={{ padding: "var(--space-3) var(--space-4)", background: "var(--bg-surface-2)", borderRadius: "var(--radius-sm)", boxShadow: "var(--inset-hairline)" }}>
-                <span style={{ font: "var(--type-caption)", color: "var(--text-muted)" }}>{label}</span>
-                <div style={{ marginTop: 4, font: "var(--type-h3)", fontVariantNumeric: "tabular-nums" }}>{value}{unit && <span style={{ font: "var(--type-h4)", color: "var(--text-secondary)" }}> {unit}</span>}</div>
+              <div key={label} className="py-3 px-4 bg-bg-surface-2 rounded-sm shadow-(--inset-hairline)">
+                <span className="text-caption text-text-muted">{label}</span>
+                <div className="mt-1 text-h3 tabular-nums">{value}{unit && <span className="text-h4 text-text-secondary"> {unit}</span>}</div>
               </div>
             ))}
           </div>

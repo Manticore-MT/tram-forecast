@@ -33,7 +33,7 @@ export function Sidebar({ view, onView }: SidebarProps) {
             <button key={id} onClick={() => onView(id)} style={{
               display: "flex", alignItems: "center", gap: "var(--space-3)", height: 44, padding: "0 var(--space-3)",
               border: "none", borderRadius: "var(--radius-md)", cursor: "pointer", font: "var(--type-ui-s)", textAlign: "left",
-              background: on ? "var(--accent-quiet)" : "transparent", color: on ? "var(--text-accent)" : "var(--text-secondary)",
+              background: on ? "var(--brand-accent-quiet)" : "transparent", color: on ? "var(--text-accent)" : "var(--text-secondary)",
               transition: "var(--transition-ui)",
             }}><Icon name={ic} size={18} />{label}</button>
           );

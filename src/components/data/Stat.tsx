@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 
 export interface StatProps {
   label?: React.ReactNode;
@@ -11,24 +12,25 @@ export interface StatProps {
   tone?: "ok" | "warn" | "danger";
   align?: "left" | "center";
   size?: "md" | "lg";
+  className?: string;
   style?: React.CSSProperties;
 }
 
 const TONE_COLOR: Record<string, string> = { ok: "var(--status-ok)", warn: "var(--status-warn)", danger: "var(--status-danger)" };
 
 /** Metric block — big tabular number with an uppercase eyebrow label. */
-export function Stat({ label, value, unit, caption, trend, tone, align = "left", size = "md", style, ...rest }: StatProps) {
+export function Stat({ label, value, unit, caption, trend, tone, align = "left", size = "md", className, style, ...rest }: StatProps) {
   const trendColor = trend && trend.dir === "down" ? "var(--status-ok)" : trend && trend.dir === "up" ? "var(--status-warn)" : "var(--text-muted)";
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "var(--space-2)", alignItems: align === "center" ? "center" : "flex-start", textAlign: align, ...style }} {...rest}>
-      {label && <span className="mt-eyebrow" style={{ font: "var(--type-eyebrow)", letterSpacing: "var(--tracking-eyebrow)", textTransform: "uppercase", color: "var(--text-muted)" }}>{label}</span>}
-      <span style={{ display: "flex", alignItems: "baseline", gap: 6, font: size === "lg" ? "var(--type-metric-xl)" : "var(--type-metric)", letterSpacing: "var(--tracking-tight)", fontVariantNumeric: "tabular-nums", color: tone ? TONE_COLOR[tone] : "var(--text-primary)" }}>
+    <div className={cn("flex flex-col gap-2", align === "center" ? "items-center text-center" : "items-start text-left", className)} style={style} {...rest}>
+      {label && <span className="text-eyebrow text-text-muted">{label}</span>}
+      <span className={cn("flex items-baseline gap-1.5 tabular-nums", size === "lg" ? "text-metric-xl" : "text-metric", tone ? "" : "text-text-primary")} style={{ color: tone ? TONE_COLOR[tone] : undefined }}>
         {value}
-        {unit && <span style={{ font: "var(--type-h4)", color: "var(--text-secondary)" }}>{unit}</span>}
+        {unit && <span className="text-h4 text-text-secondary">{unit}</span>}
       </span>
       {(caption || trend) && (
-        <span style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", font: "var(--type-caption)", color: "var(--text-muted)" }}>
-          {trend && <span style={{ color: trendColor, fontFamily: "var(--font-mono)" }}>{trend.dir === "down" ? "▼" : "▲"} {trend.value}</span>}
+        <span className="flex items-center gap-2 text-caption text-text-muted">
+          {trend && <span className="font-mono" style={{ color: trendColor }}>{trend.dir === "down" ? "▼" : "▲"} {trend.value}</span>}
           {caption}
         </span>
       )}

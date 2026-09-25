@@ -1,4 +1,6 @@
 import React from "react";
+import { cn } from "@/lib/utils";
+import { Switch as ShadcnSwitch } from "@/components/ui/switch";
 
 export interface SwitchProps {
   label?: React.ReactNode;
@@ -11,20 +13,28 @@ export interface SwitchProps {
 /** 44×26 toggle for immediate-effect settings (live data, overlays, auto-refresh). */
 export function Switch({ label, checked = false, onChange, disabled = false, style, ...rest }: SwitchProps) {
   return (
-    <label style={{ display: "inline-flex", alignItems: "center", gap: "var(--space-3)", cursor: disabled ? "not-allowed" : "pointer", opacity: disabled ? 0.45 : 1, font: "var(--type-body-s)", color: "var(--text-secondary)", ...style }}>
-      <input type="checkbox" role="switch" checked={checked} onChange={onChange} disabled={disabled} style={{ position: "absolute", opacity: 0, width: 0, height: 0 }} {...rest} />
-      <span aria-hidden="true" style={{
-        position: "relative", width: 44, height: 26, flex: "0 0 auto", borderRadius: "var(--radius-pill)",
-        background: checked ? "var(--accent)" : "var(--ink-600)",
-        boxShadow: checked ? "none" : "inset 0 0 0 1px var(--border-default)",
-        transition: "background-color var(--dur-fast) var(--ease-standard)",
-      }}>
-        <span style={{
-          position: "absolute", top: 3, left: checked ? 21 : 3, width: 20, height: 20,
-          borderRadius: "var(--radius-pill)", background: "var(--white)",
-          transition: "left var(--dur-fast) var(--ease-standard)",
-        }} />
-      </span>
+    <label
+      style={style}
+      className={cn(
+        "inline-flex items-center gap-3 text-body-s text-text-secondary",
+        disabled ? "cursor-not-allowed opacity-45" : "cursor-pointer"
+      )}
+    >
+      <ShadcnSwitch
+        checked={checked}
+        onCheckedChange={(newChecked) => {
+          if (onChange) {
+            const event = { target: { checked: newChecked } } as any;
+            onChange(event);
+          }
+        }}
+        disabled={disabled}
+        className={cn(
+          "w-11 h-6",
+          checked ? "bg-brand" : "bg-ink-600"
+        )}
+        {...rest}
+      />
       {label}
     </label>
   );

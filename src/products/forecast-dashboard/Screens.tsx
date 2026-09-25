@@ -67,7 +67,7 @@ export function Overview({ horizon, route }: OverviewProps) {
         action={<div style={{ display: "flex", alignItems: "center", gap: "var(--space-5)" }}>
           <Switch checked={band} onChange={() => setBand(!band)} label="Доверительный интервал" />
           <span style={{ display: "inline-flex", alignItems: "center", gap: 6, font: "var(--type-caption)", color: "var(--text-muted)" }}><span style={{ width: 14, height: 2, background: "var(--cyan-500)" }} />факт</span>
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 6, font: "var(--type-caption)", color: "var(--text-muted)" }}><span style={{ width: 14, height: 2, background: "var(--accent)" }} />прогноз</span>
+          <span style={{ display: "inline-flex", alignItems: "center", gap: 6, font: "var(--type-caption)", color: "var(--text-muted)" }}><span style={{ width: 14, height: 2, background: "var(--brand-accent)" }} />прогноз</span>
         </div>}>
         <ForecastChart actual={actual} forecast={forecast} band={band ? conf : null} height={280} />
       </Panel>
@@ -93,7 +93,7 @@ export function Overview({ horizon, route }: OverviewProps) {
           <div style={{ display: "flex", alignItems: "flex-end", gap: "var(--space-2)" }}>
             {longTerm.map((v, i) => (
               <div key={MONTHS[i]} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-                <span style={{ width: "100%", borderRadius: "2px 2px 0 0", background: i === longTerm.length - 1 ? "var(--accent)" : "var(--cyan-500)", opacity: i === longTerm.length - 1 ? 1 : 0.55, height: `${Math.round((v / maxLongTerm) * 100)}px` }} />
+                <span style={{ width: "100%", borderRadius: "2px 2px 0 0", background: i === longTerm.length - 1 ? "var(--brand-accent)" : "var(--cyan-500)", opacity: i === longTerm.length - 1 ? 1 : 0.55, height: `${Math.round((v / maxLongTerm) * 100)}px` }} />
                 <span style={{ font: "var(--type-caption)", color: "var(--text-muted)" }}>{MONTHS[i]}</span>
               </div>
             ))}

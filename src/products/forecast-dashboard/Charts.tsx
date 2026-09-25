@@ -46,8 +46,8 @@ export function ForecastChart({ actual, forecast, band, height = 260 }: Forecast
         <path d={path(actual, w * split, h, max)} fill="none" stroke="var(--cyan-500)" strokeWidth="2.5" />
       </g>
       <g transform={`translate(${w * split},0)`}>
-        {upper && lower && <path d={`${path(upper, w * (1 - split), h, max)} L${w * (1 - split)},${h - (lower[lower.length - 1] / max) * h} ${lower.slice().reverse().map((v, i) => `L${w * (1 - split) - (i / (lower.length - 1)) * w * (1 - split)},${h - (v / max) * h}`).join(" ")} Z`} fill="var(--accent)" fillOpacity="0.14" />}
-        <path d={path(forecast, w * (1 - split), h, max)} fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeDasharray="6 5" />
+        {upper && lower && <path d={`${path(upper, w * (1 - split), h, max)} L${w * (1 - split)},${h - (lower[lower.length - 1] / max) * h} ${lower.slice().reverse().map((v, i) => `L${w * (1 - split) - (i / (lower.length - 1)) * w * (1 - split)},${h - (v / max) * h}`).join(" ")} Z`} fill="var(--brand-accent)" fillOpacity="0.14" />}
+        <path d={path(forecast, w * (1 - split), h, max)} fill="none" stroke="var(--brand-accent)" strokeWidth="2.5" strokeDasharray="6 5" />
       </g>
       <g>{["06:00", "10:00", "14:00", "18:00", "22:00"].map((t, i) => <text key={t} x={(i / 4) * (w - 40) + 4} y={height - 6} fill="var(--text-muted)" style={{ font: "11px var(--font-mono)" }}>{t}</text>)}</g>
     </svg>
@@ -111,7 +111,7 @@ export function RouteStrip({ stops, active, onPick }: RouteStripProps) {
         <div key={s.name} style={{ flex: 1, minWidth: 96, display: "flex", flexDirection: "column", alignItems: "center", cursor: "pointer" }} onClick={() => onPick && onPick(i)}>
           <div style={{ display: "flex", alignItems: "center", width: "100%" }}>
             <span style={{ flex: 1, height: 3, background: i === 0 ? "transparent" : LOAD_VARS[Math.min(4, Math.floor(stops[i - 1].load * 5))] }} />
-            <span style={{ width: i === active ? 18 : 12, height: i === active ? 18 : 12, borderRadius: "var(--radius-pill)", background: LOAD_VARS[Math.min(4, Math.floor(s.load * 5))], boxShadow: i === active ? "0 0 0 4px var(--accent-quiet)" : "none", transition: "var(--transition-ui)" }} />
+            <span style={{ width: i === active ? 18 : 12, height: i === active ? 18 : 12, borderRadius: "var(--radius-pill)", background: LOAD_VARS[Math.min(4, Math.floor(s.load * 5))], boxShadow: i === active ? "0 0 0 4px var(--brand-accent-quiet)" : "none", transition: "var(--transition-ui)" }} />
             <span style={{ flex: 1, height: 3, background: i === stops.length - 1 ? "transparent" : LOAD_VARS[Math.min(4, Math.floor(s.load * 5))] }} />
           </div>
           <span style={{ marginTop: 10, font: "var(--type-caption)", color: i === active ? "var(--text-primary)" : "var(--text-muted)", textAlign: "center", maxWidth: 96 }}>{s.name}</span>

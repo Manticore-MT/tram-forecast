@@ -1,4 +1,5 @@
 import React from "react";
+import { cn } from "@/lib/utils";
 import { Card, Stat, Icon, Tabs } from "../../components";
 import { seedSeries, Sparkline } from "../../products/forecast-dashboard/Charts";
 import { TRAM_ROUTES, DEFAULT_ROUTE } from "../../products/forecast-dashboard/MapScreens";
@@ -35,7 +36,7 @@ export function DispatcherScreen() {
   }
 
   return (
-    <div style={{ position: "relative", height: "100%", minHeight: 620, borderRadius: "var(--radius-xl)", overflow: "hidden" }}>
+    <div className="relative h-full min-h-155 rounded-xl overflow-hidden">
       <MapCanvas
         level={level}
         route={route}
@@ -46,52 +47,52 @@ export function DispatcherScreen() {
         style={{ position: "absolute", inset: 0, borderRadius: 0 }}
       />
 
-      <div style={{ position: "absolute", top: 16, left: "50%", transform: "translateX(-50%)", zIndex: 500 }}>
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-500">
         <Card tone="glass" padding="var(--space-2) var(--space-4)">
-          <div style={{ display: "flex", alignItems: "center", gap: "var(--space-2)", font: "var(--type-ui-s)" }}>
-            <button onClick={() => setLevel("all")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, font: "inherit", color: level === "all" ? "var(--text-primary)" : "var(--text-muted)" }}>Вся сеть</button>
+          <div className="flex items-center gap-2 text-ui-s">
+            <button onClick={() => setLevel("all")} className={cn("bg-transparent border-0 cursor-pointer p-0", level === "all" ? "text-text-primary" : "text-text-muted")}>Вся сеть</button>
             {level !== "all" && <>
               <Icon name="chevron-right" size={14} />
-              <button onClick={() => setLevel("line")} style={{ background: "none", border: "none", cursor: "pointer", padding: 0, font: "inherit", color: level === "line" ? "var(--text-primary)" : "var(--text-muted)" }}>Маршрут № {route}</button>
+              <button onClick={() => setLevel("line")} className={cn("bg-transparent border-0 cursor-pointer p-0", level === "line" ? "text-text-primary" : "text-text-muted")}>Маршрут № {route}</button>
             </>}
             {level === "stop" && <>
               <Icon name="chevron-right" size={14} />
-              <span style={{ color: "var(--text-primary)" }}>{routeData.stops[Math.min(stopIndex, routeData.stops.length - 1)]?.name}</span>
+              <span className="text-text-primary">{routeData.stops[Math.min(stopIndex, routeData.stops.length - 1)]?.name}</span>
             </>}
           </div>
         </Card>
       </div>
 
-      <div style={{ position: "absolute", top: 76, left: 16, width: 300, zIndex: 500 }}>
+      <div className="absolute top-19 left-4 w-75 z-500">
         <Card tone="glass" padding="var(--space-4)">
           <DeviationList title="Зоны внимания" items={zones} onSelect={drill} />
         </Card>
       </div>
 
-      <div style={{ position: "absolute", top: 76, right: 16, width: 320, maxHeight: "calc(100% - 92px)", overflowY: "auto", zIndex: 500 }}>
-        <Card tone="glass" padding="var(--space-6)" style={{ display: "flex", flexDirection: "column", gap: "var(--space-5)" }}>
+      <div className="absolute top-19 right-4 w-80 max-h-[calc(100%-92px)] overflow-y-auto z-500">
+        <Card tone="glass" padding="var(--space-6)" className="flex flex-col gap-5">
           <div className="mt-eyebrow">Детали</div>
-          <div style={{ font: "var(--type-h4)" }}>{detail.title}</div>
-          <div style={{ display: "flex", gap: "var(--space-6)" }}>
+          <div className="text-h4">{detail.title}</div>
+          <div className="flex gap-6">
             <Stat label={detail.baselineLabel} value={detail.baselineValue} unit={detail.unit} />
             <Stat label={detail.forecastLabel} value={detail.forecastValue} unit={detail.unit} />
           </div>
           <Stat label="Отклонение" value={detail.deviationValue} tone="danger" />
           <div>
-            <div className="mt-eyebrow" style={{ marginBottom: "var(--space-2)" }}>Динамика</div>
-            <Sparkline data={dynamics} color="var(--accent)" />
+            <div className="mt-eyebrow mb-2">Динамика</div>
+            <Sparkline data={dynamics} color="var(--brand-accent)" />
           </div>
           <FactorsCard factors={detail.factors} />
         </Card>
       </div>
 
-      <div style={{ position: "absolute", bottom: 16, left: 16, width: 360, zIndex: 500 }}>
+      <div className="absolute bottom-4 left-4 w-90 z-500">
         <Card tone="glass" padding="var(--space-5)">
-          <div className="mt-eyebrow" style={{ marginBottom: "var(--space-3)" }}>Управление временем</div>
+          <div className="mt-eyebrow mb-3">Управление временем</div>
           <Tabs value={horizon} onChange={setHorizon} items={[{ value: "day", label: "день" }, { value: "month", label: "месяц" }, { value: "year", label: "год" }]} />
           <input type="range" min={5} max={23} step={1} value={hour} onChange={(e) => setHour(+e.target.value)}
-            style={{ width: "100%", marginTop: "var(--space-4)", accentColor: "var(--accent)" }} />
-          <div style={{ display: "flex", justifyContent: "space-between", font: "var(--type-mono-s)", color: "var(--text-muted)" }}>
+            className="w-full mt-4 accent-brand" />
+          <div className="flex justify-between text-mono-s text-text-muted">
             <span>05:00</span>
             <span>{String(hour).padStart(2, "0")}:00</span>
             <span>23:00</span>
@@ -99,7 +100,7 @@ export function DispatcherScreen() {
         </Card>
       </div>
 
-      <div style={{ position: "absolute", bottom: 16, left: "50%", transform: "translateX(-50%)", zIndex: 500 }}>
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-500">
         <Card tone="glass" padding="var(--space-3) var(--space-4)"><LoadLegend /></Card>
       </div>
     </div>

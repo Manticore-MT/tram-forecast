@@ -34,10 +34,10 @@
 --border-default:rgba(255,255,255,.16);
 --border-strong:rgba(255,255,255,.28);
 
---accent:var(--red-500);
---accent-hover:var(--red-400);
---accent-press:var(--red-600);
---accent-quiet:rgba(240,57,43,.14);
+--brand-accent:var(--red-500);
+--brand-accent-hover:var(--red-400);
+--brand-accent-press:var(--red-600);
+--brand-accent-quiet:rgba(240,57,43,.14);
 --on-accent:var(--white);
 
 --focus-ring:var(--cyan-500);
@@ -67,7 +67,7 @@
 --border-subtle:rgba(14,17,19,.08);
 --border-default:rgba(14,17,19,.14);
 --border-strong:rgba(14,17,19,.26);
---accent-quiet:rgba(240,57,43,.10);
+--brand-accent-quiet:rgba(240,57,43,.10);
 --glass-fill:rgba(14,17,19,.04);
 --glass-stroke:rgba(14,17,19,.10);
 --overlay-scrim:rgba(14,17,19,.45);
