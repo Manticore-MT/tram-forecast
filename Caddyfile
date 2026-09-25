@@ -1,0 +1,6 @@
+# Caddy terminates HTTPS (it obtains and renews the certificate for $DOMAIN by itself, which needs
+# ports 80 and 443 open and $DOMAIN pointing at this server) and forwards everything to the backend.
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy backend:8080
+}

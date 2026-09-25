@@ -1,0 +1,49 @@
+name: Deploy
+
+# A button, not an automatic step: run it from the Actions tab ("Run workflow"). Anyone with write
+# access to the repository can press it; the server key stays in the "production" environment's
+# secrets and is never visible to people. The workflow only pulls the images CI has already
+# published and restarts the stack, it builds nothing.
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Image tag to deploy: "latest" (the newest main build) or a commit SHA (rollback)'
+        required: true
+        default: 'latest'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Pull and restart on the server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            cd "${{ secrets.DEPLOY_PATH }}"
+            # The compose file and Caddyfile live in git, so bring them up to date first:
+            # `docker compose pull` cannot notice that the compose file itself changed.
+            git pull --ff-only
+            export IMAGE_TAG="${{ inputs.image_tag }}"
+            docker compose -f docker-compose.prod.yml pull
+            docker compose -f docker-compose.prod.yml up -d
+            docker image prune -f
+
+      # Optional check: set the environment variable DEPLOY_URL (for example https://tram.example.com)
+      # and the deploy fails when the service does not come up healthy.
+      - name: Smoke test
+        if: ${{ vars.DEPLOY_URL != '' }}
+        run: |
+          for i in $(seq 1 24); do
+            if curl -fsS "${{ vars.DEPLOY_URL }}/actuator/health" | grep -q '"status":"UP"'; then
+              echo "healthy"; exit 0
+            fi
+            echo "not ready yet ($i/24)"; sleep 5
+          done
+          echo "the service did not become healthy" >&2
+          exit 1

@@ -1,0 +1,28 @@
+name: Backup DB
+
+# Daily pg_dump of the production Postgres, kept on the server with a two-week rotation. It reuses
+# the deploy secrets, so no extra credentials are needed. Local to the server on purpose: it guards
+# against a bad deploy or migration, not against losing the server itself.
+on:
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch: {}
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Dump and rotate on the server
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -euo pipefail
+            BACKUP_DIR="${{ secrets.DEPLOY_PATH }}/backups"
+            mkdir -p "$BACKUP_DIR"
+            docker exec tram-postgres pg_dump -U tram_forecast -d tram_forecast \
+              | gzip > "$BACKUP_DIR/tram-forecast-$(date +%F).sql.gz"
+            find "$BACKUP_DIR" -name 'tram-forecast-*.sql.gz' -mtime +14 -delete
