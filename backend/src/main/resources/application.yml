@@ -11,6 +11,10 @@ spring:
 server:
   port: 8080
 
+springdoc:
+  # Keys sorted, so the exported spec is stable and diffs stay readable.
+  writer-with-order-by-keys: true
+
 management:
   endpoints:
     web:

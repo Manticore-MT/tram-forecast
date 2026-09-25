@@ -1,5 +1,8 @@
 package ru.tramforecast.api.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +22,7 @@ import ru.tramforecast.api.web.dto.Responses;
  * miss, and that is hidden behind the use cases.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping(value = "/api", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ForecastController {
 
     private final GetNetworkOverviewUseCase overview;
@@ -60,8 +63,9 @@ public class ForecastController {
      * @param params common query parameters
      * @return one series per route
      */
+    @Operation(summary = "Forecast of every route, for painting the network map")
     @GetMapping("/routes")
-    public Responses.NetworkOverview routes(ForecastParams params) {
+    public Responses.NetworkOverview routes(@ParameterObject ForecastParams params) {
         return mapper.toResponse(overview.get(params.toQuery()));
     }
 
@@ -72,8 +76,9 @@ public class ForecastController {
      * @param params  common query parameters
      * @return route total and per-stop series
      */
+    @Operation(summary = "Forecast of one route with all of its stops")
     @GetMapping("/routes/{routeId}/forecast")
-    public Responses.RouteForecast routeForecast(@PathVariable String routeId, ForecastParams params) {
+    public Responses.RouteForecast routeForecast(@PathVariable String routeId, @ParameterObject ForecastParams params) {
         return mapper.toResponse(route.get(new RouteId(routeId), params.toQuery()));
     }
 
@@ -85,9 +90,10 @@ public class ForecastController {
      * @param params  common query parameters
      * @return the stop details
      */
+    @Operation(summary = "Stop details: baseline, deviation, status, peak, facts a year earlier, factors")
     @GetMapping("/routes/{routeId}/stops/{stopId}/forecast")
     public Responses.StopForecast stopForecast(
-            @PathVariable String routeId, @PathVariable String stopId, ForecastParams params) {
+            @PathVariable String routeId, @PathVariable String stopId, @ParameterObject ForecastParams params) {
         return mapper.toResponse(stop.get(new RouteId(routeId), new StopId(stopId), params.toQuery()));
     }
 
@@ -97,8 +103,9 @@ public class ForecastController {
      * @param params common query parameters
      * @return the zones
      */
+    @Operation(summary = "Attention zones of the network, largest deviation first")
     @GetMapping("/attention")
-    public Responses.Attention attention(ForecastParams params) {
+    public Responses.Attention attention(@ParameterObject ForecastParams params) {
         return mapper.toResponse(attention.get(params.toQuery()));
     }
 
@@ -108,6 +115,7 @@ public class ForecastController {
      * @param routeId route identifier
      * @return the matrix
      */
+    @Operation(summary = "Typical week of a route: load by day of week and hour")
     @GetMapping("/routes/{routeId}/load-matrix")
     public Responses.LoadMatrix loadMatrix(@PathVariable String routeId) {
         return mapper.toResponse(matrix.get(new RouteId(routeId)));

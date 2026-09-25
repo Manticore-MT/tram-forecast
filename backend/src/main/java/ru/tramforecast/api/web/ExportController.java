@@ -1,5 +1,10 @@
 package ru.tramforecast.api.web;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springdoc.core.annotations.ParameterObject;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Locale;
@@ -51,12 +56,18 @@ public class ExportController {
      * @param params  common query parameters (horizon, date, interval, correction)
      * @return the file as an attachment
      */
+    @Operation(
+            summary = "Export the forecast as CSV (one row per stop and period)",
+            responses = @ApiResponse(
+                    responseCode = "200",
+                    description = "A CSV attachment, UTF-8, header row first",
+                    content = @Content(mediaType = "text/csv", schema = @Schema(type = "string"))))
     @GetMapping("/export")
     public ResponseEntity<String> export(
             @RequestParam(defaultValue = "csv") String format,
             @RequestParam(required = false) String routeId,
             @RequestParam(required = false) String stopId,
-            ForecastParams params) {
+            @ParameterObject ForecastParams params) {
         if (!"csv".equalsIgnoreCase(format)) {
             throw new InvalidRequestException("Unsupported export format '" + format + "', only csv is available");
         }
