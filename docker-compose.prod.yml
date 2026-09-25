@@ -1,0 +1,68 @@
+# Production stack: what actually runs on the server (see deploy/README.md).
+#
+# Images are not built here: CI builds and publishes them on every merge to main (ci.yml,
+# build-and-push), and deploying is "pull and restart" (deploy.yml). IMAGE_TAG defaults to the
+# latest main build; pin it to a commit SHA to roll back.
+#
+# Secrets and per-server settings come from a .env file next to this file (never committed):
+#   POSTGRES_PASSWORD=...   required
+#   DOMAIN=...              required, the host name Caddy serves and gets a certificate for
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: tram-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tram_forecast
+      POSTGRES_USER: tram_forecast
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+    volumes:
+      - tram_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tram_forecast -d tram_forecast"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    image: ghcr.io/manticore-mt/tram-forecast/backend:${IMAGE_TAG:-latest}
+    container_name: tram-backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tram_forecast
+      SPRING_DATASOURCE_USERNAME: tram_forecast
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      # "stub" serves synthetic demo data, "http" calls the ML service at TRAM_ML_BASE_URL.
+      TRAM_ML_MODE: ${TRAM_ML_MODE:-stub}
+      TRAM_ML_BASE_URL: ${TRAM_ML_BASE_URL:-http://ml:8000}
+      TRAM_ML_STUB_ROUTES: ${TRAM_ML_STUB_ROUTES:-3}
+      TRAM_ML_STUB_STOPS_PER_ROUTE: ${TRAM_ML_STUB_STOPS_PER_ROUTE:-5}
+      # Optional: freeze "now" to a moment inside the historical dataset, e.g. 2025-11-01T00:00:00Z
+      TRAM_CLOCK_FIXED_INSTANT: ${TRAM_CLOCK_FIXED_INSTANT:-}
+    # Leave room for Postgres, Caddy and the ML container on a 4 GB server.
+    mem_limit: 1536m
+    # No published ports: the backend is reachable only through Caddy.
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: tram-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:?set DOMAIN in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+
+volumes:
+  tram_postgres_data:
+  caddy_data:
+  caddy_config:

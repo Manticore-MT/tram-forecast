@@ -7,6 +7,7 @@ COPY src/ src/
 RUN ./mvnw -B package -DskipTests
 
 FROM eclipse-temurin:21-jre
+LABEL org.opencontainers.image.source="https://github.com/Manticore-MT/tram-forecast"
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
