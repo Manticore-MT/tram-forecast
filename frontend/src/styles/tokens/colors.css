@@ -1,0 +1,74 @@
+/* ── Base palette ───────────────────────────────────────────── */
+:root{
+/* Ink — the system is dark-first; the supplied logo is a white-on-dark lockup. */
+--ink-1000:#050607;--ink-900:#0E1113;--ink-800:#15191C;--ink-700:#1C2226;--ink-600:#252D33;--ink-500:#313B42;
+--slate-400:#49555D;--slate-300:#697680;--slate-200:#9AA6AE;--slate-100:#C9D2D8;--slate-50:#EDF1F3;--white:#FFFFFF;
+
+/* Signal red — the single hero accent: CTAs, live state, peak load. */
+--red-700:#A8190F;--red-600:#C82417;--red-500:#F0392B;--red-400:#FF6152;--red-100:#FFE0DC;
+
+/* Data hues — charts, forecast bands, map series. No purple/violet. */
+--cyan-500:#22D3EE;--cyan-600:#0FA5BD;--blue-500:#3B82F6;--teal-500:#14B8A6;
+--amber-500:#FFB020;--lime-500:#A3E635;--green-500:#2ED47A;--orange-500:#FB7B3C;
+
+/* Passenger-load scale — low → critical. Used on maps, meters, heat cells. */
+--load-1:#2ED47A;--load-2:#A3E635;--load-3:#FFB020;--load-4:#FB7B3C;--load-5:#F0392B;
+}
+
+/* ── Semantic aliases (dark = default) ──────────────────────── */
+:root{
+--bg-page:var(--ink-900);
+--bg-surface:var(--ink-800);
+--bg-surface-2:var(--ink-700);
+--bg-elevated:var(--ink-600);
+--bg-inset:var(--ink-1000);
+--bg-inverse:var(--white);
+
+--text-primary:var(--white);
+--text-secondary:var(--slate-200);
+--text-muted:var(--slate-300);
+--text-inverse:var(--ink-900);
+--text-accent:var(--red-400);
+
+--border-subtle:rgba(255,255,255,.09);
+--border-default:rgba(255,255,255,.16);
+--border-strong:rgba(255,255,255,.28);
+
+--brand-accent:var(--red-500);
+--brand-accent-hover:var(--red-400);
+--brand-accent-press:var(--red-600);
+--brand-accent-quiet:rgba(240,57,43,.14);
+--on-accent:var(--white);
+
+--focus-ring:var(--cyan-500);
+--status-ok:var(--green-500);
+--status-warn:var(--amber-500);
+--status-danger:var(--red-500);
+--status-info:var(--cyan-500);
+
+--overlay-scrim:rgba(5,6,7,.72);
+--glass-fill:rgba(255,255,255,.06);
+--glass-stroke:rgba(255,255,255,.12);
+}
+
+/* ── Light scope — docs, print, exported reports ────────────── */
+[data-theme="light"]{
+--bg-page:var(--white);
+--bg-surface:var(--slate-50);
+--bg-surface-2:#FFFFFF;
+--bg-elevated:#FFFFFF;
+--bg-inset:var(--slate-50);
+--bg-inverse:var(--ink-900);
+--text-primary:var(--ink-900);
+--text-secondary:var(--slate-400);
+--text-muted:var(--slate-300);
+--text-inverse:var(--white);
+--text-accent:var(--red-600);
+--border-subtle:rgba(14,17,19,.08);
+--border-default:rgba(14,17,19,.14);
+--border-strong:rgba(14,17,19,.26);
+--brand-accent-quiet:rgba(240,57,43,.10);
+--glass-fill:rgba(14,17,19,.04);
+--glass-stroke:rgba(14,17,19,.10);
+--overlay-scrim:rgba(14,17,19,.45);
+}

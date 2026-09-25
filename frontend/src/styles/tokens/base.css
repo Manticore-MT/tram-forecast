@@ -1,0 +1,18 @@
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--bg-page);color:var(--text-primary);font:var(--type-body);letter-spacing:var(--tracking-normal);-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:var(--text-accent);text-decoration:none;transition:var(--transition-ui)}
+a:hover{color:var(--brand-accent-hover);text-decoration:underline;text-underline-offset:3px}
+::selection{background:var(--brand-accent);color:var(--on-accent)}
+:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px;border-radius:var(--radius-xs)}
+.mt-eyebrow{font:var(--type-eyebrow);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--text-muted)}
+.mt-container{max-width:var(--container-max);margin-inline:auto;padding-inline:var(--gutter)}
+.mt-num{font-variant-numeric:tabular-nums;font-family:var(--font-mono)}
+
+/* Native <input type="range"> ships with a sharp-cornered UA track that
+   accent-color can't shape — every time-scrubber in the app used this
+   unstyled, so give it a real pill track + thumb. */
+input[type="range"]{-webkit-appearance:none;appearance:none;background:transparent;height:18px}
+input[type="range"]::-webkit-slider-runnable-track{height:4px;border-radius:var(--radius-pill);background:var(--border-default)}
+input[type="range"]::-moz-range-track{height:4px;border-radius:var(--radius-pill);background:var(--border-default)}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;margin-top:-6px;width:16px;height:16px;border-radius:var(--radius-pill);background:var(--brand-accent);border:2px solid var(--bg-page)}
+input[type="range"]::-moz-range-thumb{width:16px;height:16px;border-radius:var(--radius-pill);background:var(--brand-accent);border:2px solid var(--bg-page)}

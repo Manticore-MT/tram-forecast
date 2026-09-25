@@ -1,0 +1,155 @@
+/* Maps the hand-rolled tokens in ./tokens/*.css onto Tailwind's theme
+   namespaces, so `bg-page`, `text-accent`, `rounded-pin`, etc. become real
+   Tailwind utilities. `@theme inline` keeps these as var() references
+   (not inlined literals) so [data-theme="light"] re-theming keeps working. */
+@theme inline {
+  /* ── Palette ─────────────────────────────────────────────── */
+  --color-ink-1000: var(--ink-1000);
+  --color-ink-900: var(--ink-900);
+  --color-ink-800: var(--ink-800);
+  --color-ink-700: var(--ink-700);
+  --color-ink-600: var(--ink-600);
+  --color-ink-500: var(--ink-500);
+  --color-slate-400: var(--slate-400);
+  --color-slate-300: var(--slate-300);
+  --color-slate-200: var(--slate-200);
+  --color-slate-100: var(--slate-100);
+  --color-slate-50: var(--slate-50);
+  --color-white: var(--white);
+
+  --color-red-700: var(--red-700);
+  --color-red-600: var(--red-600);
+  --color-red-500: var(--red-500);
+  --color-red-400: var(--red-400);
+  --color-red-100: var(--red-100);
+
+  --color-cyan-500: var(--cyan-500);
+  --color-cyan-600: var(--cyan-600);
+  --color-blue-500: var(--blue-500);
+  --color-teal-500: var(--teal-500);
+  --color-amber-500: var(--amber-500);
+  --color-lime-500: var(--lime-500);
+  --color-green-500: var(--green-500);
+  --color-orange-500: var(--orange-500);
+
+  --color-load-1: var(--load-1);
+  --color-load-2: var(--load-2);
+  --color-load-3: var(--load-3);
+  --color-load-4: var(--load-4);
+  --color-load-5: var(--load-5);
+
+  /* ── Semantic aliases (re-themed by [data-theme="light"]) ───── */
+  --color-bg-page: var(--bg-page);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-2: var(--bg-surface-2);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-inset: var(--bg-inset);
+  --color-bg-inverse: var(--bg-inverse);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+  --color-text-accent: var(--text-accent);
+
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+  --color-border-strong: var(--border-strong);
+
+  /* named --brand-* (not --accent-*) because shadcn/ui's own semantic
+     --accent (a muted hover surface) already owns that name. */
+  --color-brand: var(--brand-accent);
+  --color-brand-hover: var(--brand-accent-hover);
+  --color-brand-press: var(--brand-accent-press);
+  --color-brand-quiet: var(--brand-accent-quiet);
+  --color-on-accent: var(--on-accent);
+
+  --color-focus-ring: var(--focus-ring);
+  --color-status-ok: var(--status-ok);
+  --color-status-warn: var(--status-warn);
+  --color-status-danger: var(--status-danger);
+  --color-status-info: var(--status-info);
+
+  --color-overlay-scrim: var(--overlay-scrim);
+  --color-glass-fill: var(--glass-fill);
+  --color-glass-stroke: var(--glass-stroke);
+
+  /* ── Type ────────────────────────────────────────────────── */
+  /* Aliased via --src- prefixed tokens (renamed in tokens/*.css) to avoid
+     colliding with these exact names in Tailwind's own default theme. */
+  --font-display: var(--src-font-display);
+  --font-sans: var(--src-font-sans);
+  --font-mono: var(--src-font-mono);
+  --tracking-display: var(--src-tracking-display);
+  --tracking-tight: var(--src-tracking-tight);
+  --tracking-normal: var(--src-tracking-normal);
+  --tracking-wide: var(--src-tracking-wide);
+  --tracking-eyebrow: var(--src-tracking-eyebrow);
+
+  /* ── Spacing ─────────────────────────────────────────────── */
+  /* The 4px-grid tokens (--space-1..40) already line up with Tailwind's
+     default numeric spacing scale (1 -> 4px, 2 -> 8px, ... 40 -> 160px),
+     so no override is needed there. These are the extra named ones. */
+  --spacing-section-s: var(--space-section-s);
+  --spacing-section: var(--space-section);
+  --spacing-section-l: var(--space-section-l);
+  --spacing-gutter: var(--gutter);
+  --container-max: var(--src-container-max);
+  --container-narrow: var(--src-container-narrow);
+
+  /* ── Radius ──────────────────────────────────────────────── */
+  /* Aliased via --src- prefixed tokens (renamed in tokens/*.css) to avoid
+     colliding with these exact names in Tailwind's own default theme. */
+  --radius-xs: var(--src-radius-xs);
+  --radius-sm: var(--src-radius-sm);
+  --radius-md: var(--src-radius-md);
+  --radius-lg: var(--src-radius-lg);
+  --radius-xl: var(--src-radius-xl);
+  --radius-2xl: var(--src-radius-2xl);
+  --radius-pill: var(--src-radius-pill);
+  --radius-pin: var(--src-radius-pin);
+
+  /* ── Elevation ───────────────────────────────────────────── */
+  --shadow-sm: var(--src-shadow-sm);
+  --shadow-md: var(--src-shadow-md);
+  --shadow-lg: var(--src-shadow-lg);
+  --shadow-accent: var(--src-shadow-accent);
+  --blur-glass: var(--src-blur-glass);
+  --blur-scrim: var(--src-blur-scrim);
+
+  /* ── Motion ──────────────────────────────────────────────── */
+  --duration-instant: var(--dur-instant);
+  --duration-fast: var(--dur-fast);
+  --duration-base: var(--dur-base);
+  --duration-slow: var(--dur-slow);
+  --duration-reveal: var(--dur-reveal);
+  --ease-standard: var(--src-ease-standard);
+  --ease-out: var(--src-ease-out);
+  --ease-in: var(--src-ease-in);
+}
+
+/* Composite type tokens are a single `font` shorthand (weight/size/line-height/
+   family) plus tracking — Tailwind's --text-* theme keys can't express that
+   combination, so each one becomes a named utility instead. */
+@utility text-display-xl { font: var(--type-display-xl); letter-spacing: var(--tracking-display); }
+@utility text-display-l { font: var(--type-display-l); letter-spacing: var(--tracking-display); }
+@utility text-display-m { font: var(--type-display-m); letter-spacing: var(--tracking-display); }
+@utility text-h1 { font: var(--type-h1); letter-spacing: var(--tracking-tight); }
+@utility text-h2 { font: var(--type-h2); letter-spacing: var(--tracking-tight); }
+@utility text-h3 { font: var(--type-h3); }
+@utility text-h4 { font: var(--type-h4); }
+@utility text-body-l { font: var(--type-body-l); }
+@utility text-body { font: var(--type-body); }
+@utility text-body-s { font: var(--type-body-s); }
+@utility text-ui { font: var(--type-ui); }
+@utility text-ui-s { font: var(--type-ui-s); }
+@utility text-caption { font: var(--type-caption); }
+@utility text-eyebrow { font: var(--type-eyebrow); letter-spacing: var(--tracking-eyebrow); text-transform: uppercase; }
+@utility text-metric-xl { font: var(--type-metric-xl); font-variant-numeric: tabular-nums; }
+@utility text-metric { font: var(--type-metric); font-variant-numeric: tabular-nums; }
+@utility text-mono-s { font: var(--type-mono-s); font-variant-numeric: tabular-nums; }
+
+/* Shorthand for the ui color+background+border+transform transition every
+   interactive component shares. */
+@utility transition-ui { transition: var(--transition-ui); }
+@utility press-scale { transform: scale(var(--press-scale)); }

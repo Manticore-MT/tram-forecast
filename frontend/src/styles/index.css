@@ -1,0 +1,120 @@
+@import url("tokens/fonts.css");
+@import url("tokens/colors.css");
+@import url("tokens/typography.css");
+@import url("tokens/spacing.css");
+@import url("tokens/radius.css");
+@import url("tokens/elevation.css");
+@import url("tokens/motion.css");
+@import url("tokens/base.css");
+@import "tailwind-theme.css";
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* shadcn's generated components use these as shorthand for Radix's
+   data-state/data-orientation attributes, but Tailwind's own data-*
+   variant syntax only matches a literal boolean attribute of that name
+   (e.g. [data-active]) — so without these overrides, none of Radix's
+   open/active/checked/orientation states ever match. */
+@custom-variant data-active (&[data-state="active"]);
+@custom-variant data-open (&[data-state="open"]);
+@custom-variant data-closed (&[data-state="closed"]);
+@custom-variant data-checked (&[data-state="checked"]);
+@custom-variant data-unchecked (&[data-state="unchecked"]);
+@custom-variant data-horizontal (&[data-orientation="horizontal"]);
+@custom-variant data-vertical (&[data-orientation="vertical"]);
+
+/* shadcn/ui's canonical variable names, aliased onto this project's own
+   brand tokens (defined in ./tokens/*.css) instead of shadcn's generic
+   gray defaults — so shadcn components inherit the signal-red accent,
+   dark-first surfaces, and the existing [data-theme="light"] re-theming
+   instead of needing a separate .dark toggle. */
+@theme inline {
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+    --background: var(--bg-page);
+    --foreground: var(--text-primary);
+    --card: var(--bg-surface);
+    --card-foreground: var(--text-primary);
+    --popover: var(--bg-elevated);
+    --popover-foreground: var(--text-primary);
+    --primary: var(--brand-accent);
+    --primary-foreground: var(--on-accent);
+    --secondary: var(--bg-surface-2);
+    --secondary-foreground: var(--text-primary);
+    --muted: var(--bg-surface-2);
+    --muted-foreground: var(--text-muted);
+    --accent: var(--glass-fill);
+    --accent-foreground: var(--text-primary);
+    --destructive: var(--status-danger);
+    --border: var(--border-default);
+    --input: var(--border-default);
+    --ring: var(--focus-ring);
+    --chart-1: var(--cyan-500);
+    --chart-2: var(--blue-500);
+    --chart-3: var(--teal-500);
+    --chart-4: var(--amber-500);
+    --chart-5: var(--orange-500);
+    /* Not var(--radius-md) — that name is also claimed by the @theme inline
+       block above (--radius-md: calc(var(--radius) * 0.8)), which makes the
+       two circularly reference each other. Browsers treat a circular custom
+       property as invalid, so every rounded-* utility derived from --radius
+       silently collapsed to square corners. */
+    --radius: 14px;
+    --sidebar: var(--bg-surface);
+    --sidebar-foreground: var(--text-primary);
+    --sidebar-primary: var(--brand-accent);
+    --sidebar-primary-foreground: var(--on-accent);
+    --sidebar-accent: var(--glass-fill);
+    --sidebar-accent-foreground: var(--text-primary);
+    --sidebar-border: var(--border-default);
+    --sidebar-ring: var(--focus-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    }
+}
