@@ -30,7 +30,9 @@ import org.testcontainers.postgresql.PostgreSQLContainer;
         properties = {
             "tram.auth.enabled=true",
             "tram.auth.username=test-dispatcher",
-            "tram.auth.password=test-secret-1"
+            "tram.auth.password=test-secret-1",
+            // these tests send several wrong passwords on purpose; the lockout has its own test
+            "tram.auth.max-failed-attempts=1000"
         })
 class AuthTest {
 

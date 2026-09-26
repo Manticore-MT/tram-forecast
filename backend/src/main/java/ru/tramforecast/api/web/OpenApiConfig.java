@@ -67,7 +67,9 @@ public class OpenApiConfig {
                                 - Errors are RFC 9457 problem documents (`application/problem+json`).
                                 - When access control is on, every `/api/**` request needs the header
                                   `Authorization: Basic base64(user:password)`; there is no login endpoint.
-                                  A missing or wrong credential gives 401 (no `WWW-Authenticate` header).
+                                  A missing or wrong credential gives 401 (no `WWW-Authenticate` header). After 3 failed
+                                  attempts in a row a client is refused for 10 seconds with 429 and a
+                                  `Retry-After` header.
                                 """)
                         .license(new License().name("MIT").url("https://opensource.org/licenses/MIT")))
                 .components(new Components().addSecuritySchemes(
@@ -125,6 +127,10 @@ public class OpenApiConfig {
             String handler = handlerMethod.getMethod().getName();
             addProblem(operation.getResponses(), "401",
                     "Missing or invalid Authorization: Basic header (only when access control is on)");
+            addProblem(operation.getResponses(), "429",
+                    "Too many failed login attempts from this client (only when access control is on); wait "
+                            + "for the number of seconds in the Retry-After header, even the right password is "
+                            + "refused until then");
             if (!"meta".equals(handler)) {
                 addProblem(operation.getResponses(), "400", "Invalid parameter or request");
             }

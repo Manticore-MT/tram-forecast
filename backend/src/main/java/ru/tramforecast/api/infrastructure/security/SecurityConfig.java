@@ -1,5 +1,6 @@
 package ru.tramforecast.api.infrastructure.security;
 
+import java.time.Clock;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.UUID;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -37,15 +39,16 @@ public class SecurityConfig {
      * @param http     Spring Security builder
      * @param auth     access settings
      * @param provider checker of the credentials
-     * @param zone     API zone, used for the timestamp of a 401 response
+     * @param zone     API zone, used for the timestamp of a 401 or 429 response
      * @param cors     cross-origin settings
+     * @param limiter  counts failed attempts and locks a client out after too many
      * @return the chain
      * @throws Exception when the chain cannot be built
      */
     @Bean
     public SecurityFilterChain apiSecurity(
             HttpSecurity http, AuthProperties auth, AuthenticationProvider provider, ZoneId zone,
-            CorsProperties cors)
+            CorsProperties cors, LoginAttemptLimiter limiter)
             throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -58,7 +61,10 @@ public class SecurityConfig {
             return http.authorizeHttpRequests(requests -> requests.anyRequest().permitAll()).build();
         }
         ProblemAuthenticationEntryPoint entryPoint = new ProblemAuthenticationEntryPoint(zone);
+        // Not a bean: a Filter bean would also be registered as a servlet filter and run twice.
+        LoginThrottleFilter throttle = new LoginThrottleFilter(limiter, zone);
         return http
+                .addFilterBefore(throttle, BasicAuthenticationFilter.class)
                 .authenticationProvider(provider)
                 .httpBasic(basic -> basic.authenticationEntryPoint(entryPoint))
                 .exceptionHandling(errors -> errors.authenticationEntryPoint(entryPoint))
@@ -68,13 +74,25 @@ public class SecurityConfig {
                 .build();
     }
 
+    /**
+     * The limiter of failed login attempts. It runs on the real clock, not the emulated business
+     * clock: with a frozen "now" a lockout would never end.
+     *
+     * @param auth access settings
+     * @return the limiter
+     */
+    @Bean
+    public LoginAttemptLimiter loginAttemptLimiter(AuthProperties auth) {
+        return new LoginAttemptLimiter(auth.maxFailedAttempts(), auth.lockout(), Clock.systemUTC());
+    }
+
     private static CorsConfigurationSource corsSource(CorsProperties cors) {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(cors.allowedOrigins());
         config.setAllowedMethods(List.of("GET", "HEAD", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
-        // the export endpoint names its file in this header, and a page can only read it if exposed
-        config.setExposedHeaders(List.of("Content-Disposition"));
+        // a page can only read the export file name (Content-Disposition) and the lockout wait (Retry-After) if exposed
+        config.setExposedHeaders(List.of("Content-Disposition", "Retry-After"));
         // credentials are sent as an explicit Authorization header, never as browser-managed cookies
         config.setAllowCredentials(false);
         config.setMaxAge(3600L);
