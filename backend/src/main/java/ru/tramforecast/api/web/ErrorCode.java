@@ -24,6 +24,8 @@ public enum ErrorCode {
     FORECAST_NOT_READY,
     /** The Authorization header is missing or wrong. */
     UNAUTHORIZED,
+    /** Too many failed login attempts from this client; wait for the time in the Retry-After header. */
+    TOO_MANY_ATTEMPTS,
     /** Something unexpected went wrong on the server. */
     INTERNAL_ERROR
 }

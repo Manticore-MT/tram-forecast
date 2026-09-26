@@ -10,6 +10,9 @@ spring:
 
 server:
   port: 8080
+  # Behind the reverse proxy the client address comes from X-Forwarded-For, but only when the proxy
+  # is a trusted internal one; the login throttle counts attempts per client address.
+  forward-headers-strategy: native
 
 springdoc:
   # Keys sorted, so the exported spec is stable and diffs stay readable.
@@ -47,6 +50,10 @@ tram:
     enabled: ${TRAM_AUTH_ENABLED:false}
     username: ${TRAM_AUTH_USERNAME:}
     password: ${TRAM_AUTH_PASSWORD:}
+    # After this many failed attempts in a row a client (by address) is refused for the lockout time,
+    # even with the right password.
+    max-failed-attempts: ${TRAM_AUTH_MAX_FAILED_ATTEMPTS:3}
+    lockout: ${TRAM_AUTH_LOCKOUT:10s}
   attention:
     # Deviation thresholds in percent of the baseline. Values are provisional (to confirm).
     warning-pct: 10

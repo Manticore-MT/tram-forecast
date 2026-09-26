@@ -22,11 +22,11 @@ class SecurityConfigTest {
      */
     @Test
     void refusesToStartWithoutCredentialsWhenEnabled() {
-        assertThatThrownBy(() -> config.apiAuthenticationProvider(new AuthProperties(true, "", "secret")))
+        assertThatThrownBy(() -> config.apiAuthenticationProvider(new AuthProperties(true, "", "secret", null, null)))
                 .isInstanceOf(IllegalStateException.class);
-        assertThatThrownBy(() -> config.apiAuthenticationProvider(new AuthProperties(true, "user", " ")))
+        assertThatThrownBy(() -> config.apiAuthenticationProvider(new AuthProperties(true, "user", " ", null, null)))
                 .isInstanceOf(IllegalStateException.class);
-        assertThatThrownBy(() -> config.apiAuthenticationProvider(new AuthProperties(true, null, null)))
+        assertThatThrownBy(() -> config.apiAuthenticationProvider(new AuthProperties(true, null, null, null, null)))
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -35,7 +35,7 @@ class SecurityConfigTest {
      */
     @Test
     void acceptsOnlyTheConfiguredPair() {
-        var provider = config.apiAuthenticationProvider(new AuthProperties(true, "user", "secret"));
+        var provider = config.apiAuthenticationProvider(new AuthProperties(true, "user", "secret", null, null));
 
         assertThat(provider.authenticate(UsernamePasswordAuthenticationToken.unauthenticated("user", "secret"))
                 .isAuthenticated()).isTrue();
@@ -52,7 +52,7 @@ class SecurityConfigTest {
      */
     @Test
     void disabledProviderAcceptsNothing() {
-        var provider = config.apiAuthenticationProvider(new AuthProperties(false, "", ""));
+        var provider = config.apiAuthenticationProvider(new AuthProperties(false, "", "", null, null));
 
         assertThatThrownBy(() -> provider.authenticate(UsernamePasswordAuthenticationToken.unauthenticated("", "")))
                 .isInstanceOf(BadCredentialsException.class);
