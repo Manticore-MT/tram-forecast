@@ -24,7 +24,8 @@ public class GetLoadMatrixService implements GetLoadMatrixUseCase {
     public LoadMatrix get(RouteId routeId) {
         LoadMatrix matrix = actuals.loadMatrix(routeId);
         if (matrix.cells().isEmpty()) {
-            throw new NotFoundException("No history to build a load matrix for route '" + routeId.value() + "'");
+            throw NotFoundException.noData(
+                    "No history is stored for route '" + routeId.value() + "', so a load matrix cannot be built");
         }
         return matrix;
     }

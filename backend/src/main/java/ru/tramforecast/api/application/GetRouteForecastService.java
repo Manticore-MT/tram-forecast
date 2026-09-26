@@ -32,7 +32,7 @@ public class GetRouteForecastService implements GetRouteForecastUseCase {
                 .filter(stop -> stop.routeId().equals(routeId))
                 .toList();
         if (stops.isEmpty()) {
-            throw new NotFoundException("No forecast for route '" + routeId.value() + "'");
+            throw NotFoundException.route(routeId, prepared.knownRoutes());
         }
         RouteForecast route = ForecastAggregator.byRoute(stops).get(0);
         return new RouteForecastResult(

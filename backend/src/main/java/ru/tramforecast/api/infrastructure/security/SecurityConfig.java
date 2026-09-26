@@ -1,5 +1,6 @@
 package ru.tramforecast.api.infrastructure.security;
 
+import java.time.ZoneId;
 import java.util.UUID;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -29,11 +30,13 @@ public class SecurityConfig {
      * @param http     Spring Security builder
      * @param auth     access settings
      * @param provider checker of the credentials
+     * @param zone     API zone, used for the timestamp of a 401 response
      * @return the chain
      * @throws Exception when the chain cannot be built
      */
     @Bean
-    public SecurityFilterChain apiSecurity(HttpSecurity http, AuthProperties auth, AuthenticationProvider provider)
+    public SecurityFilterChain apiSecurity(
+            HttpSecurity http, AuthProperties auth, AuthenticationProvider provider, ZoneId zone)
             throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -42,7 +45,7 @@ public class SecurityConfig {
         if (!auth.enabled()) {
             return http.authorizeHttpRequests(requests -> requests.anyRequest().permitAll()).build();
         }
-        ProblemAuthenticationEntryPoint entryPoint = new ProblemAuthenticationEntryPoint();
+        ProblemAuthenticationEntryPoint entryPoint = new ProblemAuthenticationEntryPoint(zone);
         return http
                 .authenticationProvider(provider)
                 .httpBasic(basic -> basic.authenticationEntryPoint(entryPoint))

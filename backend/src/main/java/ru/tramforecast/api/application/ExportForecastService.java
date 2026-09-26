@@ -23,12 +23,19 @@ public class ExportForecastService implements ExportForecastUseCase {
 
     @Override
     public List<StopForecast> export(ForecastQuery query, RouteId routeId, StopId stopId) {
-        List<StopForecast> rows = preparer.prepare(query).stops().stream()
+        PreparedForecast prepared = preparer.prepare(query);
+        List<StopForecast> rows = prepared.stops().stream()
                 .filter(s -> routeId == null || s.routeId().equals(routeId))
                 .filter(s -> stopId == null || s.stopId().equals(stopId))
                 .toList();
         if (rows.isEmpty()) {
-            throw new NotFoundException("Nothing to export for the given route and stop");
+            if (routeId != null && stopId != null) {
+                throw prepared.missing(routeId, stopId);
+            }
+            if (routeId != null && !prepared.knownRoutes().contains(routeId)) {
+                throw NotFoundException.route(routeId, prepared.knownRoutes());
+            }
+            throw NotFoundException.noData("Nothing to export for the given filters");
         }
         return rows;
     }

@@ -1,6 +1,0 @@
-{
-  "detail": "No forecast for route 'NOPE'",
-  "instance": "/api/routes/NOPE/forecast",
-  "status": 404,
-  "title": "Not found"
-}

@@ -46,8 +46,7 @@ public class GetStopForecastService implements GetStopForecastUseCase {
         StopForecast stop = prepared.stops().stream()
                 .filter(s -> s.routeId().equals(routeId) && s.stopId().equals(stopId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException(
-                        "No forecast for stop '" + stopId.value() + "' on route '" + routeId.value() + "'"));
+                .orElseThrow(() -> prepared.missing(routeId, stopId));
         ForecastPoint peak = SeriesAnalytics.peak(stop.points()).orElse(null);
         ForecastPoint maxDeviation = SeriesAnalytics.maxDeviation(stop.points()).orElse(null);
         Double pct = maxDeviation == null ? null : maxDeviation.deviationPct();

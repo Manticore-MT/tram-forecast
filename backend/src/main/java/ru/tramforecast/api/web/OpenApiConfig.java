@@ -91,11 +91,25 @@ public class OpenApiConfig {
                     .addProperty("type", new StringSchema().example("about:blank"))
                     .addProperty("title", new StringSchema().example("Invalid parameter"))
                     .addProperty("status", new IntegerSchema().example(400))
+                    .addProperty("code", errorCodes())
+                    .addProperty("timestamp", new StringSchema()
+                            .description("When the error happened, ISO 8601 with an explicit offset")
+                            .example("2026-09-26T13:20:11.123+03:00"))
                     .addProperty("detail", new StringSchema()
                             .description("A message that can be shown to the user")
                             .example("One of the request parameters is missing or has the wrong format."))
                     .addProperty("instance", new StringSchema().example("/api/routes")));
         };
+    }
+
+    private static StringSchema errorCodes() {
+        StringSchema code = new StringSchema();
+        code.setDescription("Machine-readable error code, stable across releases (codes are added, never renamed)");
+        code.setExample(ErrorCode.ROUTE_NOT_FOUND.name());
+        for (ErrorCode value : ErrorCode.values()) {
+            code.addEnumItem(value.name());
+        }
+        return code;
     }
 
     /**

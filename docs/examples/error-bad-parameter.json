@@ -1,6 +1,8 @@
 {
+  "code": "INVALID_PARAMETER",
   "detail": "One of the request parameters is missing or has the wrong format. Expected: horizon = day|month|year, date = YYYY-MM-DD, snapshot = latest|initial, from/to = ISO 8601 with offset, coefficients = numbers between 0.1 and 3.",
   "instance": "/api/routes",
   "status": 400,
+  "timestamp": "2026-09-26T13:20:11.123+03:00",
   "title": "Invalid parameter"
 }

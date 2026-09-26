@@ -43,8 +43,14 @@ class AuthTest {
 
     private HttpResponse<String> get(String path, String user, String password)
             throws IOException, InterruptedException {
+        return send("GET", path, user, password);
+    }
+
+    private HttpResponse<String> send(String method, String path, String user, String password)
+            throws IOException, InterruptedException {
         HttpRequest.Builder request = HttpRequest.newBuilder(
-                URI.create("http://localhost:" + environment.getProperty("local.server.port") + path));
+                        URI.create("http://localhost:" + environment.getProperty("local.server.port") + path))
+                .method(method, HttpRequest.BodyPublishers.noBody());
         if (user != null) {
             String token = Base64.getEncoder().encodeToString((user + ":" + password).getBytes(StandardCharsets.UTF_8));
             request.header("Authorization", "Basic " + token);
@@ -68,6 +74,8 @@ class AuthTest {
         assertThat(response.body())
                 .contains("\"title\":\"Unauthorized\"")
                 .contains("\"status\":401")
+                .contains("\"code\":\"UNAUTHORIZED\"")
+                .containsPattern("\"timestamp\":\"\\d{4}-\\d{2}-\\d{2}T[^\"]+[+-]\\d{2}:\\d{2}\"")
                 .contains("\"instance\":\"/api/meta\"");
     }
 
@@ -94,6 +102,23 @@ class AuthTest {
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).contains("\"dataSource\"");
+    }
+
+    /**
+     * In the real application (not a test double) a URL that is not an endpoint is a 404 with its own
+     * code and a wrong HTTP method is a 405, never a generic 500.
+     *
+     * @throws Exception when the request fails
+     */
+    @Test
+    void unknownEndpointAndWrongMethodAreNotServerErrors() throws Exception {
+        HttpResponse<String> unknown = get("/api/no-such-endpoint", "test-dispatcher", "test-secret-1");
+        assertThat(unknown.statusCode()).isEqualTo(404);
+        assertThat(unknown.body()).contains("\"code\":\"ENDPOINT_NOT_FOUND\"");
+
+        HttpResponse<String> wrongMethod = send("POST", "/api/meta", "test-dispatcher", "test-secret-1");
+        assertThat(wrongMethod.statusCode()).isEqualTo(405);
+        assertThat(wrongMethod.body()).contains("\"code\":\"METHOD_NOT_ALLOWED\"");
     }
 
     /**

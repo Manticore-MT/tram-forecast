@@ -2,8 +2,11 @@ package ru.tramforecast.api.web;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.matchesPattern;
 import static org.hamcrest.Matchers.startsWith;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -45,6 +48,7 @@ import ru.tramforecast.api.support.InMemoryForecastRepository;
 class ApiTest {
 
     private static final ZoneId MOSCOW = ZoneId.of("Europe/Moscow");
+    private static final String ISO_WITH_OFFSET = "\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?[+-]\\d{2}:\\d{2}";
     private static final Clock CLOCK = Clock.fixed(Instant.parse("2026-09-25T09:00:00Z"), ZoneId.of("UTC"));
 
     private MockMvc mvc;
@@ -84,7 +88,7 @@ class ApiTest {
                                 new ru.tramforecast.api.application.GetMetaService(
                                         CLOCK, new ForecastDates(CLOCK, MOSCOW, 1), MOSCOW, "stub"),
                                 mapper))
-                .setControllerAdvice(new GlobalExceptionHandler())
+                .setControllerAdvice(new GlobalExceptionHandler(MOSCOW))
                 .setConversionService(conversion)
                 .build();
     }
@@ -206,13 +210,72 @@ class ApiTest {
         mvc.perform(get("/api/routes").param("horizon", "week"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.code").value("INVALID_PARAMETER"))
+                .andExpect(jsonPath("$.timestamp").value(matchesPattern(ISO_WITH_OFFSET)))
                 .andExpect(jsonPath("$.detail").value(containsString("horizon = day|month|year")));
         mvc.perform(get("/api/routes").param("date", "2030-01-01"))
                 .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
                 .andExpect(jsonPath("$.detail").value(containsString("at most 1 year")));
         mvc.perform(get("/api/routes/NOPE/forecast"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.title").value("Not found"));
+                .andExpect(jsonPath("$.title").value("Route not found"))
+                .andExpect(jsonPath("$.code").value("ROUTE_NOT_FOUND"))
+                .andExpect(jsonPath("$.detail").value(containsString("There is no route 'NOPE'. Known routes: R1, R2")))
+                .andExpect(jsonPath("$.instance").value("/api/routes/NOPE/forecast"));
+    }
+
+    /**
+     * An unknown stop on a known route, an unknown route on a stop request and a route without
+     * history each get their own code, so the client can say what exactly is missing.
+     */
+    @Test
+    void notFoundIsSpecificAboutWhatIsMissing() throws Exception {
+        mvc.perform(get("/api/routes/R1/stops/nope/forecast"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("STOP_NOT_FOUND"))
+                .andExpect(jsonPath("$.detail").value("Route 'R1' has no stop 'nope'"));
+        mvc.perform(get("/api/routes/NOPE/stops/ALL/forecast"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ROUTE_NOT_FOUND"));
+        mvc.perform(get("/api/routes/R1/load-matrix"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("NO_DATA"))
+                .andExpect(jsonPath("$.detail").value(containsString("No history is stored for route 'R1'")));
+        mvc.perform(get("/api/export").param("routeId", "NOPE"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ROUTE_NOT_FOUND"));
+        mvc.perform(get("/api/export").param("routeId", "R1").param("stopId", "nope"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("STOP_NOT_FOUND"));
+    }
+
+    /**
+     * A URL that is not an endpoint is a 404 with its own code, and a wrong HTTP method is a 405,
+     * so the client never has to guess from a generic 500.
+     */
+    @Test
+    void unknownEndpointAndWrongMethodHaveTheirOwnCodes() throws Exception {
+        mvc.perform(get("/api/no-such-endpoint"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.code").value("ENDPOINT_NOT_FOUND"));
+        mvc.perform(post("/api/meta"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(jsonPath("$.code").value("METHOD_NOT_ALLOWED"))
+                .andExpect(jsonPath("$.detail").value(containsString("POST")));
+    }
+
+    /**
+     * An unexpected failure is reported as a generic 500 that leaks nothing internal.
+     */
+    @Test
+    void unexpectedFailureLeaksNothingInternal() {
+        var problem = new GlobalExceptionHandler(MOSCOW).unexpected(new IllegalStateException("db password is hunter2"));
+
+        assertThat(problem.getStatus()).isEqualTo(500);
+        assertThat(problem.getProperties()).containsEntry("code", "INTERNAL_ERROR");
+        assertThat(String.valueOf(problem.getDetail())).doesNotContain("hunter2");
     }
 
     /**
@@ -225,6 +288,7 @@ class ApiTest {
         });
         mvc.perform(get("/api/routes"))
                 .andExpect(status().isServiceUnavailable())
+                .andExpect(jsonPath("$.code").value("FORECAST_NOT_READY"))
                 .andExpect(jsonPath("$.detail").value(containsString("try again later")));
     }
 }

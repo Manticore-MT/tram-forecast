@@ -1193,6 +1193,12 @@
         "type" : "object",
         "description" : "RFC 9457 problem document",
         "properties" : {
+          "code" : {
+            "type" : "string",
+            "description" : "Machine-readable error code, stable across releases (codes are added, never renamed)",
+            "enum" : [ "INVALID_REQUEST", "INVALID_PARAMETER", "ROUTE_NOT_FOUND", "STOP_NOT_FOUND", "NO_DATA", "ENDPOINT_NOT_FOUND", "METHOD_NOT_ALLOWED", "FORECAST_NOT_READY", "UNAUTHORIZED", "INTERNAL_ERROR" ],
+            "example" : "ROUTE_NOT_FOUND"
+          },
           "detail" : {
             "type" : "string",
             "description" : "A message that can be shown to the user",
@@ -1206,6 +1212,11 @@
             "type" : "integer",
             "format" : "int32",
             "example" : 400
+          },
+          "timestamp" : {
+            "type" : "string",
+            "description" : "When the error happened, ISO 8601 with an explicit offset",
+            "example" : "2026-09-26T13:20:11.123+03:00"
           },
           "title" : {
             "type" : "string",
