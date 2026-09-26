@@ -1,0 +1,84 @@
+# The whole service on one machine, from source, with one command (for the jury and for a quick look):
+#
+#   docker compose -f docker-compose.local.yml up --build
+#
+# Then open http://localhost:8080 and sign in with the demo login below. The first build takes a few
+# minutes (Maven, npm and pip download their dependencies); the next starts take seconds.
+#
+# Same topology as production (docker-compose.prod.yml): Caddy in front, the frontend as static files, the
+# backend, the ML service with the model and Postgres. Differences: the images are built here from the
+# sources instead of being pulled, there is no domain and no HTTPS, and the only published port is
+# 127.0.0.1:8080 (reachable from this machine only).
+#
+# The clock is frozen on 1 Nov 2025 09:00 Moscow time, the first day of the period the model forecasts
+# (1 Nov 2025 - 31 Dec 2026), so "today" is inside the data. Stop with Ctrl+C; remove the database with
+#   docker compose -f docker-compose.local.yml down -v
+#
+# Settings (all optional, environment variables or a .env file next to this file):
+#   TRAM_AUTH_USERNAME / TRAM_AUTH_PASSWORD   demo login, default jury / jury-local-demo (local use only)
+#   LOCAL_PORT                                host port of the site, default 8080
+name: tram-forecast-local
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: tram_forecast
+      POSTGRES_USER: tram_forecast
+      POSTGRES_PASSWORD: tram_forecast
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tram_forecast -d tram_forecast"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ml:
+    build: ./ml
+    restart: unless-stopped
+    environment:
+      ML_ALLOW_SCENARIO: "true"
+    cpus: "1"
+    mem_limit: 768m
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ml:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tram_forecast
+      SPRING_DATASOURCE_USERNAME: tram_forecast
+      SPRING_DATASOURCE_PASSWORD: tram_forecast
+      TRAM_ML_MODE: http
+      TRAM_ML_BASE_URL: http://ml:8000
+      TRAM_AUTH_ENABLED: "true"
+      TRAM_AUTH_USERNAME: ${TRAM_AUTH_USERNAME:-jury}
+      TRAM_AUTH_PASSWORD: ${TRAM_AUTH_PASSWORD:-jury-local-demo}
+      TRAM_CLOCK_FIXED_INSTANT: "2025-11-01T06:00:00Z"
+      TRAM_FORECAST_FROM: "2025-11-01"
+      TRAM_FORECAST_TO: "2026-12-31"
+    mem_limit: 1536m
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - backend
+      - frontend
+    ports:
+      - "127.0.0.1:${LOCAL_PORT:-8080}:80"
+    volumes:
+      - ./Caddyfile.http:/etc/caddy/Caddyfile:ro
+
+volumes:
+  postgres_data:
