@@ -5,6 +5,7 @@ node_modules/
 __pycache__/
 *.pyc
 .venv/
+dist
 
 # IDE
 .idea/
@@ -20,6 +21,8 @@ __pycache__/
 Thumbs.db
 
 # Organizers dataset and any raw data never go into the repo (size, license); load facts through scripts/
-data/
+# Anchored (not bare `data/`) so it doesn't also catch frontend/src/data/, which is tracked.
+/data/
+/frontend/data/
 dataset*.zip
 *.zip
