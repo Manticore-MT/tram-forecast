@@ -1,10 +1,4 @@
-export type DispatcherLevel = "all" | "line" | "stop";
-
-export interface DrillTarget {
-  level: DispatcherLevel;
-  route?: string;
-  stopIndex?: number;
-}
+import type { Place } from "./store";
 
 export interface DeviationItem {
   title: string;
@@ -13,8 +7,8 @@ export interface DeviationItem {
   peakTime: string;
   tone: "danger" | "warn" | "ok";
   selected?: boolean;
-  /** Present when the item is part of the вся-сеть/маршрут/остановка drill-down. */
-  drillTo?: DrillTarget;
+  /** Where a click on the item leads in the сеть/маршрут/остановка drill-down. */
+  drillTo?: Place;
 }
 
 export interface FactorItem {

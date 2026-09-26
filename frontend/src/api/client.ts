@@ -1,4 +1,4 @@
-import type { operations } from "./schema.d.ts";
+import type { components, operations } from "./schema.d.ts";
 import { getAuthHeader, isAuthenticated, logout } from "./auth";
 
 // Empty string = relative "/api/..." — correct for prod, where Caddy serves the frontend and
@@ -7,14 +7,18 @@ import { getAuthHeader, isAuthenticated, logout } from "./auth";
 // (not committed), e.g. VITE_API_BASE_URL=http://localhost:8080.
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
+export type ApiErrorCode = NonNullable<components["schemas"]["Problem"]["code"]>;
+
 export class ApiError extends Error {
   status: number;
+  code?: ApiErrorCode;
   detail?: string;
 
-  constructor(status: number, title: string, detail?: string) {
+  constructor(status: number, title: string, detail?: string, code?: ApiErrorCode) {
     super(title);
     this.status = status;
     this.detail = detail;
+    this.code = code;
   }
 }
 
@@ -43,14 +47,16 @@ async function apiFetch<T>(path: string, params?: Query): Promise<T> {
   if (!res.ok) {
     let title = res.statusText;
     let detail: string | undefined;
+    let code: ApiErrorCode | undefined;
     try {
-      const problem = await res.json();
+      const problem: components["schemas"]["Problem"] = await res.json();
       title = problem.title ?? title;
       detail = problem.detail;
+      code = problem.code;
     } catch {
       // body wasn't a problem+json document, keep the status text
     }
-    throw new ApiError(res.status, title, detail);
+    throw new ApiError(res.status, title, detail, code);
   }
   return res.json() as Promise<T>;
 }

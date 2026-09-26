@@ -1,9 +1,10 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import { Badge, Stat, Select } from "../../components";
-import { Sparkline } from "../../products/forecast-dashboard/Charts";
-import { Panel } from "../../products/forecast-dashboard/Shell";
-import type { DeviationItem, DrillTarget, FactorItem, PeriodOption } from "./data";
+import { Sparkline } from "../../shared/charts";
+import { Panel } from "../../shared/Panel";
+import type { DeviationItem, FactorItem, PeriodOption } from "./types";
+import type { Place } from "./store";
 
 export interface MetricCardProps {
   label: string;
@@ -35,7 +36,7 @@ export interface DeviationListProps {
   layout?: "list" | "table";
   style?: React.CSSProperties;
   /** Called with the item's drillTo when it's clickable — powers the вся-сеть/маршрут/остановка hierarchy. */
-  onSelect?: (target: DrillTarget | undefined) => void;
+  onSelect?: (place: Place) => void;
 }
 
 /** Reusable "список с отклонениями" — зоны внимания, прогнозируемые пики, рейтинг проблемных мест.
@@ -48,9 +49,9 @@ export function DeviationList({ title, items, layout = "list", style, onSelect }
       <div className={cn("flex flex-wrap", layout === "table" ? "flex-row" : "flex-col")}>
         {items.map((z, i) => (
           <div
-            key={z.title}
+            key={`${z.title}-${i}`}
             role={z.drillTo ? "button" : undefined}
-            onClick={z.drillTo ? () => onSelect && onSelect(z.drillTo) : undefined}
+            onClick={z.drillTo ? () => onSelect?.(z.drillTo!) : undefined}
             className={cn(
               "flex items-center justify-between gap-3 py-3 pr-2 pl-3",
               layout === "table" ? "flex-[1_1_260px]" : "flex-none",

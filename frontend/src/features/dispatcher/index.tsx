@@ -8,9 +8,8 @@ import { logout } from "../../api/auth";
 
 type Screen = "dispatcher" | "overview";
 
-/** Two-screen mockup: dispatcher map overlay (US1-6) and stakeholder overview grid (US7-10),
- *  assembled from the design system's existing components — no new styles, placeholder data only. */
-export default function DispatcherOverviewMockup() {
+/** App shell: the dispatcher map screen (US1-6) and the stakeholder overview grid (US7-10). */
+export default function DispatcherApp() {
   const [screen, setScreen] = React.useState<Screen>("dispatcher");
   const navigate = useNavigate();
   const full = screen === "dispatcher";
@@ -24,7 +23,7 @@ export default function DispatcherOverviewMockup() {
     <div className="flex h-screen flex-col bg-bg-page px-8 py-6 text-text-primary">
       <div className="mb-6 flex flex-none items-start justify-between gap-2">
         <div className="flex flex-col gap-2">
-          <div className="mt-eyebrow">Поток · Диспетчер и обзор сети · макет из компонентов дизайн-системы</div>
+          <div className="mt-eyebrow">Поток · прогноз загрузки трамваев</div>
           <Tabs value={screen} onChange={(v) => setScreen(v as Screen)} items={[
             { value: "dispatcher", label: "Диспетчер" },
             { value: "overview", label: "Обзор" },

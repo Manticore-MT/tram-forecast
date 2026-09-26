@@ -8,10 +8,15 @@ React + TypeScript + Vite app for **Хакатон Московского тра
 
 - Vite + React 18 + TypeScript, real ES module imports (no Babel-in-browser, no `window` globals).
 - `src/components/` — 19 shared components (Button, Card, Icon, LoadMeter, etc.), each a typed `.tsx` file exporting a named function + `Props` interface. Import from `../../components` (barrel at `src/components/index.ts`).
-- `src/mockups/dispatcherOverview/` — **the actual product**, mounted at `*` (default route) in `src/App.tsx`. Two screens: `DispatcherScreen` (dispatcher, US1-6) and `OverviewScreen` (stakeholder overview, US7-10).
-- `src/products/forecast-dashboard/` — legacy, mounted only at `/dashboard-legacy`. Has real API wiring and some screens (`RouteView`'s load matrix, `ModelView`'s quality history) not yet ported to `dispatcherOverview` — see `docs/legacy-dashboard-blocks.md` for the block-by-block gap list before deleting anything here. `dispatcherOverview` also still imports shared pieces from this folder (`Charts.tsx`, `Shell.tsx`, route data in `MapScreens.tsx`) — those stay regardless of what happens to the legacy screens.
-  **Don't write new changes into this folder.** It's named `-legacy` on purpose. Only touch it to read
-  a feature while porting it into `dispatcherOverview`, then remove it from here once ported.
+- `src/features/dispatcher/` — **the product**, mounted at `*` in `src/App.tsx`. Two screens: `DispatcherScreen` (full-screen map + floating panels, US1-6) and `OverviewScreen` (stakeholder grid, US7-10).
+  - `store.ts` — zustand store with the UI state only: picked object (`place`), time (`scale` + `cursor` + `focus`), scenario `corrections`. Server data stays in React Query; never copy it into the store.
+  - `forecast.ts` — hooks that join the store with the API (`useCurrentSeries`, `useUncorrectedSeries`, `useFocusIndex`, …). Panels read data through these instead of building params themselves.
+  - `time.ts` — pure time model: scale (= API horizon: day / week / month / year) + cursor date → window, labels, shifting, drill-down.
+  - `panels/` — one file per floating panel; `map/` — Leaflet canvas (forecast-agnostic, colors via props) and its store wiring.
+- `src/features/login/` — basic-auth login screen.
+- `src/shared/` — app-wide pieces: `Floating` (panel placement slots over the map — the one place for layout), charts, notices, load ramp + legend.
+- `src/network/` — static tram geometry (data.mos.ru) for the 9 dataset routes.
+- Removed features (old dashboard, layout mockups) live under git tag `legacy-dashboard`; `docs/legacy-dashboard-blocks.md` lists what wasn't ported and where to find it. Read it before building overview/model/export features.
 
 ## Running it
 
@@ -19,6 +24,10 @@ React + TypeScript + Vite app for **Хакатон Московского тра
 npm install
 npm run dev
 ```
+
+Against the prod backend: `VITE_API_BASE_URL=https://24manticore.ru` in `.env.local` (CORS allows `localhost:5173`; log in with the stand's basic-auth credentials). The file must be UTF-8 — PowerShell's `echo … >` writes UTF-16, which Vite silently ignores; use `Set-Content .env.local "VITE_API_BASE_URL=https://24manticore.ru" -Encoding ascii`. Restart `npm run dev` after changing it.
+
+Regenerate API types after the backend changes the contract: `npx openapi-typescript ../docs/openapi.json -o src/api/schema.d.ts`.
 
 ## History
 
