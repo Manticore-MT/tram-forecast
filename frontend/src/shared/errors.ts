@@ -63,6 +63,12 @@ const BY_CODE: Record<ApiErrorCode, ErrorDescription> = {
     tone: "error",
     retryable: false,
   },
+  TOO_MANY_ATTEMPTS: {
+    title: "Слишком много попыток входа",
+    hint: "Доступ с этого адреса временно закрыт. Подождите несколько секунд и повторите.",
+    tone: "error",
+    retryable: true,
+  },
   INTERNAL_ERROR: {
     title: "Ошибка сервера",
     hint: "Попробуйте ещё раз через некоторое время.",

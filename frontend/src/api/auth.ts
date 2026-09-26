@@ -30,6 +30,10 @@ export async function login(username: string, password: string): Promise<void> {
   if (res.status === 401) {
     throw new AuthError("Неверное имя пользователя или пароль");
   }
+  if (res.status === 429) {
+    const seconds = Number(res.headers.get("Retry-After")) || 10;
+    throw new AuthError(`Слишком много неудачных попыток. Повторите через ${seconds} с.`);
+  }
   if (!res.ok) {
     throw new AuthError("Не удалось подключиться к серверу");
   }

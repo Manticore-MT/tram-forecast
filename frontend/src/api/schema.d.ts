@@ -243,7 +243,7 @@ export interface components {
              * @example ROUTE_NOT_FOUND
              * @enum {string}
              */
-            code?: "INVALID_REQUEST" | "INVALID_PARAMETER" | "ROUTE_NOT_FOUND" | "STOP_NOT_FOUND" | "NO_DATA" | "ENDPOINT_NOT_FOUND" | "METHOD_NOT_ALLOWED" | "FORECAST_NOT_READY" | "UNAUTHORIZED" | "INTERNAL_ERROR";
+            code?: "INVALID_REQUEST" | "INVALID_PARAMETER" | "ROUTE_NOT_FOUND" | "STOP_NOT_FOUND" | "NO_DATA" | "ENDPOINT_NOT_FOUND" | "METHOD_NOT_ALLOWED" | "FORECAST_NOT_READY" | "UNAUTHORIZED" | "TOO_MANY_ATTEMPTS" | "INTERNAL_ERROR";
             /**
              * @description A message that can be shown to the user
              * @example One of the request parameters is missing or has the wrong format.
@@ -388,6 +388,15 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             /** @description No forecast is stored for the request and the ML service is unavailable */
             503: {
                 headers: {
@@ -473,6 +482,15 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             /** @description No forecast is stored for the request and the ML service is unavailable */
             503: {
                 headers: {
@@ -504,6 +522,15 @@ export interface operations {
             };
             /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -544,6 +571,15 @@ export interface operations {
             };
             /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -608,6 +644,15 @@ export interface operations {
             };
             /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -699,6 +744,15 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             /** @description No forecast is stored for the request and the ML service is unavailable */
             503: {
                 headers: {
@@ -750,6 +804,15 @@ export interface operations {
             };
             /** @description Unknown route or stop, or nothing to return for them */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -826,6 +889,15 @@ export interface operations {
             };
             /** @description Unknown route or stop, or nothing to return for them */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
