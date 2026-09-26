@@ -31,13 +31,14 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      ml:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tram_forecast
       SPRING_DATASOURCE_USERNAME: tram_forecast
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
-      # "stub" serves synthetic demo data, "http" calls the ML service at TRAM_ML_BASE_URL.
-      TRAM_ML_MODE: ${TRAM_ML_MODE:-stub}
-      TRAM_ML_BASE_URL: ${TRAM_ML_BASE_URL:-http://ml:8000}
+      TRAM_ML_MODE: http
+      TRAM_ML_BASE_URL: http://ml:8000
       TRAM_ML_STUB_ROUTES: ${TRAM_ML_STUB_ROUTES:-3}
       TRAM_ML_STUB_STOPS_PER_ROUTE: ${TRAM_ML_STUB_STOPS_PER_ROUTE:-5}
       # Access control: with TRAM_AUTH_ENABLED=true every /api/** request needs
@@ -52,6 +53,16 @@ services:
     # Leave room for Postgres, Caddy and the ML container on a 4 GB server.
     mem_limit: 1536m
     # No published ports: the backend is reachable only through Caddy.
+
+  ml:
+    image: ghcr.io/manticore-mt/tram-forecast/ml:${IMAGE_TAG:-latest}
+    container_name: tram-ml
+    restart: unless-stopped
+    environment:
+      ML_ALLOW_SCENARIO: "true"
+    # The artifact and stop map are versioned inside the image. Only the backend can reach port 8000.
+    cpus: "1"
+    mem_limit: 768m
 
   frontend:
     image: ghcr.io/manticore-mt/tram-forecast/frontend:${IMAGE_TAG:-latest}

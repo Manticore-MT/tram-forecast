@@ -1,0 +1,35 @@
+{
+  "environment": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.14",
+  "method": "FastAPI TestClient, sequential, one cold + nine cached requests per horizon; includes response serialization; no TCP, Docker or concurrent-load measurement",
+  "benchmarks": [
+    {
+      "horizon": "day",
+      "coldMs": 51.08,
+      "warmMedianMs": 44.32,
+      "maxMs": 67.59,
+      "responseBytes": 817974
+    },
+    {
+      "horizon": "week",
+      "coldMs": 17.9,
+      "warmMedianMs": 16.84,
+      "maxMs": 17.97,
+      "responseBytes": 389064
+    },
+    {
+      "horizon": "month",
+      "coldMs": 60.25,
+      "warmMedianMs": 59.87,
+      "maxMs": 77.87,
+      "responseBytes": 1043182
+    },
+    {
+      "horizon": "year",
+      "coldMs": 90.77,
+      "warmMedianMs": 28.71,
+      "maxMs": 90.77,
+      "responseBytes": 573231
+    }
+  ]
+}

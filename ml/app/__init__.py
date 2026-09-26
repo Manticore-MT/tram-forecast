@@ -1,0 +1,1 @@
+"""Manticore tram forecast service."""

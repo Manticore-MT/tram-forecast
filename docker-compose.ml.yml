@@ -1,0 +1,22 @@
+# Local ML integration: docker compose -f docker-compose.yml -f docker-compose.ml.yml up --build
+services:
+  ml:
+    build: ./ml
+    restart: unless-stopped
+    environment:
+      ML_ALLOW_SCENARIO: "true"
+      ML_NETWORK_PATH: /network/tram-stops.json
+    volumes:
+      - ./shared/tram-stops.json:/network/tram-stops.json:ro
+    ports:
+      - "127.0.0.1:8000:8000"
+    cpus: "2"
+    mem_limit: 1g
+  backend:
+    depends_on:
+      ml:
+        condition: service_healthy
+    environment:
+      TRAM_ML_MODE: http
+      TRAM_ML_BASE_URL: http://ml:8000
+      TRAM_CLOCK_FIXED_INSTANT: "2025-11-01T06:00:00Z"
