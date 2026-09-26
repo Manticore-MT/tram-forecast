@@ -12,6 +12,14 @@ on:
         required: true
         default: 'latest'
 
+# One deploy at a time. Two runs started together (a double click) both ran `docker compose pull`
+# on the server at once and the second failed with "unable to lease content". With this, the second
+# run waits for the first to finish instead of racing it, and is never cancelled halfway through
+# a restart.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
