@@ -88,7 +88,7 @@ calendar year inside that range, so only 2026. The backend knows the range from 
 |---|---|---|
 | `POST /predict/routes` | the route totals with baseline, without the stop split (the real values) | no |
 | `GET /metadata` | model version, baseline method, corrections note, limitations, sources, supported routes | no |
-| `GET /metrics?origin=2025-07-01\|2025-09-01` | WAPE and score overall, by route and by day on the two historical 61-day backtest blocks | **yes**: `GET /api/model/stats` (default block 2025-09-01; per day `absoluteError` and `actualSum` are combined into an exact WAPE) |
+| `GET /metrics?origin=2025-07-01\|2025-09-01` | WAPE and score overall, by route and by day on the two historical 61-day backtest blocks | **yes**: `GET /api/model/stats` (default block 2025-09-01; per day `absoluteError` and `actualSum` are combined into an exact WAPE; `platform.score` is passed on as a separate `platformScore`) |
 | `GET /health` | liveness and the model version (the container health check) | Deploy checks it |
 
 ## Status of the earlier open questions

@@ -215,8 +215,19 @@ public final class Responses {
      * @param source    {@code ml-backtest} (measured by the ML side on a historical block) or {@code facts}
      *                  (the backend's own stored forecasts against the facts)
      * @param note      what the numbers are and are not, for a caption; {@code null} when there is none
+     * @param platformScore the score the platform gave the submitted contest file on its hidden check (as the
+     *                  team reports it), {@code null} when it is not known. A separate measurement: show it on
+     *                  its own and never mix it with the backtest above
+     * @param platformNote  what {@code platformScore} is and what it must not be used for (it is a route x hour
+     *                  score, not a stop score), {@code null} when there is no platform score
      */
     public record ModelStats(
-            Double wape, Double wapeScore, List<DailyAccuracy> history, String source, String note) {
+            Double wape,
+            Double wapeScore,
+            List<DailyAccuracy> history,
+            String source,
+            String note,
+            Double platformScore,
+            String platformNote) {
     }
 }

@@ -18,7 +18,8 @@ import tools.jackson.databind.json.JsonMapper;
  * Reads the model's quality from the ML service ({@code GET /metrics}, described in
  * {@code docs/ml-contract.md}). The answer is a historical backtest that does not change, so it is
  * kept for a few minutes instead of being asked for on every request. Only the fields the backend
- * needs are read; everything else in the answer is ignored.
+ * needs (the days, the origin, the first limitation and the score the platform gave the submitted
+ * file); everything else in the answer is ignored.
  */
 public class HttpMlMetricsClient implements MlMetricsClient {
 
@@ -64,7 +65,12 @@ public class HttpMlMetricsClient implements MlMetricsClient {
             if (days.isEmpty()) {
                 throw new MlUnavailableException("The ML service returned no backtest days", null);
             }
-            return new BacktestMetrics(root.path("origin").asString(""), note(root), days);
+            JsonNode platform = root.path("platform").path("score");
+            return new BacktestMetrics(
+                    root.path("origin").asString(""),
+                    note(root),
+                    days,
+                    platform.isNumber() ? platform.asDouble() : null);
         } catch (MlUnavailableException e) {
             throw e;
         } catch (RuntimeException e) {

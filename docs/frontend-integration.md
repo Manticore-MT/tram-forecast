@@ -23,6 +23,12 @@ used to tune the model, so this is not an independent test). If nothing falls in
 `wapeScore` are `null` (not zero) and `history` is empty. If the ML service cannot be asked, `source` is
 `facts` (the backend's own stored forecasts against the facts, empty today).
 
+`platformScore` (for example 0.88226) is a **different measurement**: the score the platform gave the submitted
+contest file on its hidden check, as the team reports it (`platformNote` says so). Show it on its own line,
+**never merge it with the backtest** (the backtest is about 0.89, a historical estimate whose blocks were used
+to tune the model). Both are route x hour scores: **do not show them as the quality of a stop**, the stop
+values are a demonstration. `platformScore` is `null` when the ML service does not report it.
+
 **The date range.** `GET /api/meta` reports `forecastFrom` and `forecastTo` (the range the model covers, for
 the stand 2025-11-01 .. 2026-12-31; both are `null` when the model has no fixed range) and `latestDate` (the
 end of the range). Limit the date picker to it: a period that is not **entirely** inside is refused with `400`

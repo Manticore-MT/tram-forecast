@@ -39,7 +39,7 @@ class ModelStatsFromMlTest {
         for (int i = 0; i < 61; i++) {
             days.add(new BacktestDay(BLOCK_START.plusDays(i), 100 + (i % 5) * 10, 1000));
         }
-        return new BacktestMetrics("2025-09-01", "Backtest of the model from 2025-09-01 (route x hour)", days);
+        return new BacktestMetrics("2025-09-01", "Backtest of the model from 2025-09-01 (route x hour)", days, 0.88226);
     }
 
     private static ForecastDates on(String date) {
@@ -72,6 +72,25 @@ class ModelStatsFromMlTest {
         assertThat(stats.wapeScore()).isCloseTo(1 - error / 30_000.0, org.assertj.core.data.Offset.offset(1e-12));
         // a single day: 2 Oct is index 31 -> error 110
         assertThat(stats.history().get(0).wape()).isEqualTo(0.11);
+    }
+
+    /**
+     * The platform's score is reported on its own, next to the backtest but never merged into it: the
+     * backtest numbers stay what the days give, and the note says the score is not a backtest and does not
+     * apply to stops.
+     */
+    @Test
+    void thePlatformScoreIsASeparateMeasurement() {
+        ModelStats stats = service(() -> block(), "2025-11-01").get(30);
+
+        assertThat(stats.platformScore()).isEqualTo(0.88226);
+        assertThat(stats.platformNote()).contains("скрытой проверке платформы").contains("не бэктест").contains("остановки");
+        assertThat(stats.wapeScore()).isNotEqualTo(0.88226);
+
+        BacktestMetrics without = new BacktestMetrics("2025-09-01", "note", block().days());
+        ModelStats none = service(() -> without, "2025-11-01").get(30);
+        assertThat(none.platformScore()).isNull();
+        assertThat(none.platformNote()).isNull();
     }
 
     /**
@@ -124,6 +143,7 @@ class ModelStatsFromMlTest {
 
         assertThat(stats.source()).isEqualTo("facts");
         assertThat(stats.note()).isNull();
+        assertThat(stats.platformScore()).isNull();
         assertThat(stats.wape()).isNull();
         assertThat(stats.history()).isEmpty();
     }

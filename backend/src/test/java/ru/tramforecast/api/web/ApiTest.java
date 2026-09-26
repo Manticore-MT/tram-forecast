@@ -285,6 +285,7 @@ class ApiTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.source").value("facts"))
                 .andExpect(jsonPath("$.note").value(nullValue()))
+                .andExpect(jsonPath("$.platformScore").value(nullValue()))
                 .andExpect(jsonPath("$.wape").value(nullValue()))
                 .andExpect(jsonPath("$.history", hasSize(0)));
     }

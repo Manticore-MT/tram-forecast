@@ -39,6 +39,14 @@ public class GetModelStatsService implements GetModelStatsUseCase {
     private static final Logger LOG = LoggerFactory.getLogger(GetModelStatsService.class);
     private static final int MAX_DAYS = 90;
     private static final String SOURCE_ML = "ml-backtest";
+    /**
+     * The platform's score is a different measurement from the backtest (a hidden check of the submitted
+     * contest file, reported by the team), and it is a route x hour score: it says nothing about stops, whose
+     * values are a demonstration. The wording is the ML side's.
+     */
+    private static final String PLATFORM_NOTE = "Результат на скрытой проверке платформы для отправленного "
+            + "конкурсного файла (сообщён командой). Это не бэктест, и переносить его на остановки нельзя: "
+            + "прогноз по остановкам демонстрационный.";
 
     private final ForecastRepository forecasts;
     private final ActualRepository actuals;
@@ -106,10 +114,19 @@ public class GetModelStatsService implements GetModelStatsUseCase {
             }
         }
         if (actual <= 0) {
-            return new ModelStats(null, null, history, SOURCE_ML, metrics.note());
+            return new ModelStats(null, null, history, SOURCE_ML, metrics.note(), platform(metrics), platformNote(metrics));
         }
         double wape = error / actual;
-        return new ModelStats(wape, Wape.score(wape), history, SOURCE_ML, metrics.note());
+        return new ModelStats(
+                wape, Wape.score(wape), history, SOURCE_ML, metrics.note(), platform(metrics), platformNote(metrics));
+    }
+
+    private static Double platform(BacktestMetrics metrics) {
+        return metrics.platformScore();
+    }
+
+    private static String platformNote(BacktestMetrics metrics) {
+        return metrics.platformScore() == null ? null : PLATFORM_NOTE;
     }
 
     private ModelStats fromFacts(int days) {

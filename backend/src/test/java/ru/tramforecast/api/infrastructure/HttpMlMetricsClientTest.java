@@ -94,6 +94,20 @@ class HttpMlMetricsClientTest {
         assertThat(metrics.days().get(0).date()).isEqualTo(LocalDate.of(2025, 9, 1));
         assertThat(metrics.days().get(0).absoluteError()).isEqualTo(10.0);
         assertThat(metrics.days().get(1).actualSum()).isEqualTo(100.0);
+        assertThat(metrics.platformScore()).isEqualTo(0.8822);
+    }
+
+    /**
+     * A missing or non-numeric platform score is simply not reported.
+     */
+    @Test
+    void aMissingPlatformScoreIsNull() {
+        body = "{\"origin\": \"2025-09-01\", \"byDay\": [{\"date\": \"2025-09-01\", \"absoluteError\": 1, \"actualSum\": 10}]}";
+
+        assertThat(client(Duration.ofMinutes(5)).backtest().platformScore()).isNull();
+
+        body = "{\"origin\": \"2025-09-01\", \"platform\": {\"score\": \"n/a\"}, \"byDay\": [{\"date\": \"2025-09-01\", \"absoluteError\": 1, \"actualSum\": 10}]}";
+        assertThat(client(Duration.ofMinutes(5)).backtest().platformScore()).isNull();
     }
 
     /**

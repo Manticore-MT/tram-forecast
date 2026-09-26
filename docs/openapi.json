@@ -1219,6 +1219,13 @@
           "note" : {
             "type" : "string"
           },
+          "platformNote" : {
+            "type" : "string"
+          },
+          "platformScore" : {
+            "type" : "number",
+            "format" : "double"
+          },
           "source" : {
             "type" : "string"
           },
