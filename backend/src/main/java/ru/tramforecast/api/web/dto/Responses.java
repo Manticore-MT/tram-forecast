@@ -147,7 +147,6 @@ public final class Responses {
      * One attention zone.
      *
      * @param routeId        route identifier
-     * @param stopId         stop identifier
      * @param level          {@code WARNING} or {@code CRITICAL}
      * @param deviationAbs   absolute deviation at the point of maximum deviation
      * @param deviationPct   percent deviation at that point
@@ -157,7 +156,6 @@ public final class Responses {
      */
     public record AttentionZone(
             String routeId,
-            String stopId,
             String level,
             double deviationAbs,
             double deviationPct,

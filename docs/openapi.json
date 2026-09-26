@@ -1092,9 +1092,6 @@
           },
           "routeId" : {
             "type" : "string"
-          },
-          "stopId" : {
-            "type" : "string"
           }
         }
       },

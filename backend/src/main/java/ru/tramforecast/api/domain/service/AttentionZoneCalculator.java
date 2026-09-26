@@ -7,10 +7,10 @@ import java.util.Optional;
 import ru.tramforecast.api.domain.model.AttentionLevel;
 import ru.tramforecast.api.domain.model.AttentionZone;
 import ru.tramforecast.api.domain.model.ForecastPoint;
-import ru.tramforecast.api.domain.model.StopForecast;
+import ru.tramforecast.api.domain.model.RouteForecast;
 
 /**
- * Finds attention zones: stops whose forecast deviates from the baseline beyond the policy
+ * Finds attention zones: routes whose forecast deviates from the baseline beyond the policy
  * thresholds, ranked by how large the deviation is.
  */
 public final class AttentionZoneCalculator {
@@ -30,14 +30,14 @@ public final class AttentionZoneCalculator {
     }
 
     /**
-     * Computes the zones for a set of stop forecasts.
+     * Computes the zones for a set of route forecasts.
      *
-     * @param forecasts stop forecasts of one horizon and date
+     * @param forecasts route forecasts of one horizon and date
      * @return zones ordered by descending absolute percent deviation
      */
-    public List<AttentionZone> calculate(List<StopForecast> forecasts) {
+    public List<AttentionZone> calculate(List<RouteForecast> forecasts) {
         List<AttentionZone> zones = new ArrayList<>();
-        for (StopForecast forecast : forecasts) {
+        for (RouteForecast forecast : forecasts) {
             Optional<ForecastPoint> maxDeviation = SeriesAnalytics.maxDeviation(forecast.points());
             Optional<ForecastPoint> peak = SeriesAnalytics.peak(forecast.points());
             if (maxDeviation.isEmpty() || peak.isEmpty()) {
@@ -51,7 +51,6 @@ public final class AttentionZoneCalculator {
             }
             zones.add(new AttentionZone(
                     forecast.routeId(),
-                    forecast.stopId(),
                     deviating.deviationAbs(),
                     pct,
                     peak.get().periodStart(),
