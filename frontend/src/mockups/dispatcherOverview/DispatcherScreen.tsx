@@ -69,6 +69,7 @@ export function DispatcherScreen() {
         activeIndex={level === "stop" ? stopIndex : -1}
         onRouteClick={(r) => drill({ level: "line", route: r })}
         onPick={(i) => (level === "line" ? drill({ level: "stop", route, stopIndex: i }) : setStopIndex(i))}
+        onBackgroundClick={level !== "all" ? () => setLevel(level === "stop" ? "line" : "all") : undefined}
         style={{ position: "absolute", inset: 0, borderRadius: 0 }}
       />
 

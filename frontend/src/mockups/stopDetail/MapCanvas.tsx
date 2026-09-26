@@ -16,12 +16,14 @@ export interface MapCanvasProps {
   onPick?: (i: number) => void;
   /** Route clicked on the map at "all" — lets the caller drill into that route. */
   onRouteClick?: (routeNumber: string) => void;
+  /** Click on empty map background (not a stop/route) — QoL shortcut to go up one level. */
+  onBackgroundClick?: () => void;
   style?: React.CSSProperties;
 }
 
 /** Same real Leaflet/OSM basemap as products/forecast-dashboard/MapScreens.tsx — reused here so the
  *  mockups show an actual map, not a stand-in. Only the marker/line treatment differs per level. */
-export function MapCanvas({ level, caption, route, activeIndex, onPick, onRouteClick, style }: MapCanvasProps) {
+export function MapCanvas({ level, caption, route, activeIndex, onPick, onRouteClick, onBackgroundClick, style }: MapCanvasProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const mapRef = React.useRef<L.Map | null>(null);
   const layerRef = React.useRef<L.LayerGroup | null>(null);
@@ -62,7 +64,7 @@ export function MapCanvas({ level, caption, route, activeIndex, onPick, onRouteC
       for (const r of Object.values(TRAM_ROUTES)) {
         for (let i = 0; i < r.stops.length - 1; i++) {
           L.polyline([r.stops[i].ll, r.stops[i + 1].ll], { color: hexFor(r.stops[i].load), weight: 3, opacity: 0.8 })
-            .on("click", () => onRouteClick && onRouteClick(r.number))
+            .on("click", (e) => { L.DomEvent.stopPropagation(e); onRouteClick?.(r.number); })
             .addTo(g);
         }
         for (const s of r.stops) allStops.push(s.ll);
@@ -81,13 +83,20 @@ export function MapCanvas({ level, caption, route, activeIndex, onPick, onRouteC
         const isActive = i === activeIndex;
         L.circleMarker(s.ll, { radius: isActive ? 11 : 7, color: "#0E1113", weight: 2, fillColor: hexFor(s.load), fillOpacity: 1 })
           .bindTooltip(`${s.name} · ${Math.round(s.load * 100)} %`, { direction: "top" })
-          .on("click", () => onPick && onPick(i))
+          .on("click", (e) => { L.DomEvent.stopPropagation(e); onPick?.(i); })
           .addTo(g);
       });
     }
     g.addTo(map);
     layerRef.current = g;
   }, [level, route, activeIndex, onPick, onRouteClick]);
+
+  React.useEffect(() => {
+    const map = mapRef.current; if (!map || !onBackgroundClick) return;
+    // Clicking empty map area goes up one level; markers/polylines stop propagation so this only fires on background.
+    map.on("click", onBackgroundClick);
+    return () => { map.off("click", onBackgroundClick); };
+  }, [onBackgroundClick]);
 
   return (
     <div style={{ position: "relative", isolation: "isolate", zIndex: 0, flex: 1, minHeight: 220, borderRadius: "var(--radius-lg)", overflow: "hidden", boxShadow: "var(--inset-hairline)", ...style }}>
