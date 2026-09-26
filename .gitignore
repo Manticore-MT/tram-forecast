@@ -26,3 +26,7 @@ Thumbs.db
 /frontend/data/
 dataset*.zip
 *.zip
+
+# Tool caches accidentally created at the repo root
+/.vite/
+*.tsbuildinfo

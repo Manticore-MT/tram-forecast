@@ -68,8 +68,11 @@ Not our decisions — official rules/answers from the organizers. Hard constrain
   routes. This settles the former open question of "route vs. stop aggregation" for attention zones:
   there's no per-stop forecast to aggregate, so the route section of an attention zone *is* the
   forecast; a stop-level view is bonus scope, not MVP.
-- **Dataset window**: train = Jan–Aug 2025, test = Sep–Oct 2025, forecast target = **Nov–Dec 2025**.
-  Use these real dates, not placeholder 2026 dates from earlier mockups/drafts.
+- **Dataset window** (an ML-data fact, not a runtime requirement): train = Jan–Aug 2025, test =
+  Sep–Oct 2025, forecast target = **Nov–Dec 2025**. This describes what the model was trained/
+  evaluated on and what it predicts for `submission.csv` — it does **not** mean the live service's
+  clock or demo has to sit inside this window. Whether to align the backend's clock
+  (`TRAM_CLOCK_FIXED_INSTANT`) to this range for a realistic demo is a separate, later call.
 - **Basic auth required.** Credentials go in a separate file, never in the README or committed docs.
   Frontend needs a **login screen (username/password) and a logout action**, not just the backend
   challenge — someone has to design/build that flow, it's not free with basic auth alone.
