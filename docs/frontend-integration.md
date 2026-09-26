@@ -58,7 +58,9 @@ that matter for the UI:
 - **One request per view, then the slider is local.** Every forecast response contains the whole
   horizon (24 hours for a day, the days of a month, the 12 months of a year). Moving the time slider
   must not call the API: read the point out of the array you already have.
-- **Steps follow the horizon**: day = hourly, month = daily, year = monthly.
+- **Steps follow the horizon**: day = hourly, week = daily, month = daily, year = monthly. A **week is
+  seven days starting at the requested `date`** (a sliding window, not a calendar week): the operator
+  picks the first day, `date` in the answer is that first day and `points` has seven entries.
 - **Time**: ISO 8601 with an explicit offset, e.g. `2026-09-25T09:00:00+03:00`. Dates are
   `YYYY-MM-DD`. Do not use unix timestamps.
 - **Refresh**: use `refetchInterval` (React Query) only on the day view (30-60 s). Month and year

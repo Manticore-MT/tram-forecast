@@ -6,8 +6,8 @@ import java.time.ZoneId;
 import ru.tramforecast.api.domain.model.Horizon;
 
 /**
- * The calendar period a horizon covers for an anchor date: the day itself, the whole month or the
- * whole year that contains it.
+ * The period a horizon covers for an anchor date: the day itself, the seven days that start at it
+ * (a week), the whole month or the whole year that contains it.
  *
  * @param start inclusive start of the period
  * @param end   exclusive end of the period
@@ -29,6 +29,10 @@ public record ForecastPeriod(Instant start, Instant end) {
             case DAY -> {
                 first = date;
                 next = date.plusDays(1);
+            }
+            case WEEK -> {
+                first = date;
+                next = date.plusDays(7);
             }
             case MONTH -> {
                 first = date.withDayOfMonth(1);

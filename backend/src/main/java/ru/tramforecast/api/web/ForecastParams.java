@@ -24,11 +24,11 @@ import ru.tramforecast.api.domain.model.SnapshotKind;
  */
 public record ForecastParams(
         @Schema(description = "Planning horizon. It fixes the step of the returned points: day = hourly, "
-                + "month = daily, year = monthly.",
-                type = "string", allowableValues = {"day", "month", "year"}, defaultValue = "day")
+                + "week = daily (seven days starting at the anchor date), month = daily, year = monthly.",
+                type = "string", allowableValues = {"day", "week", "month", "year"}, defaultValue = "day")
         Horizon horizon,
-        @Schema(description = "Anchor date YYYY-MM-DD: the day itself, or any day inside the month or year. "
-                + "Defaults to today, at most one year ahead.", example = "2026-09-25")
+        @Schema(description = "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any "
+                + "day inside the month or year. Defaults to today, at most one year ahead.", example = "2026-09-25")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
         @Schema(description = "Which stored snapshot to read: the latest one, or the initial one (the forecast "
                 + "as it was first made for that date).",

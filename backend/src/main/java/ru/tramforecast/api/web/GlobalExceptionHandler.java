@@ -69,7 +69,7 @@ public class GlobalExceptionHandler {
     public ProblemDetail badParameter(Exception e) {
         return problem(HttpStatus.BAD_REQUEST, ErrorCode.INVALID_PARAMETER, "Invalid parameter",
                 "One of the request parameters is missing or has the wrong format. "
-                        + "Expected: horizon = day|month|year, date = YYYY-MM-DD, snapshot = latest|initial, "
+                        + "Expected: horizon = day|week|month|year, date = YYYY-MM-DD, snapshot = latest|initial, "
                         + "from/to = ISO 8601 with offset, coefficients = numbers between 0.1 and 3.");
     }
 

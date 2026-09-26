@@ -53,14 +53,15 @@ public class OpenApiConfig {
                         .title("Tram forecast API")
                         .version("0.1.0")
                         .description("""
-                                Forecast of tram ridership by route and stop for three horizons.
+                                Forecast of tram ridership by route and stop for the horizons day, week, month and year.
 
                                 **Conventions**
                                 - Timestamps are ISO 8601 with an explicit offset, for example
                                   `2026-09-25T09:00:00+03:00`. Dates are `YYYY-MM-DD`. There are no unix timestamps.
                                 - Every forecast response carries the whole horizon, so a time slider on the client
                                   reads points locally and needs no further requests.
-                                - Steps follow the horizon: day = hourly, month = daily, year = monthly.
+                                - Steps follow the horizon: day = hourly, week = daily, month = daily, year = monthly. A week is
+                                  seven days starting at the requested `date` (not a calendar week).
                                 - Routes and stops are identified by opaque string IDs; geometry is not served.
                                 - `modelVersion = "stub"` and `dataSource = "stub"` mean synthetic demo data.
                                 - Errors are RFC 9457 problem documents (`application/problem+json`).

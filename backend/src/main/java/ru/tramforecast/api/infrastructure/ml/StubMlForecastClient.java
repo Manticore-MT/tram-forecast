@@ -81,6 +81,14 @@ public class StubMlForecastClient implements MlForecastClient {
                     points.add(point(start.plusHours(hour), baseline, stopShock * rush, seed + hour));
                 }
             }
+            case WEEK -> {
+                for (int day = 0; day < 7; day++) {
+                    LocalDate d = date.plusDays(day);
+                    double weekend = d.getDayOfWeek() == DayOfWeek.SATURDAY || d.getDayOfWeek() == DayOfWeek.SUNDAY
+                            ? 0.7 : 1.0;
+                    points.add(point(d.atStartOfDay(zone), base * 12 * weekend, stopShock, seed + day));
+                }
+            }
             case MONTH -> {
                 LocalDate first = date.withDayOfMonth(1);
                 for (int day = 0; day < first.lengthOfMonth(); day++) {

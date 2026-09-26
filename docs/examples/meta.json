@@ -10,6 +10,10 @@
       "step": "hour"
     },
     {
+      "horizon": "week",
+      "step": "day"
+    },
+    {
       "horizon": "month",
       "step": "day"
     },
