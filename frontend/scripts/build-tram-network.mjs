@@ -36,7 +36,7 @@ for (const trip of trips) {
     .sort((a, b) => a.seq - b.seq)
     .map((t) => stopByCode.get(t.stopCode))
     .filter(Boolean)
-    .map((s) => ({ name: s.name, ll: s.ll }));
+    .map((s) => ({ name: s.name, ll: s.ll, stopCode: s.stopCode }));
   if (times.length < 2) continue;
   const existing = byRoute.get(trip.routeCode);
   if (!existing || times.length > existing.stops.length) {

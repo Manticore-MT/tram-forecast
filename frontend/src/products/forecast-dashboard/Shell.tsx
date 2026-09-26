@@ -2,6 +2,9 @@ import React from "react";
 import { IconButton, Icon, Badge, Tabs, Tag, Card, Tooltip } from "../../components";
 import pinMark from "../../assets/mark-pin-white.svg";
 import { LOAD_VARS } from "./Charts";
+import { ApiError } from "../../api/client";
+import { logout } from "../../api/auth";
+import { useNavigate } from "react-router-dom";
 
 export const NAV: [string, string, string][] = [
   ["map", "map-pin", "Карта загрузки"],
@@ -10,6 +13,21 @@ export const NAV: [string, string, string][] = [
   ["model", "brain", "Модель"],
   ["data", "layers", "Данные"],
 ];
+
+/** Per-widget error state — each card/panel renders its own instead of a global toast (see docs/open-questions.md). */
+export function ErrorNotice({ error }: { error: unknown }) {
+  const message = error instanceof ApiError ? error.detail ?? error.message : "Не удалось загрузить данные";
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "var(--space-3)", padding: "var(--space-4)", background: "var(--bg-surface-2)", borderRadius: "var(--radius-md)", boxShadow: "var(--inset-hairline)" }}>
+      <Icon name="alert-triangle" size={16} />
+      <span style={{ font: "var(--type-body-s)", color: "var(--text-secondary)" }}>{message}</span>
+    </div>
+  );
+}
+
+export function LoadingNotice() {
+  return <span style={{ font: "var(--type-caption)", color: "var(--text-muted)" }}>Загрузка…</span>;
+}
 
 export interface SidebarProps {
   view: string;
@@ -56,18 +74,25 @@ export interface TopBarProps {
   onHorizon: (v: string) => void;
   route: string;
   onRoute: (v: string) => void;
+  routes: string[];
   onExport: () => void;
 }
 
-export function TopBar({ horizon, onHorizon, route, onRoute, onExport }: TopBarProps) {
+export function TopBar({ horizon, onHorizon, route, onRoute, routes, onExport }: TopBarProps) {
+  const navigate = useNavigate();
+  function handleLogout() {
+    logout();
+    navigate("/login", { replace: true });
+  }
   return (
     <header style={{ display: "flex", alignItems: "center", gap: "var(--space-4)", padding: "var(--space-5) var(--space-8)", boxShadow: "inset 0 -1px 0 var(--border-subtle)" }}>
-      <div style={{ display: "flex", gap: "var(--space-2)" }}>
-        {["17", "27", "А", "7"].map((r) => <Tag key={r} selected={r === route} onClick={() => onRoute(r)} icon={<Icon name="tram-front" size={14} />}>{r}</Tag>)}
+      <div style={{ display: "flex", gap: "var(--space-2)", flexWrap: "wrap" }}>
+        {routes.map((r) => <Tag key={r} selected={r === route} onClick={() => onRoute(r)} icon={<Icon name="tram-front" size={14} />}>{r}</Tag>)}
       </div>
       <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "var(--space-4)" }}>
         <Tabs value={horizon} onChange={onHorizon} items={[{ value: "day", label: "1 день" }, { value: "month", label: "1 месяц" }, { value: "year", label: "1 год" }]} />
         <Tooltip content="Выгрузить прогноз в CSV"><IconButton label="Экспорт" icon={<Icon name="download" size={18} />} onClick={onExport} /></Tooltip>
+        <Tooltip content="Выйти"><IconButton label="Выйти" icon={<Icon name="log-out" size={18} />} onClick={handleLogout} /></Tooltip>
         <div style={{ width: 36, height: 36, borderRadius: "var(--radius-pill)", background: "var(--ink-600)", boxShadow: "var(--inset-hairline-strong)", display: "grid", placeItems: "center", font: "var(--type-ui-s)" }}>ЕД</div>
       </div>
     </header>

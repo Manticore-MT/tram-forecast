@@ -3,12 +3,17 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "../../styles/leaflet-dark.css";
 import { Card, Badge, Button, Icon, Stat, LoadMeter, Switch } from "../../components";
-import { Panel, LoadLegend } from "./Shell";
+import { Panel, LoadLegend, ErrorNotice } from "./Shell";
+import { useRouteForecast } from "../../api/hooks";
 import tramNetworkRaw from "../../data/tram-network.json";
 
 export interface TramStop {
   name: string;
   ll: [number, number];
+  /** Organizers' own stop code ("Код остановки" in the raw dataset) — the id to match
+   *  against the backend's stopId once it's wired to real (non-stub) data, instead of
+   *  positional-index guessing. See docs/open-questions.md for the open confirmation with backend/ML. */
+  stopCode?: string;
   load: number;
 }
 
@@ -21,6 +26,7 @@ export interface TramRoute {
 interface RawStop {
   name: string;
   ll: [number, number];
+  stopCode?: string;
 }
 
 interface RawRoute {
@@ -37,16 +43,26 @@ function loadFor(name: string, seed: number): number {
   return 0.2 + ((h % 1000) / 1000) * 0.65;
 }
 
+/** The hackathon dataset only covers these 9 routes — tram-network.json has 36 (sourced
+ *  from data.mos.ru independently of the ML/backend dataset), so the extra ones are
+ *  filtered out here rather than in the JSON file itself. */
+export const DATASET_ROUTE_NUMBERS = ["1", "7", "11", "12", "17", "25", "26", "28", "50"];
+
 /** Real Moscow tram network — stop positions and track order sourced from data.mos.ru
  *  (остановки + расписание рейсов), joined by scripts/build-tram-network.mjs into
  *  src/data/tram-network.json. The connector between consecutive stops is still a
  *  straight segment, not surveyed track geometry; load values are synthetic. */
 export const TRAM_ROUTES: Record<string, TramRoute> = Object.fromEntries(
-  (tramNetworkRaw as RawRoute[]).map((r) => [
-    r.number,
-    { number: r.number, name: r.name, stops: r.stops.map((s, i) => ({ ...s, load: loadFor(s.name, i * 7 + r.number.length) })) },
-  ]),
+  (tramNetworkRaw as RawRoute[])
+    .filter((r) => DATASET_ROUTE_NUMBERS.includes(r.number))
+    .map((r) => [
+      r.number,
+      { number: r.number, name: r.name, stops: r.stops.map((s, i) => ({ ...s, load: loadFor(s.name, i * 7 + r.number.length) })) },
+    ]),
 );
+
+/** The API's routeId is the route number as a string ("1", "17") — build it from `number`, never from tram-network.json's internal id. */
+export const toRouteId = (number: string) => number;
 
 export const TRAM_ROUTE_NUMBERS = Object.keys(TRAM_ROUTES);
 export const DEFAULT_ROUTE = "17";
@@ -56,14 +72,18 @@ export const GEO = TRAM_ROUTES[DEFAULT_ROUTE].stops;
 export const LOAD_HEX = ["#2ED47A", "#A3E635", "#FFB020", "#FB7B3C", "#F0392B"];
 export const hexFor = (v: number) => LOAD_HEX[Math.min(4, Math.floor(v * 5))];
 
+export interface MapStop extends TramStop {
+  v: number;
+  forecast?: number;
+}
+
 interface MapCanvasProps {
-  route: string;
-  hour: number;
+  stops: MapStop[];
   active: number;
   onPick?: (i: number) => void;
 }
 
-export function MapCanvas({ route, hour, onPick, active }: MapCanvasProps) {
+export function MapCanvas({ stops, onPick, active }: MapCanvasProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const mapRef = React.useRef<L.Map | null>(null);
   const layerRef = React.useRef<L.LayerGroup | null>(null);
@@ -97,45 +117,76 @@ export function MapCanvas({ route, hour, onPick, active }: MapCanvasProps) {
     const map = mapRef.current; if (!map) return;
     if (layerRef.current) layerRef.current.remove();
     const g = L.layerGroup();
-    const stops = (TRAM_ROUTES[route] ?? TRAM_ROUTES[DEFAULT_ROUTE]).stops;
-    const shift = Math.exp(-Math.pow((hour - 8.5) / 3, 2)) + 0.9 * Math.exp(-Math.pow((hour - 18.5) / 3.2, 2));
-    const pts = stops.map((s) => ({ ...s, v: Math.max(0.05, Math.min(1, s.load * (0.35 + 0.8 * shift))) }));
-    for (let i = 0; i < pts.length - 1; i++) {
-      L.polyline([pts[i].ll, pts[i + 1].ll], { color: hexFor(pts[i].v), weight: 6, opacity: 0.85, dashArray: "1 0" }).addTo(g);
+    for (let i = 0; i < stops.length - 1; i++) {
+      L.polyline([stops[i].ll, stops[i + 1].ll], { color: hexFor(stops[i].v), weight: 6, opacity: 0.85, dashArray: "1 0" }).addTo(g);
     }
-    pts.forEach((s, i) => {
+    stops.forEach((s, i) => {
       L.circleMarker(s.ll, { radius: i === active ? 11 : 7, color: "#0E1113", weight: 2, fillColor: hexFor(s.v), fillOpacity: 1 })
         .bindTooltip(`${s.name} · ${Math.round(s.v * 100)} %`, { direction: "top" })
         .on("click", () => onPick && onPick(i)).addTo(g);
     });
     g.addTo(map);
     layerRef.current = g;
-  }, [route, hour, active, onPick]);
+  }, [stops, active, onPick]);
 
   React.useEffect(() => {
-    const map = mapRef.current; if (!map) return;
-    const stops = (TRAM_ROUTES[route] ?? TRAM_ROUTES[DEFAULT_ROUTE]).stops;
+    const map = mapRef.current; if (!map || stops.length === 0) return;
     map.fitBounds(stops.map((s) => s.ll), { padding: [48, 48], maxZoom: 15 });
-  }, [route]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stops.map((s) => s.name).join(",")]);
 
   return <div ref={ref} style={{ position: "absolute", inset: 0, isolation: "isolate", background: "var(--ink-800)" }} />;
 }
 
-export interface MapViewProps {
-  route: string;
+/** Synthetic fallback shift used only while the real forecast hasn't loaded yet or failed. */
+function peakShift(hour: number): number {
+  return Math.exp(-Math.pow((hour - 8.5) / 3, 2)) + 0.9 * Math.exp(-Math.pow((hour - 18.5) / 3.2, 2));
 }
 
-export function MapView({ route }: MapViewProps) {
+/** Combines local stop geometry (name, ll — from data.mos.ru) with the backend's per-stop
+ *  forecast (opaque stopId, so matched positionally: both are ordered along the route).
+ *  Falls back to a synthetic time-of-day curve while the real data hasn't loaded yet. */
+export function useMapStops(route: string, hour: number, date: string): { stops: MapStop[]; isLoading: boolean; isError: boolean; error: unknown } {
+  const localStops = (TRAM_ROUTES[route] ?? TRAM_ROUTES[DEFAULT_ROUTE]).stops;
+  const { data, isLoading, isError, error } = useRouteForecast(route, { horizon: "day", date });
+  const backendStops = data?.stops ?? [];
+  const hourIndex = Math.max(0, Math.min(23, Math.round(hour)));
+  const maxForecast = React.useMemo(() => {
+    let max = 0;
+    for (const bs of backendStops) for (const p of bs.points ?? []) if ((p.forecast ?? 0) > max) max = p.forecast!;
+    return max;
+  }, [backendStops]);
+  const stops = React.useMemo(
+    () =>
+      localStops.map((ls, i) => {
+        const forecast = backendStops[i]?.points?.[hourIndex]?.forecast;
+        const v =
+          forecast !== undefined && maxForecast > 0
+            ? Math.max(0.05, Math.min(1, forecast / maxForecast))
+            : Math.max(0.05, Math.min(1, ls.load * (0.35 + 0.8 * peakShift(hour))));
+        return { ...ls, v, forecast };
+      }),
+    [localStops, backendStops, hourIndex, maxForecast, hour],
+  );
+  return { stops, isLoading, isError, error };
+}
+
+export interface MapViewProps {
+  route: string;
+  date: string;
+}
+
+export function MapView({ route, date }: MapViewProps) {
   const [hour, setHour] = React.useState(18);
   const [active, setActive] = React.useState(0);
   const [live, setLive] = React.useState(true);
-  const stops = (TRAM_ROUTES[route] ?? TRAM_ROUTES[DEFAULT_ROUTE]).stops;
+  const { stops, isLoading, isError, error } = useMapStops(route, hour, date);
   React.useEffect(() => { setActive(0); }, [route]);
   const s = stops[Math.min(active, stops.length - 1)];
   const label = `${String(Math.floor(hour)).padStart(2, "0")}:${hour % 1 ? "30" : "00"}`;
   return (
     <div style={{ position: "relative", height: "100%", minHeight: 620, borderRadius: "var(--radius-xl)", overflow: "hidden", boxShadow: "var(--inset-hairline)" }}>
-      <MapCanvas route={route} hour={hour} active={active} onPick={setActive} />
+      <MapCanvas stops={stops} active={active} onPick={setActive} />
       <div style={{ position: "absolute", top: 16, left: 16, width: 320, display: "flex", flexDirection: "column", gap: "var(--space-3)", zIndex: 500 }}>
         <Card tone="glass" padding="var(--space-5)">
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "var(--space-3)" }}>
@@ -145,20 +196,22 @@ export function MapView({ route }: MapViewProps) {
             </div>
             <Badge tone={live ? "ok" : "neutral"} dot>{live ? "live" : "пауза"}</Badge>
           </div>
-          <input type="range" min="5" max="23.5" step="0.5" value={hour} onChange={(e) => setHour(+e.target.value)}
+          <input type="range" min="5" max="23" step="1" value={hour} onChange={(e) => setHour(+e.target.value)}
             style={{ width: "100%", marginTop: "var(--space-4)", accentColor: "var(--brand-accent)" }} />
-          <div style={{ display: "flex", justifyContent: "space-between", font: "var(--type-mono-s)", color: "var(--text-muted)" }}><span>05:00</span><span>23:30</span></div>
+          <div style={{ display: "flex", justifyContent: "space-between", font: "var(--type-mono-s)", color: "var(--text-muted)" }}><span>05:00</span><span>23:00</span></div>
           <div style={{ marginTop: "var(--space-4)" }}><Switch checked={live} onChange={() => setLive(!live)} label="Обновлять в реальном времени" /></div>
+          {isError && <div style={{ marginTop: "var(--space-3)" }}><ErrorNotice error={error} /></div>}
         </Card>
-        <Card tone="glass" padding="var(--space-5)">
-          <div className="mt-eyebrow">Остановка</div>
-          <div style={{ marginTop: 6, font: "var(--type-h4)" }}>{s.name}</div>
-          <div style={{ marginTop: "var(--space-4)" }}><LoadMeter value={s.load} /></div>
-          <div style={{ marginTop: "var(--space-4)", display: "flex", gap: "var(--space-6)" }}>
-            <Stat label="Вход/час" value="1 240" />
-            <Stat label="Интервал" value="6.5" unit="мин" />
-          </div>
-        </Card>
+        {s && (
+          <Card tone="glass" padding="var(--space-5)">
+            <div className="mt-eyebrow">Остановка</div>
+            <div style={{ marginTop: 6, font: "var(--type-h4)" }}>{s.name}</div>
+            <div style={{ marginTop: "var(--space-4)" }}><LoadMeter value={s.v} /></div>
+            <div style={{ marginTop: "var(--space-4)", display: "flex", gap: "var(--space-6)" }}>
+              <Stat label="Прогноз, пасс/ч" value={s.forecast !== undefined ? Math.round(s.forecast).toLocaleString("ru-RU") : isLoading ? "…" : "—"} />
+            </div>
+          </Card>
+        )}
       </div>
       <div style={{ position: "absolute", bottom: 16, left: 16, zIndex: 500 }}>
         <Card tone="glass" padding="var(--space-4)"><LoadLegend /></Card>
@@ -174,17 +227,19 @@ export function MapView({ route }: MapViewProps) {
 
 export interface DemandMapProps {
   route: string;
+  date: string;
   height?: number;
 }
 
 /** Compact, read-only variant of MapCanvas — the predicted-demand strip for the Overview screen. */
-export function DemandMap({ route, height = 260 }: DemandMapProps) {
+export function DemandMap({ route, date, height = 260 }: DemandMapProps) {
+  const { stops } = useMapStops(route, 18, date);
   return (
     <div style={{ position: "relative", height, borderRadius: "var(--radius-lg)", overflow: "hidden", boxShadow: "var(--inset-hairline)" }}>
-      <MapCanvas route={route} hour={18.5} active={-1} />
+      <MapCanvas stops={stops} active={-1} />
       <div style={{ position: "absolute", top: 12, left: 12, zIndex: 500 }}>
         <Card tone="glass" padding="var(--space-3) var(--space-4)">
-          <span style={{ font: "var(--type-caption)", color: "var(--text-secondary)" }}>Прогноз спроса · 18:30</span>
+          <span style={{ font: "var(--type-caption)", color: "var(--text-secondary)" }}>Прогноз спроса · 18:00</span>
         </Card>
       </div>
     </div>
@@ -201,10 +256,10 @@ export function IngestView() {
   ];
   const quality: [string, number][] = [["Пропуски валидаций", 0.006], ["Дубли транзакций", 0.002], ["Остановки без привязки", 0.014], ["Выбросы телематики", 0.021]];
   const api: [string, string, string][] = [
-    ["GET", "/api/v1/forecast?route=17&horizon=day", "p95 84 мс"],
-    ["GET", "/api/v1/forecast/stop/{id}?from&to", "p95 61 мс"],
-    ["GET", "/api/v1/routes", "p95 12 мс"],
-    ["POST", "/api/v1/model/retrain", "async"],
+    ["GET", "/api/routes/{routeId}/forecast?horizon=day", "p95 84 мс"],
+    ["GET", "/api/routes/{routeId}/stops/{stopId}/forecast", "p95 61 мс"],
+    ["GET", "/api/routes", "p95 12 мс"],
+    ["GET", "/api/model/stats", "p95 9 мс"],
   ];
   return (
     <div style={{ display: "grid", gap: "var(--space-5)" }}>
