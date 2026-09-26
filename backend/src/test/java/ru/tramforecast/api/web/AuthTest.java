@@ -122,6 +122,27 @@ class AuthTest {
     }
 
     /**
+     * CORS is off unless configured: a browser's preflight from another origin gets no CORS headers,
+     * so nothing is opened by accident.
+     *
+     * @throws Exception when the request fails
+     */
+    @Test
+    void corsIsOffUnlessConfigured() throws Exception {
+        HttpRequest preflight = HttpRequest.newBuilder(
+                        URI.create("http://localhost:" + environment.getProperty("local.server.port") + "/api/meta"))
+                .method("OPTIONS", HttpRequest.BodyPublishers.noBody())
+                .header("Origin", "http://localhost:5173")
+                .header("Access-Control-Request-Method", "GET")
+                .build();
+
+        HttpResponse<String> response = HttpClient.newHttpClient()
+                .send(preflight, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+
+        assertThat(response.headers().firstValue("Access-Control-Allow-Origin")).isEmpty();
+    }
+
+    /**
      * Only {@code /api/**} is protected: health checks and the OpenAPI document stay open.
      *
      * @throws Exception when the request fails
