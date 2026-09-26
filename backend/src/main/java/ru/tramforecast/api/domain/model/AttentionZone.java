@@ -3,10 +3,9 @@ package ru.tramforecast.api.domain.model;
 import java.time.Instant;
 
 /**
- * A stop where the forecast deviates notably from the baseline.
+ * A route whose forecast deviates notably from the baseline.
  *
  * @param routeId         the route
- * @param stopId          the stop
  * @param deviationAbs    absolute deviation at the point of maximum deviation
  * @param deviationPct    percent deviation at the point of maximum deviation
  * @param peakAt          start of the period with the highest forecast
@@ -16,7 +15,6 @@ import java.time.Instant;
  */
 public record AttentionZone(
         RouteId routeId,
-        StopId stopId,
         double deviationAbs,
         double deviationPct,
         Instant peakAt,

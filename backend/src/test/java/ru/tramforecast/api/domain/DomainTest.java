@@ -68,19 +68,19 @@ class DomainTest {
     }
 
     /**
-     * Only stops beyond the threshold become zones, ranked by deviation, with a recommendation.
+     * Only routes beyond the threshold become zones, ranked by deviation, with a recommendation.
      */
     @Test
     void attentionZonesAreThresholdedRankedAndCarryRecommendations() {
         AttentionZoneCalculator calculator = new AttentionZoneCalculator(
                 new AttentionPolicy(10, 25), new RecommendationPolicy(10));
-        StopForecast calm = stop("R1", "S1", new ForecastPoint(T0, 100, 105, null));
-        StopForecast busy = stop("R1", "S2", new ForecastPoint(T0, 100, 130, null));
-        StopForecast quiet = stop("R2", "S3", new ForecastPoint(T0, 100, 85, null));
+        RouteForecast calm = route("R1", new ForecastPoint(T0, 100, 105, null));
+        RouteForecast busy = route("R2", new ForecastPoint(T0, 100, 130, null));
+        RouteForecast quiet = route("R3", new ForecastPoint(T0, 100, 85, null));
 
         List<AttentionZone> zones = calculator.calculate(List.of(calm, busy, quiet));
 
-        assertThat(zones).extracting(z -> z.stopId().value()).containsExactly("S2", "S3");
+        assertThat(zones).extracting(z -> z.routeId().value()).containsExactly("R2", "R3");
         assertThat(zones.get(0).level()).isEqualTo(AttentionLevel.CRITICAL);
         assertThat(zones.get(0).recommendation().action()).isEqualTo(RecommendationAction.ADD_VEHICLE);
         assertThat(zones.get(1).level()).isEqualTo(AttentionLevel.WARNING);
@@ -160,6 +160,10 @@ class DomainTest {
         assertThat(week.end()).isEqualTo(Instant.parse("2026-10-01T21:00:00Z"));
         assertThat(week.contains(Instant.parse("2026-09-20T12:00:00Z"))).isFalse();
         assertThat(Horizon.WEEK.granularity()).isEqualTo(ru.tramforecast.api.domain.model.Granularity.DAY);
+    }
+
+    private static RouteForecast route(String route, ForecastPoint point) {
+        return new RouteForecast(new RouteId(route), Horizon.DAY, LocalDate.of(2026, 9, 25), T0, List.of(point));
     }
 
     private static StopForecast stop(String route, String stop, ForecastPoint point) {

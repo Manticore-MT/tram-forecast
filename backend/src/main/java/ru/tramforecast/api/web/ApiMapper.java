@@ -167,7 +167,6 @@ public class ApiMapper {
     private Responses.AttentionZone zone(AttentionZone zone) {
         return new Responses.AttentionZone(
                 zone.routeId().value(),
-                zone.stopId().value(),
                 zone.level().name(),
                 round(zone.deviationAbs()),
                 round(zone.deviationPct()),

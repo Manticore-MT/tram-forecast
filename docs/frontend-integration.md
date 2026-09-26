@@ -36,6 +36,14 @@ end of the range). Limit the date picker to it: a period that is not **entirely*
 is seven days from `date`, a month and a year are the calendar month and year that contain it. The clock of
 the stand is frozen (`now`/`today` in `/api/meta`), so "today" is the same day for every request.
 
+**Attention zones (`GET /api/attention`).** One zone per **route**, not per stop: the deviation and the peak
+are computed from the route total (the sum of the route's stops), and a zone has no `stopId`. The stop
+values of the ML service are a demonstration (an equal split of the route total), so ranking stops by them
+would list the same route once per stop. A zone drills into its route (`routeId`); `deviationAbs` and
+`deviationPct` are at the period of the largest deviation (`maxDeviationAt`), `peakAt` is the period with the
+highest forecast, `level` is `WARNING` or `CRITICAL`, and `recommendation` is a suggested action with a vehicle
+count.
+
 **Lockout after wrong passwords.** Three failed login attempts in a row from one client address lock
 that client out for 10 seconds: every `/api/**` request from it, **even with the right password**, gets
 `429` (`code: TOO_MANY_ATTEMPTS`) and a `Retry-After` header with the seconds left (also in `detail`).

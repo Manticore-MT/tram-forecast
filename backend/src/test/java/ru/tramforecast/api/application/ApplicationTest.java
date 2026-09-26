@@ -116,7 +116,7 @@ class ApplicationTest {
     }
 
     /**
-     * Attention zones are computed by the backend from the loaded aggregates.
+     * Attention zones are computed by the backend per route, from the stops summed into the route.
      */
     @Test
     void attentionZonesComeFromLoadedAggregates() {
@@ -125,8 +125,9 @@ class ApplicationTest {
                 .get(ForecastQuery.of(Horizon.DAY, DATE));
 
         assertThat(result.zones()).hasSize(1);
-        assertThat(result.zones().get(0).stopId().value()).isEqualTo("S1");
-        assertThat(result.zones().get(0).level()).isEqualTo(AttentionLevel.CRITICAL);
+        assertThat(result.zones().get(0).routeId().value()).isEqualTo("R1");
+        assertThat(result.zones().get(0).deviationPct()).isCloseTo(16.0, org.assertj.core.data.Offset.offset(1e-9));
+        assertThat(result.zones().get(0).level()).isEqualTo(AttentionLevel.WARNING);
     }
 
     /**
