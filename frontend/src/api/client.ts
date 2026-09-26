@@ -1,7 +1,11 @@
 import type { operations } from "./schema.d.ts";
 import { getAuthHeader, isAuthenticated, logout } from "./auth";
 
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
+// Empty string = relative "/api/..." — correct for prod, where Caddy serves the frontend and
+// proxies /api/** to the backend from the same origin (see root Caddyfile). Local dev against a
+// separately-running backend needs its own base URL: set VITE_API_BASE_URL in frontend/.env.local
+// (not committed), e.g. VITE_API_BASE_URL=http://localhost:8080.
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
 export class ApiError extends Error {
   status: number;
