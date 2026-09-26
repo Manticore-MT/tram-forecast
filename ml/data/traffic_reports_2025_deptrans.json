@@ -1,0 +1,616 @@
+{
+  "source": "https://t.me/s/DtOperativno",
+  "fetchedAt": "2026-09-26T22:35:41.754383+00:00",
+  "oldestPageTimestamp": "2024-12-28T12:04:57+00:00",
+  "completeThroughStart": true,
+  "scope": "irregular citywide observations extracted from official public posts",
+  "warning": "Archive traversal does not imply a complete hourly series; unparsed or unpublished observations are missing, not zero.",
+  "observations": [
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20376",
+      "publishedAt": "2025-03-06T15:38:11+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20398",
+      "publishedAt": "2025-03-07T14:38:27+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20568",
+      "publishedAt": "2025-03-25T11:21:16+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 4
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20587",
+      "publishedAt": "2025-03-27T15:43:53+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20638",
+      "publishedAt": "2025-04-01T06:20:33+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 3
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20644",
+      "publishedAt": "2025-04-01T15:30:44+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 5
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20646",
+      "publishedAt": "2025-04-01T16:38:12+00:00",
+      "averageSpeedKmh": 22,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20665",
+      "publishedAt": "2025-04-04T15:09:37+00:00",
+      "averageSpeedKmh": 25,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20798",
+      "publishedAt": "2025-04-16T14:34:24+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20869",
+      "publishedAt": "2025-04-21T15:28:19+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/20902",
+      "publishedAt": "2025-04-23T11:35:53+00:00",
+      "averageSpeedKmh": 32,
+      "congestionPoints": 4
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/21003",
+      "publishedAt": "2025-04-29T15:29:27+00:00",
+      "averageSpeedKmh": 26,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/21148",
+      "publishedAt": "2025-05-13T16:24:28+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/21239",
+      "publishedAt": "2025-05-20T16:14:35+00:00",
+      "averageSpeedKmh": 26,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/21313",
+      "publishedAt": "2025-05-27T15:47:51+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/21342",
+      "publishedAt": "2025-05-28T16:08:00+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/21360",
+      "publishedAt": "2025-05-29T16:26:51+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/21536",
+      "publishedAt": "2025-06-11T14:49:34+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/21978",
+      "publishedAt": "2025-07-21T11:22:56+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 4
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22015",
+      "publishedAt": "2025-07-22T16:03:35+00:00",
+      "averageSpeedKmh": 32,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22053",
+      "publishedAt": "2025-07-24T10:58:46+00:00",
+      "averageSpeedKmh": 42,
+      "congestionPoints": 5
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22055",
+      "publishedAt": "2025-07-24T12:17:09+00:00",
+      "averageSpeedKmh": 38,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22208",
+      "publishedAt": "2025-08-04T16:39:44+00:00",
+      "averageSpeedKmh": 32,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22218",
+      "publishedAt": "2025-08-05T12:19:29+00:00",
+      "averageSpeedKmh": 52,
+      "congestionPoints": 3
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22267",
+      "publishedAt": "2025-08-07T16:18:40+00:00",
+      "averageSpeedKmh": 36,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22356",
+      "publishedAt": "2025-08-14T16:24:31+00:00",
+      "averageSpeedKmh": 36,
+      "congestionPoints": 5
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22516",
+      "publishedAt": "2025-08-27T16:23:35+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22536",
+      "publishedAt": "2025-08-28T15:45:51+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22584",
+      "publishedAt": "2025-09-02T16:31:30+00:00",
+      "averageSpeedKmh": 26,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22633",
+      "publishedAt": "2025-09-05T15:46:50+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22676",
+      "publishedAt": "2025-09-10T16:22:19+00:00",
+      "averageSpeedKmh": 30,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22677",
+      "publishedAt": "2025-09-10T17:30:15+00:00",
+      "averageSpeedKmh": 30,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22722",
+      "publishedAt": "2025-09-12T15:20:18+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22814",
+      "publishedAt": "2025-09-19T15:27:42+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22853",
+      "publishedAt": "2025-09-23T15:46:19+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22878",
+      "publishedAt": "2025-09-24T15:49:53+00:00",
+      "averageSpeedKmh": 32,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22916",
+      "publishedAt": "2025-09-25T15:47:46+00:00",
+      "averageSpeedKmh": 26,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/22955",
+      "publishedAt": "2025-09-30T15:50:39+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23042",
+      "publishedAt": "2025-10-07T16:31:59+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23069",
+      "publishedAt": "2025-10-09T16:18:37+00:00",
+      "averageSpeedKmh": 26,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23091",
+      "publishedAt": "2025-10-10T14:24:22+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23092",
+      "publishedAt": "2025-10-10T16:14:53+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23117",
+      "publishedAt": "2025-10-13T16:25:30+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23129",
+      "publishedAt": "2025-10-14T15:26:34+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23132",
+      "publishedAt": "2025-10-14T16:31:49+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23148",
+      "publishedAt": "2025-10-15T15:54:38+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23149",
+      "publishedAt": "2025-10-15T16:45:58+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23154",
+      "publishedAt": "2025-10-15T17:47:48+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23196",
+      "publishedAt": "2025-10-17T14:50:39+00:00",
+      "averageSpeedKmh": 30,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23253",
+      "publishedAt": "2025-10-23T15:56:00+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23309",
+      "publishedAt": "2025-10-29T12:31:31+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23315",
+      "publishedAt": "2025-10-29T15:26:10+00:00",
+      "averageSpeedKmh": 25,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23317",
+      "publishedAt": "2025-10-29T16:25:10+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23340",
+      "publishedAt": "2025-10-30T16:09:21+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23342",
+      "publishedAt": "2025-10-30T16:58:12+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 5
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23363",
+      "publishedAt": "2025-10-31T14:51:02+00:00",
+      "averageSpeedKmh": 26,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23365",
+      "publishedAt": "2025-10-31T16:41:03+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23382",
+      "publishedAt": "2025-11-01T15:08:07+00:00",
+      "averageSpeedKmh": 25,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23425",
+      "publishedAt": "2025-11-06T15:19:01+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23451",
+      "publishedAt": "2025-11-07T14:53:36+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23453",
+      "publishedAt": "2025-11-07T15:50:53+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23483",
+      "publishedAt": "2025-11-10T15:49:42+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23493",
+      "publishedAt": "2025-11-11T15:00:44+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23517",
+      "publishedAt": "2025-11-12T14:58:38+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23521",
+      "publishedAt": "2025-11-12T16:13:22+00:00",
+      "averageSpeedKmh": 25,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23525",
+      "publishedAt": "2025-11-12T18:41:11+00:00",
+      "averageSpeedKmh": 40,
+      "congestionPoints": 5
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23536",
+      "publishedAt": "2025-11-13T14:49:46+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23555",
+      "publishedAt": "2025-11-14T15:26:07+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23602",
+      "publishedAt": "2025-11-17T15:24:41+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23609",
+      "publishedAt": "2025-11-17T17:42:51+00:00",
+      "averageSpeedKmh": 46,
+      "congestionPoints": 4
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23644",
+      "publishedAt": "2025-11-18T14:30:14+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23653",
+      "publishedAt": "2025-11-18T17:24:12+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23716",
+      "publishedAt": "2025-11-21T13:48:33+00:00",
+      "averageSpeedKmh": 26,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23770",
+      "publishedAt": "2025-11-25T15:11:09+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23784",
+      "publishedAt": "2025-11-26T13:59:31+00:00",
+      "averageSpeedKmh": 30,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23792",
+      "publishedAt": "2025-11-26T17:51:21+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23834",
+      "publishedAt": "2025-11-28T14:10:11+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23885",
+      "publishedAt": "2025-12-02T14:07:42+00:00",
+      "averageSpeedKmh": 32,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23893",
+      "publishedAt": "2025-12-02T17:26:41+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23911",
+      "publishedAt": "2025-12-03T15:35:16+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23925",
+      "publishedAt": "2025-12-04T15:08:53+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23937",
+      "publishedAt": "2025-12-05T13:54:40+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/23971",
+      "publishedAt": "2025-12-08T15:33:16+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24008",
+      "publishedAt": "2025-12-10T15:31:56+00:00",
+      "averageSpeedKmh": 25,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24055",
+      "publishedAt": "2025-12-11T15:50:30+00:00",
+      "averageSpeedKmh": 23,
+      "congestionPoints": null
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24060",
+      "publishedAt": "2025-12-11T18:12:16+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 5
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24094",
+      "publishedAt": "2025-12-12T14:45:51+00:00",
+      "averageSpeedKmh": 25,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24118",
+      "publishedAt": "2025-12-15T15:44:32+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24178",
+      "publishedAt": "2025-12-17T14:40:05+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24193",
+      "publishedAt": "2025-12-18T12:44:01+00:00",
+      "averageSpeedKmh": 32,
+      "congestionPoints": null
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24216",
+      "publishedAt": "2025-12-19T08:47:48+00:00",
+      "averageSpeedKmh": 35,
+      "congestionPoints": null
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24273",
+      "publishedAt": "2025-12-22T15:46:29+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24284",
+      "publishedAt": "2025-12-23T13:57:46+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24286",
+      "publishedAt": "2025-12-23T14:55:19+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24324",
+      "publishedAt": "2025-12-24T16:12:01+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": null
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24327",
+      "publishedAt": "2025-12-24T18:15:27+00:00",
+      "averageSpeedKmh": null,
+      "congestionPoints": 5
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24367",
+      "publishedAt": "2025-12-25T15:44:43+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": null
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24432",
+      "publishedAt": "2025-12-29T12:23:47+00:00",
+      "averageSpeedKmh": 29,
+      "congestionPoints": null
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24438",
+      "publishedAt": "2025-12-29T15:21:54+00:00",
+      "averageSpeedKmh": 24,
+      "congestionPoints": 7
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24439",
+      "publishedAt": "2025-12-29T16:29:54+00:00",
+      "averageSpeedKmh": 27,
+      "congestionPoints": 6
+    },
+    {
+      "sourceUrl": "https://t.me/DtOperativno/24459",
+      "publishedAt": "2025-12-30T13:41:51+00:00",
+      "averageSpeedKmh": 28,
+      "congestionPoints": 7
+    }
+  ]
+}

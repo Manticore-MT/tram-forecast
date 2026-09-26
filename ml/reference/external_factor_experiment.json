@@ -1,0 +1,170 @@
+{
+  "source": "https://open-meteo.com/en/docs/historical-weather-api",
+  "targetWeatherAvailableAtOrigin": false,
+  "results": {
+    "2025-07-01": {
+      "base_a1_observed": {
+        "score": 0.8160927367813386,
+        "wape": 0.18390726321866133,
+        "trainingDays": 1622
+      },
+      "basic_a1_observed": {
+        "score": 0.813666592013136,
+        "wape": 0.186333407986864,
+        "trainingDays": 1622
+      },
+      "basic_a1_climate": {
+        "score": 0.817938369616279,
+        "wape": 0.18206163038372106,
+        "trainingDays": 1622
+      },
+      "basic_a10_observed": {
+        "score": 0.815946184112323,
+        "wape": 0.18405381588767702,
+        "trainingDays": 1622
+      },
+      "basic_a10_climate": {
+        "score": 0.8229060586943915,
+        "wape": 0.17709394130560857,
+        "trainingDays": 1622
+      },
+      "basic_a100_observed": {
+        "score": 0.8022345340394456,
+        "wape": 0.19776546596055444,
+        "trainingDays": 1622
+      },
+      "basic_a100_climate": {
+        "score": 0.8169091766665356,
+        "wape": 0.1830908233334644,
+        "trainingDays": 1622
+      },
+      "extreme_a1_observed": {
+        "score": 0.8111807054245763,
+        "wape": 0.1888192945754237,
+        "trainingDays": 1622
+      },
+      "extreme_a10_observed": {
+        "score": 0.8123503723843483,
+        "wape": 0.1876496276156517,
+        "trainingDays": 1622
+      },
+      "extreme_a100_observed": {
+        "score": 0.8016774819307113,
+        "wape": 0.19832251806928874,
+        "trainingDays": 1622
+      },
+      "route_basic_a1_observed": {
+        "score": 0.8157294419278163,
+        "wape": 0.1842705580721837,
+        "trainingDays": 1622
+      },
+      "route_basic_a1_climate": {
+        "score": 0.8196018326397013,
+        "wape": 0.18039816736029865,
+        "trainingDays": 1622
+      },
+      "route_basic_a10_observed": {
+        "score": 0.8153386031507589,
+        "wape": 0.1846613968492411,
+        "trainingDays": 1622
+      },
+      "route_basic_a10_climate": {
+        "score": 0.8206915272421751,
+        "wape": 0.17930847275782488,
+        "trainingDays": 1622
+      },
+      "route_basic_a100_observed": {
+        "score": 0.7960453194420779,
+        "wape": 0.20395468055792212,
+        "trainingDays": 1622
+      },
+      "route_basic_a100_climate": {
+        "score": 0.8110879108959772,
+        "wape": 0.18891208910402277,
+        "trainingDays": 1622
+      }
+    },
+    "2025-09-01": {
+      "base_a1_observed": {
+        "score": 0.8890865308863258,
+        "wape": 0.11091346911367415,
+        "trainingDays": 2125
+      },
+      "basic_a1_observed": {
+        "score": 0.8847931758392195,
+        "wape": 0.11520682416078057,
+        "trainingDays": 2125
+      },
+      "basic_a1_climate": {
+        "score": 0.8838980021429391,
+        "wape": 0.11610199785706089,
+        "trainingDays": 2125
+      },
+      "basic_a10_observed": {
+        "score": 0.8767511727216161,
+        "wape": 0.1232488272783839,
+        "trainingDays": 2125
+      },
+      "basic_a10_climate": {
+        "score": 0.8721270268317572,
+        "wape": 0.12787297316824275,
+        "trainingDays": 2125
+      },
+      "basic_a100_observed": {
+        "score": 0.8316316323249158,
+        "wape": 0.16836836767508423,
+        "trainingDays": 2125
+      },
+      "basic_a100_climate": {
+        "score": 0.821221598068427,
+        "wape": 0.17877840193157296,
+        "trainingDays": 2125
+      },
+      "extreme_a1_observed": {
+        "score": 0.883979538976889,
+        "wape": 0.11602046102311098,
+        "trainingDays": 2125
+      },
+      "extreme_a10_observed": {
+        "score": 0.8773510508571049,
+        "wape": 0.12264894914289519,
+        "trainingDays": 2125
+      },
+      "extreme_a100_observed": {
+        "score": 0.8327234073833649,
+        "wape": 0.16727659261663505,
+        "trainingDays": 2125
+      },
+      "route_basic_a1_observed": {
+        "score": 0.8840030713256835,
+        "wape": 0.11599692867431655,
+        "trainingDays": 2125
+      },
+      "route_basic_a1_climate": {
+        "score": 0.8818020490300815,
+        "wape": 0.11819795096991842,
+        "trainingDays": 2125
+      },
+      "route_basic_a10_observed": {
+        "score": 0.8799128500318828,
+        "wape": 0.12008714996811722,
+        "trainingDays": 2125
+      },
+      "route_basic_a10_climate": {
+        "score": 0.8770084544882013,
+        "wape": 0.12299154551179868,
+        "trainingDays": 2125
+      },
+      "route_basic_a100_observed": {
+        "score": 0.830997518163589,
+        "wape": 0.16900248183641098,
+        "trainingDays": 2125
+      },
+      "route_basic_a100_climate": {
+        "score": 0.8310023977810648,
+        "wape": 0.16899760221893523,
+        "trainingDays": 2125
+      }
+    }
+  }
+}

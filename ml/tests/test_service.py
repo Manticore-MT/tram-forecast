@@ -111,7 +111,9 @@ def test_quality_is_backtest_only(client):
     assert len(body["byDay"]) == 61 and len(body["byRoute"]) == 9
     assert sum(r["absoluteError"] for r in body["byDay"]) == body["overall"]["absoluteError"]
     assert not body["platform"]["hiddenActualsAvailable"]
-    assert body["platform"]["score"] is None
+    assert body["platform"]["score"] == .89174
+    assert body["platform"]["submissionFile"] == "reference/submission_service_dates_candidate.csv"
+    assert body["platform"]["servingModelMatchesSubmission"] is False
     assert client.get("/metrics?origin=2025-11-01").status_code == 422
 
 

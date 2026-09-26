@@ -188,8 +188,11 @@ def backtest_metrics(origin):
 @app.get("/metrics")
 def metrics(origin: Literal["2025-07-01", "2025-09-01"] = Query(default="2025-09-01")):
     return dict(scope="historical_route_hour_backtest", **backtest_metrics(origin),
-                platform={"score": None if app.state.service.engine.night_filtered else .88220,
-                          "previousUnfilteredScore": .88220 if app.state.service.engine.night_filtered else None,
+                platform={"score": .89174,
+                          "submissionFile": "reference/submission_service_dates_candidate.csv",
+                          "previousHybridScore": .88226,
+                          "servingModelMatchesSubmission": False,
+                          "previousUnfilteredScore": .88220,
                           "provenance": "reported_by_team", "hiddenActualsAvailable": False},
                 limitations=["Блоки использовались при подборе модели; это не независимый финальный тест.",
                              "Остановочных метрик и фактов нет. В actual_value не следует импортировать искусственно распределённые факты.",
