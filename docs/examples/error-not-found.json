@@ -1,8 +1,0 @@
-{
-  "code": "NOT_FOUND",
-  "detail": "No forecast for route 'NOPE'",
-  "instance": "/api/routes/NOPE/forecast",
-  "status": 404,
-  "timestamp": "2026-09-26T13:20:11.123+03:00",
-  "title": "Not found"
-}

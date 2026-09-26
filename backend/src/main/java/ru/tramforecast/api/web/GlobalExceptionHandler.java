@@ -74,14 +74,18 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * The route or stop is unknown.
+     * The route is unknown, the stop is not on the route, or there is no data to answer with.
      *
      * @param e the failure
      * @return 404
      */
     @ExceptionHandler(NotFoundException.class)
     public ProblemDetail notFound(NotFoundException e) {
-        return problem(HttpStatus.NOT_FOUND, ErrorCode.NOT_FOUND, "Not found", e.getMessage());
+        return switch (e.reason()) {
+            case ROUTE -> problem(HttpStatus.NOT_FOUND, ErrorCode.ROUTE_NOT_FOUND, "Route not found", e.getMessage());
+            case STOP -> problem(HttpStatus.NOT_FOUND, ErrorCode.STOP_NOT_FOUND, "Stop not found", e.getMessage());
+            case NO_DATA -> problem(HttpStatus.NOT_FOUND, ErrorCode.NO_DATA, "No data", e.getMessage());
+        };
     }
 
     /**

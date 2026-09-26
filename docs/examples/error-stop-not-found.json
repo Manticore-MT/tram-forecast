@@ -1,0 +1,8 @@
+{
+  "code": "STOP_NOT_FOUND",
+  "detail": "Route '1' has no stop 'X'",
+  "instance": "/api/routes/1/stops/X/forecast",
+  "status": 404,
+  "timestamp": "2026-09-26T13:20:11.123+03:00",
+  "title": "Stop not found"
+}

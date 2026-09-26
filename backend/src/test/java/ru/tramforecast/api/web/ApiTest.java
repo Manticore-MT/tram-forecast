@@ -219,9 +219,35 @@ class ApiTest {
                 .andExpect(jsonPath("$.detail").value(containsString("at most 1 year")));
         mvc.perform(get("/api/routes/NOPE/forecast"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.title").value("Not found"))
-                .andExpect(jsonPath("$.code").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.title").value("Route not found"))
+                .andExpect(jsonPath("$.code").value("ROUTE_NOT_FOUND"))
+                .andExpect(jsonPath("$.detail").value(containsString("There is no route 'NOPE'. Known routes: R1, R2")))
                 .andExpect(jsonPath("$.instance").value("/api/routes/NOPE/forecast"));
+    }
+
+    /**
+     * An unknown stop on a known route, an unknown route on a stop request and a route without
+     * history each get their own code, so the client can say what exactly is missing.
+     */
+    @Test
+    void notFoundIsSpecificAboutWhatIsMissing() throws Exception {
+        mvc.perform(get("/api/routes/R1/stops/nope/forecast"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("STOP_NOT_FOUND"))
+                .andExpect(jsonPath("$.detail").value("Route 'R1' has no stop 'nope'"));
+        mvc.perform(get("/api/routes/NOPE/stops/ALL/forecast"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ROUTE_NOT_FOUND"));
+        mvc.perform(get("/api/routes/R1/load-matrix"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("NO_DATA"))
+                .andExpect(jsonPath("$.detail").value(containsString("No history is stored for route 'R1'")));
+        mvc.perform(get("/api/export").param("routeId", "NOPE"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("ROUTE_NOT_FOUND"));
+        mvc.perform(get("/api/export").param("routeId", "R1").param("stopId", "nope"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.code").value("STOP_NOT_FOUND"));
     }
 
     /**

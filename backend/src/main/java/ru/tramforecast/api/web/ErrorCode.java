@@ -10,8 +10,12 @@ public enum ErrorCode {
     INVALID_REQUEST,
     /** A parameter is missing or has the wrong format. */
     INVALID_PARAMETER,
-    /** The route or stop is unknown, or there is nothing to return for it. */
-    NOT_FOUND,
+    /** There is no such route. */
+    ROUTE_NOT_FOUND,
+    /** The route exists but has no such stop. */
+    STOP_NOT_FOUND,
+    /** The route and stop exist but there is no data to answer with (no history, nothing to export). */
+    NO_DATA,
     /** The URL is not an endpoint of this API. */
     ENDPOINT_NOT_FOUND,
     /** The endpoint exists but not for this HTTP method. */

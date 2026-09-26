@@ -1,0 +1,8 @@
+{
+  "code": "NO_DATA",
+  "detail": "No history is stored for route '1', so a load matrix cannot be built",
+  "instance": "/api/routes/1/load-matrix",
+  "status": 404,
+  "timestamp": "2026-09-26T13:20:11.123+03:00",
+  "title": "No data"
+}

@@ -26,8 +26,10 @@ fields, so one error window can show them all:
 | `instance` | the request path that failed |
 
 Codes (added over time, never renamed): `INVALID_REQUEST` (400), `INVALID_PARAMETER` (400),
-`UNAUTHORIZED` (401), `NOT_FOUND` (404, unknown route or stop), `ENDPOINT_NOT_FOUND` (404, not an
-endpoint), `METHOD_NOT_ALLOWED` (405), `FORECAST_NOT_READY` (503, nothing stored and ML is
+`UNAUTHORIZED` (401), `ROUTE_NOT_FOUND` (404, no such route; `detail` lists the known routes),
+`STOP_NOT_FOUND` (404, the route exists but has no such stop), `NO_DATA` (404, route and stop exist
+but there is nothing to answer with, for example no history for a load matrix),
+`ENDPOINT_NOT_FOUND` (404, not an endpoint), `METHOD_NOT_ALLOWED` (405), `FORECAST_NOT_READY` (503, nothing stored and ML is
 unavailable: try again later), `INTERNAL_ERROR` (500, nothing internal is revealed). Samples:
 [`examples/error-*.json`](examples).
 

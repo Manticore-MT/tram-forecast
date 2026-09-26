@@ -1196,8 +1196,8 @@
           "code" : {
             "type" : "string",
             "description" : "Machine-readable error code, stable across releases (codes are added, never renamed)",
-            "enum" : [ "INVALID_REQUEST", "INVALID_PARAMETER", "NOT_FOUND", "ENDPOINT_NOT_FOUND", "METHOD_NOT_ALLOWED", "FORECAST_NOT_READY", "UNAUTHORIZED", "INTERNAL_ERROR" ],
-            "example" : "NOT_FOUND"
+            "enum" : [ "INVALID_REQUEST", "INVALID_PARAMETER", "ROUTE_NOT_FOUND", "STOP_NOT_FOUND", "NO_DATA", "ENDPOINT_NOT_FOUND", "METHOD_NOT_ALLOWED", "FORECAST_NOT_READY", "UNAUTHORIZED", "INTERNAL_ERROR" ],
+            "example" : "ROUTE_NOT_FOUND"
           },
           "detail" : {
             "type" : "string",

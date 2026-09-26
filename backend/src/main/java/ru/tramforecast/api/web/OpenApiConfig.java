@@ -105,7 +105,7 @@ public class OpenApiConfig {
     private static StringSchema errorCodes() {
         StringSchema code = new StringSchema();
         code.setDescription("Machine-readable error code, stable across releases (codes are added, never renamed)");
-        code.setExample(ErrorCode.NOT_FOUND.name());
+        code.setExample(ErrorCode.ROUTE_NOT_FOUND.name());
         for (ErrorCode value : ErrorCode.values()) {
             code.addEnumItem(value.name());
         }
