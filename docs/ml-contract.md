@@ -1,77 +1,103 @@
 # Contract with the ML service
 
-What the backend expects from the ML service. The ML side (model, code, container) is owned and
-built by the ML engineer; this document only pins the interface. The backend never touches raw
-telemetry.
+What the backend expects from the ML service and what the real service (`ml/`, built by the ML
+engineer) actually does. This document pins the interface; the model, its code and its numbers belong
+to the ML side. The backend never touches raw telemetry.
 
-The backend has two modes, set by `TRAM_ML_MODE`:
+## How it is wired
 
-- `stub` (default): the backend serves deterministic synthetic forecasts itself, so everything
-  else can be built and demoed before the model exists. Responses carry `modelVersion = "stub"`.
-- `http`: the backend calls the ML service at `TRAM_ML_BASE_URL` (default `http://ml:8000`) using
-  the contract below. The contract is pinned by a test on the backend side
-  (`HttpMlForecastClientTest`), which also covers error status, malformed body and timeout.
+- The ML service is a separate container (FastAPI, `ml/Dockerfile`), image `.../tram-forecast/ml`,
+  reachable only from the backend at `http://ml:8000` (no published port). The production compose file
+  always runs the backend with `TRAM_ML_MODE=http`.
+- `TRAM_ML_MODE=stub` (the default outside production compose) serves deterministic synthetic
+  forecasts from inside the backend, for local development. Its `modelVersion` is `stub`.
+- The backend reads forecasts from its own storage and asks ML **only when storage has nothing** for
+  the request; it stores the answer (append-only). The read timeout is 10 s (`tram.ml.read-timeout`).
+- The contract is pinned by `HttpMlForecastClientTest` (request, response, refusals, error status,
+  malformed body, timeout).
 
-## What the backend expects: `POST /predict`
+## `POST /predict` (what the backend calls)
 
-The backend asks for the forecast of the **whole network** for one horizon and anchor date. It asks
-only when its own storage has nothing for that request, and stores what it gets (append-only), so
-recomputing is cheap for the backend and slow calls are fine as long as they finish within the
-read timeout (10 s by default, `tram.ml.read-timeout`).
-
-Request:
+The backend asks for the forecast of the **whole network** for one horizon and anchor date.
 
 ```json
-{ "horizon": "day", "date": "2026-09-25" }
+{ "horizon": "day", "date": "2025-11-05" }
 ```
 
-- `horizon`: `day`, `week`, `month` or `year`. It fixes the step of the points: **day = hourly,
-  week = daily, month = daily, year = monthly**.
+- `horizon`: `day` (24 hourly points), `week` (7 daily points), `month` (daily points),
+  `year` (12 monthly points).
 - `date`: anchor date `YYYY-MM-DD`. For `day` it is the day; for `week` it is the **first of seven
-  days** (a sliding window that starts at `date`, not a calendar week: the operator picks the first
-  day, so return exactly seven daily points from `date`); for `month`/`year` any day inside the
-  month/year. Days, months and years begin at **Europe/Moscow** midnight.
+  days** (a sliding window that starts at `date`, not a calendar week); for `month` any day inside the
+  month; for `year` any day inside the calendar year. Days begin at **Europe/Moscow** midnight.
+- The service also accepts an optional `routeIds` list; the backend does not send it.
 
 Response:
 
 ```json
 {
-  "generatedAt": "2026-09-25T12:00:00+03:00",
-  "modelVersion": "v0.3",
+  "generatedAt": "2026-09-26T20:18:44+03:00",
+  "modelVersion": "<model>-uniform-stops-demo-<hash>",
   "forecasts": [
     {
-      "routeId": "5",
-      "stopId": "1023",
-      "points": [
-        { "periodStart": "2026-09-25T09:00:00+03:00", "baseline": 900.0, "forecast": 1240.0 }
-      ],
-      "factors": ["weekend", "rain"]
+      "routeId": "17",
+      "stopId": "2594",
+      "points": [{ "periodStart": "2025-11-05T08:00:00+03:00", "baseline": 1750.4, "forecast": 1980.2 }],
+      "factors": ["Календарь: дни недели, праздники, сокращённые дни", "ДЕМО ОСТАНОВОК: ..."]
     }
   ]
 }
 ```
 
-- One entry per stop **of a route** (a stop served by several routes appears once per route).
-- `baseline` is the "usual level" for the same period; `forecast` is the model's value. The backend
-  computes the deviation (absolute and percent), the attention zones and the recommendations
-  itself, so these two numbers are all it needs.
-- `factors` lists what the model took into account (calendar, weather, events ...), shown to the
-  dispatcher. May be empty or omitted.
-- All timestamps ISO 8601 with an explicit offset.
-- IDs (`routeId`, `stopId`) must be the ones from the route/stop dataset the frontend draws the map
-  from; the backend stores them as-is.
+- The unit is **boardings per period** (the target is successful validations per route and hour).
+- `routeId` is the route number as a string (`1, 7, 11, 12, 17, 25, 26, 28, 50`); `stopId` is the
+  `stopCode` from `shared/tram-stops.json`.
+- **Stop values are a demonstration, not a measurement.** The dataset has no stops, the model forecasts
+  a route per hour, and `POST /predict` splits the route total **equally** among its stops (the
+  backend sums the stops back into the route total). The service marks this in `factors` ("ДЕМО
+  ОСТАНОВОК") and in `modelVersion` (`-uniform-stops-demo-<hash>`). Forecasts after 2025-12-31 are a
+  **scenario** (`-scenario` in `modelVersion`, a "СЦЕНАРИЙ" factor): their quality is not measured.
+- `baseline` is the "usual level": the median of the 56 days before 2025-11-01 for the route, the
+  effective weekday and the hour (holidays count as Sunday). The backend takes it as is and computes
+  the deviation, attention zones and recommendations from `baseline` and `forecast`.
+- Weather, event and season corrections are **multipliers applied by the backend**; ML does not apply
+  them again.
 
-Errors: any non-2xx status or a timeout is treated as "ML unavailable": the backend keeps serving
-what it has stored and returns 503 only when it has nothing.
+## The period the model covers
 
-## Open questions for the model (need answers before the contract is final)
+The model covers **2025-11-01 .. 2026-12-31** (2026 is a scenario); a `year` request must be a whole
+calendar year inside that range, so only 2026. The backend knows the range from configuration
+(`TRAM_FORECAST_FROM`, `TRAM_FORECAST_TO`, defaults in the production compose file) and:
 
-1. **Unit of `baseline`/`forecast`**: passengers per period, or load ratio? The dispatcher screens
-   show "1 240 passengers, usually 900, +340 / +37.8%", which needs absolute values.
-2. **Which day counts as "the norm" for the baseline** (same weekday average over N weeks?). It must
-   be documented: the judging asks for the domain of applicability.
-3. **Quality metric**: the challenge is judged on WAPE-score `max(0, 1 - Σ|y-ŷ|/Σy)`. The backend
-   reports the same metric from stored initial forecasts versus facts (`GET /api/model/stats`).
-4. **Facts for the dashboard**: the backend needs observed values aggregated to stop and hour
-   (table `actual_value`, see `backend/src/main/resources/db/migration/V1__init.sql`). Who produces
-   the aggregate from the organizers' dataset, and in what format?
+- refuses a period that is not entirely inside it **before** calling ML, with `400` and the code
+  `PERIOD_NOT_SUPPORTED` and the range in the message;
+- reports it to clients in `GET /api/meta` (`forecastFrom`, `forecastTo`; `latestDate` is the end of it).
+
+## Errors
+
+- A `422` from ML is a **refusal of this request**, not an outage. The service explains it as
+  `{"detail": {"code": ..., "message": ...}}`: `UNSUPPORTED_PERIOD` and `SCENARIO_DISABLED` become
+  `PERIOD_NOT_SUPPORTED` (400) with ML's message; other codes (for example `UNSUPPORTED_ROUTE`) become
+  `INVALID_REQUEST` (400). A validation error of the framework (a list under `detail`) is treated the
+  same way.
+- Any other non-2xx status, a malformed body or a timeout is "ML unavailable": the backend keeps serving
+  what it has stored and answers `503 FORECAST_NOT_READY` only when it has nothing.
+
+## Other endpoints of the ML service
+
+| Endpoint | What it gives | Used by the backend |
+|---|---|---|
+| `POST /predict/routes` | the route totals with baseline, without the stop split (the real values) | no |
+| `GET /metadata` | model version, baseline method, corrections note, limitations, sources, supported routes | no |
+| `GET /metrics?origin=2025-07-01\|2025-09-01` | WAPE and score overall, by route and by day on the two historical 61-day backtest blocks | not yet; planned for `GET /api/model/stats` |
+| `GET /health` | liveness and the model version (the container health check) | Deploy checks it |
+
+## Status of the earlier open questions
+
+1. **Unit of `baseline` / `forecast`**: boardings per period (answered above).
+2. **Which day counts as the norm**: the median of the 56 days before 2025-11-01 per route, effective
+   weekday and hour (answered above; `GET /metadata` documents it).
+3. **Quality metric**: WAPE-score `max(0, 1 - Σ|y-ŷ|/Σy)`. The ML service reports it from its backtests
+   (`GET /metrics`); passing those numbers through `GET /api/model/stats` is the next step, because the
+   backend has no facts to compute it itself.
+4. **Facts for the dashboard**: not loaded into the backend (`actual_value` is empty), so `actual` is
+   absent and the load matrix has no data. The organizers' labels are available in `ml/data/`.

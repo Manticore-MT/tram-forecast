@@ -6,13 +6,17 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 import ru.tramforecast.api.domain.model.ForecastPoint;
 import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.RouteId;
 import ru.tramforecast.api.domain.model.StopForecast;
 import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.domain.port.MlForecastClient;
+import ru.tramforecast.api.domain.port.MlRequestRejectedException;
 import ru.tramforecast.api.domain.port.MlUnavailableException;
 
 /**
@@ -20,6 +24,8 @@ import ru.tramforecast.api.domain.port.MlUnavailableException;
  * with finished aggregates for every stop. The contract is documented in {@code ml/README.md}.
  */
 public class HttpMlForecastClient implements MlForecastClient {
+
+    private static final JsonMapper MAPPER = JsonMapper.builder().build();
 
     private final RestClient client;
 
@@ -45,11 +51,38 @@ public class HttpMlForecastClient implements MlForecastClient {
                 throw new MlUnavailableException("The ML service returned an empty answer", null);
             }
             return map(response, horizon, date);
-        } catch (MlUnavailableException e) {
+        } catch (MlUnavailableException | MlRequestRejectedException e) {
             throw e;
+        } catch (HttpClientErrorException e) {
+            // 422 is a refusal of this request; any other client error is treated like an outage
+            if (e.getStatusCode().value() == 422) {
+                throw rejection(e);
+            }
+            throw new MlUnavailableException("The ML service request failed: " + e.getMessage(), e);
         } catch (RuntimeException e) {
             throw new MlUnavailableException("The ML service request failed: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Reads a 422 answer. The ML service explains a refusal as {@code {"detail": {"code": ..., "message":
+     * ...}}}; a validation error of its framework has a list under {@code detail} instead.
+     */
+    private static MlRequestRejectedException rejection(HttpClientErrorException e) {
+        String code = "REJECTED";
+        String message = "The ML service refused the request";
+        try {
+            JsonNode detail = MAPPER.readTree(e.getResponseBodyAsString()).path("detail");
+            if (detail.isObject()) {
+                code = detail.path("code").asString(code);
+                message = detail.path("message").asString(message);
+            } else if (detail.isArray() && !detail.isEmpty()) {
+                message = detail.get(0).path("msg").asString(message);
+            }
+        } catch (RuntimeException ignored) {
+            // the body was not the documented shape: keep the generic explanation
+        }
+        return new MlRequestRejectedException(code, message);
     }
 
     private static List<StopForecast> map(PredictResponse response, Horizon horizon, LocalDate date) {

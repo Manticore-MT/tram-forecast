@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.StopForecast;
 import ru.tramforecast.api.domain.port.MlForecastClient;
+import ru.tramforecast.api.domain.port.MlRequestRejectedException;
 import ru.tramforecast.api.domain.port.MlUnavailableException;
 import ru.tramforecast.api.infrastructure.config.TramProperties;
 import ru.tramforecast.api.infrastructure.ml.MlConfig;
@@ -123,6 +124,52 @@ class HttpMlForecastClientTest {
     }
 
     /**
+     * A 422 with the documented explanation is a refusal, not "unavailable": asking again later gives the
+     * same answer, so the code and the reason are passed on.
+     */
+    @Test
+    void documentedRefusalIsNotUnavailable() {
+        status = 422;
+        body = "{\"detail\":{\"code\":\"UNSUPPORTED_PERIOD\",\"message\":\"Inside 2025-11-01 .. 2026-12-31 only\"}}";
+
+        assertThatThrownBy(() -> client(Duration.ofSeconds(2)).predict(Horizon.DAY, LocalDate.of(2025, 10, 15)))
+                .isInstanceOfSatisfying(MlRequestRejectedException.class, e -> {
+                    assertThat(e.code()).isEqualTo("UNSUPPORTED_PERIOD");
+                    assertThat(e.getMessage()).isEqualTo("Inside 2025-11-01 .. 2026-12-31 only");
+                });
+    }
+
+    /**
+     * A validation error of the ML framework (a list under "detail") is a refusal with its first message.
+     */
+    @Test
+    void frameworkValidationErrorIsARefusal() {
+        status = 422;
+        body = "{\"detail\":[{\"loc\":[\"body\",\"horizon\"],\"msg\":\"Input should be day, week, month or year\"}]}";
+
+        assertThatThrownBy(() -> client(Duration.ofSeconds(2)).predict(Horizon.DAY, LocalDate.of(2026, 9, 25)))
+                .isInstanceOfSatisfying(MlRequestRejectedException.class, e -> {
+                    assertThat(e.code()).isEqualTo("REJECTED");
+                    assertThat(e.getMessage()).isEqualTo("Input should be day, week, month or year");
+                });
+    }
+
+    /**
+     * A 422 whose body is not the documented shape is still a refusal, with a generic explanation.
+     */
+    @Test
+    void unreadableRefusalKeepsAGenericExplanation() {
+        status = 422;
+        body = "<html>nope</html>";
+
+        assertThatThrownBy(() -> client(Duration.ofSeconds(2)).predict(Horizon.DAY, LocalDate.of(2026, 9, 25)))
+                .isInstanceOfSatisfying(MlRequestRejectedException.class, e -> {
+                    assertThat(e.code()).isEqualTo("REJECTED");
+                    assertThat(e.getMessage()).isEqualTo("The ML service refused the request");
+                });
+    }
+
+    /**
      * A body that does not follow the contract is "ML unavailable", never a raw parsing error.
      */
     @Test
@@ -165,7 +212,7 @@ class HttpMlForecastClientTest {
                         "http", "http://127.0.0.1:" + port, Duration.ofSeconds(1), readTimeout,
                         new TramProperties.Stub(1, 1)),
                 new TramProperties.Attention(10, 25),
-                new TramProperties.Forecast(1),
+                new TramProperties.Forecast(1, null, null),
                 new TramProperties.Refresh(false, "0 0 * * * *"),
                 new TramProperties.Cache(Duration.ofSeconds(1), Duration.ofSeconds(1), 8));
         return new MlConfig().httpMlForecastClient(properties);

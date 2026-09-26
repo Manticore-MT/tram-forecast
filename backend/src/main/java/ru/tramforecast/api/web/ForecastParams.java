@@ -28,7 +28,8 @@ public record ForecastParams(
                 type = "string", allowableValues = {"day", "week", "month", "year"}, defaultValue = "day")
         Horizon horizon,
         @Schema(description = "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any "
-                + "day inside the month or year. Defaults to today, at most one year ahead.", example = "2026-09-25")
+                + "day inside the month or year. Defaults to today. The whole period must lie inside the range the "
+                + "model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).", example = "2026-09-25")
         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
         @Schema(description = "Which stored snapshot to read: the latest one, or the initial one (the forecast "
                 + "as it was first made for that date).",

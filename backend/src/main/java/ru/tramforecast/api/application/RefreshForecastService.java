@@ -9,6 +9,7 @@ import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.StopForecast;
 import ru.tramforecast.api.domain.port.ForecastRepository;
 import ru.tramforecast.api.domain.port.MlForecastClient;
+import ru.tramforecast.api.domain.port.MlRequestRejectedException;
 import ru.tramforecast.api.domain.port.MlUnavailableException;
 
 /**
@@ -45,6 +46,9 @@ public class RefreshForecastService implements RefreshForecastUseCase {
             List<StopForecast> fresh = ml.predict(horizon, date);
             repository.saveAll(fresh);
             return !fresh.isEmpty();
+        } catch (MlRequestRejectedException e) {
+            LOG.warn("ML refused to refresh {} {}: {}", horizon, date, e.getMessage());
+            return false;
         } catch (MlUnavailableException e) {
             LOG.warn("ML unavailable while refreshing {} {}, keeping the last snapshot: {}", horizon, date,
                     e.getMessage());

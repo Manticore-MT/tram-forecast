@@ -1,6 +1,7 @@
 package ru.tramforecast.api.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.time.Clock;
@@ -23,6 +24,7 @@ import ru.tramforecast.api.domain.model.SnapshotKind;
 import ru.tramforecast.api.domain.model.StopForecast;
 import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.domain.port.MlForecastClient;
+import ru.tramforecast.api.domain.port.MlRequestRejectedException;
 import ru.tramforecast.api.domain.port.MlUnavailableException;
 import ru.tramforecast.api.domain.service.AttentionPolicy;
 import ru.tramforecast.api.domain.service.AttentionZoneCalculator;
@@ -195,6 +197,91 @@ class ApplicationTest {
         assertThat(stats.history()).hasSize(1);
         assertThatThrownBy(() -> new GetModelStatsService(forecasts, actuals).get(0))
                 .isInstanceOf(InvalidRequestException.class);
+    }
+
+    private ForecastDates rangedDates() {
+        return new ForecastDates(
+                Clock.fixed(NOON, ZONE), ZONE, 1, LocalDate.of(2025, 11, 1), LocalDate.of(2026, 12, 31));
+    }
+
+    /**
+     * A period is accepted only when all of it lies inside the model's range: a day, a week that starts
+     * at the date, a whole month, a whole calendar year.
+     */
+    @Test
+    void periodMustLieEntirelyInsideTheModelRange() {
+        ForecastDates dates = rangedDates();
+
+        assertThatCode(() -> dates.ensureSupported(Horizon.DAY, LocalDate.of(2025, 11, 1))).doesNotThrowAnyException();
+        assertThatCode(() -> dates.ensureSupported(Horizon.WEEK, LocalDate.of(2026, 12, 25))).doesNotThrowAnyException();
+        assertThatCode(() -> dates.ensureSupported(Horizon.MONTH, LocalDate.of(2026, 12, 10))).doesNotThrowAnyException();
+        assertThatCode(() -> dates.ensureSupported(Horizon.YEAR, LocalDate.of(2026, 3, 3))).doesNotThrowAnyException();
+
+        assertThatThrownBy(() -> dates.ensureSupported(Horizon.DAY, LocalDate.of(2025, 10, 31)))
+                .isInstanceOf(PeriodNotSupportedException.class)
+                .hasMessageContaining("2025-11-01 .. 2026-12-31")
+                .hasMessageContaining("day covers 2025-10-31 .. 2025-10-31");
+        assertThatThrownBy(() -> dates.ensureSupported(Horizon.WEEK, LocalDate.of(2026, 12, 26)))
+                .isInstanceOf(PeriodNotSupportedException.class)
+                .hasMessageContaining("week covers 2026-12-26 .. 2027-01-01");
+        assertThatThrownBy(() -> dates.ensureSupported(Horizon.MONTH, LocalDate.of(2025, 10, 15)))
+                .isInstanceOf(PeriodNotSupportedException.class);
+        assertThatThrownBy(() -> dates.ensureSupported(Horizon.YEAR, LocalDate.of(2025, 12, 1)))
+                .isInstanceOf(PeriodNotSupportedException.class)
+                .hasMessageContaining("year covers 2025-01-01 .. 2025-12-31");
+    }
+
+    /**
+     * With a fixed range the range is the limit (not "one year ahead"), a date beyond it is a period
+     * problem, and without a range nothing is refused.
+     */
+    @Test
+    void theRangeReplacesTheYearsAheadLimit() {
+        ForecastDates dates = rangedDates();
+
+        assertThat(dates.latest()).isEqualTo(LocalDate.of(2026, 12, 31));
+        assertThat(dates.earliest()).isEqualTo(LocalDate.of(2025, 11, 1));
+        assertThat(dates.resolve(LocalDate.of(2027, 3, 1))).isEqualTo(LocalDate.of(2027, 3, 1));
+        assertThatThrownBy(() -> dates.ensureSupported(Horizon.DAY, LocalDate.of(2027, 3, 1)))
+                .isInstanceOf(PeriodNotSupportedException.class);
+
+        ForecastDates unlimited = new ForecastDates(Clock.fixed(NOON, ZONE), ZONE, 1);
+        assertThat(unlimited.earliest()).isNull();
+        assertThatCode(() -> unlimited.ensureSupported(Horizon.DAY, LocalDate.of(1999, 1, 1))).doesNotThrowAnyException();
+        assertThatThrownBy(() -> unlimited.resolve(LocalDate.of(2030, 1, 1))).isInstanceOf(InvalidRequestException.class);
+    }
+
+    /**
+     * The metadata tells the client the model's range.
+     */
+    @Test
+    void metaReportsTheModelRange() {
+        ServiceMeta meta = new GetMetaService(Clock.fixed(NOON, ZONE), rangedDates(), ZONE, "model").get();
+
+        assertThat(meta.forecastFrom()).isEqualTo(LocalDate.of(2025, 11, 1));
+        assertThat(meta.forecastTo()).isEqualTo(LocalDate.of(2026, 12, 31));
+        assertThat(meta.latestDate()).isEqualTo(LocalDate.of(2026, 12, 31));
+    }
+
+    /**
+     * A refusal from ML about the period is a period problem for the client (not "try again later"), any
+     * other refusal is an invalid request, and only a real outage is "ML unavailable".
+     */
+    @Test
+    void mlRefusalsAreNotReportedAsAnOutage() {
+        ForecastLoader unsupported = new ForecastLoader(new InMemoryForecastRepository(), (h, d) -> {
+            throw new MlRequestRejectedException("UNSUPPORTED_PERIOD", "Inside 2025-11-01 .. 2026-12-31 only");
+        });
+        ForecastLoader unknownRoute = new ForecastLoader(new InMemoryForecastRepository(), (h, d) -> {
+            throw new MlRequestRejectedException("UNSUPPORTED_ROUTE", "No such route");
+        });
+
+        assertThatThrownBy(() -> unsupported.load(Horizon.DAY, DATE, SnapshotKind.LATEST))
+                .isInstanceOf(PeriodNotSupportedException.class)
+                .hasMessage("Inside 2025-11-01 .. 2026-12-31 only");
+        assertThatThrownBy(() -> unknownRoute.load(Horizon.DAY, DATE, SnapshotKind.LATEST))
+                .isInstanceOf(InvalidRequestException.class)
+                .hasMessage("No such route");
     }
 
     private static StopForecast stop(String stop, Instant generatedAt, ForecastPoint point) {

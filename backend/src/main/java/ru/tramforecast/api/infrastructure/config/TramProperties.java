@@ -1,6 +1,7 @@
 package ru.tramforecast.api.infrastructure.config;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -59,9 +60,11 @@ public record TramProperties(
     /**
      * Limits on forecast requests.
      *
-     * @param maxYearsAhead how far ahead a forecast may be requested
+     * @param maxYearsAhead how far ahead a forecast may be requested when the model has no fixed range
+     * @param from          first date the model covers, blank for no lower limit
+     * @param to            last date the model covers, blank for "today plus the allowed years"
      */
-    public record Forecast(int maxYearsAhead) {
+    public record Forecast(int maxYearsAhead, LocalDate from, LocalDate to) {
     }
 
     /**

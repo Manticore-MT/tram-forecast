@@ -85,7 +85,9 @@ public class UseCaseConfig {
      */
     @Bean
     public ForecastDates forecastDates(Clock clock, ZoneId zone, TramProperties properties) {
-        return new ForecastDates(clock, zone, properties.forecast().maxYearsAhead());
+        return new ForecastDates(
+                clock, zone, properties.forecast().maxYearsAhead(), properties.forecast().from(),
+                properties.forecast().to());
     }
 
     /**
