@@ -3,7 +3,7 @@ name: Deploy
 # A button, not an automatic step: run it from the Actions tab ("Run workflow"). Anyone with write
 # access to the repository can press it; the server key stays in the "production" environment's
 # secrets and is never visible to people. The workflow only pulls the images CI has already
-# published and restarts the stack, it builds nothing.
+# published and restarts the stack, it builds nothing. Wait until the ML service is healthy.
 on:
   workflow_dispatch:
     inputs:
@@ -24,13 +24,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     environment: production
+    permissions:
+      contents: read
+      packages: read
     steps:
       - name: Pull and restart on the server
         uses: appleboy/ssh-action@v1
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: GHCR_TOKEN
           script: |
             set -euo pipefail
             cd "${{ secrets.DEPLOY_PATH }}"
@@ -38,8 +44,12 @@ jobs:
             # `docker compose pull` cannot notice that the compose file itself changed.
             git pull --ff-only
             export IMAGE_TAG="${{ inputs.image_tag }}"
+            # New GHCR packages start private; use this run's short-lived token for the pull.
+            printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+            trap 'docker logout ghcr.io >/dev/null 2>&1 || true' EXIT
             docker compose -f docker-compose.prod.yml pull
-            docker compose -f docker-compose.prod.yml up -d
+            docker compose -f docker-compose.prod.yml up -d --wait --wait-timeout 120
+            docker compose -f docker-compose.prod.yml exec -T ml python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"
             docker image prune -f
 
       # Optional check: set the environment variable DEPLOY_URL (for example https://tram.example.com)
