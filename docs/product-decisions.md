@@ -127,9 +127,8 @@ Directly actionable pieces:
   zero for that source — applies to weather, traffic, calendar/holidays, and any "other" factor
   (events, roadworks, news).
 - **Correction coefficients must visibly and instantly affect the forecast in the UI** (weather/event/
-  season sliders) — worth 1 of the 8 data-criterion points; the API already supports this
-  (`weather`, `event`, `season` params per `frontend-integration.md`), so this is a frontend UI gap
-  to close, not a backend one.
+  season sliders) — worth 1 of the 8 data-criterion points. Done on the frontend (панель «Сценарий»,
+  see § Frontend UX below).
 - **Required submission artifacts** (links, filled on the hackathon platform): ML model + training
   code + README; all external data sources used; runnable service (Docker Compose) with API entry
   points and jury instructions; architecture/module diagram + model validity/adaptation description;
@@ -139,6 +138,33 @@ Directly actionable pieces:
   final version is what's graded). Both close **2026-09-27 23:59 MSK**.
 - Dataset: `dataset.zip` at <https://disk.yandex.ru/d/DiFwlfMOauxjBg> (per the brief; the org call
   said 9 routes after route 5 was dropped — confirm the zip matches).
+
+## Frontend UX (решения фронта — Адис, 2026-09-26; не с общего созвона)
+
+Decided by the frontend owner while building the dispatcher screen. Not team-call decisions — raise
+on a call if anyone disagrees. Implementation: `frontend/src/features/dispatcher/`.
+
+- **Time control = scale + cursor** (calendar model, like Google/Apple Calendar): scales
+  «Год | Месяц | 7 дней | День», shown coarse → fine like the breadcrumbs, **День by default**.
+  «7 дней» is the API's `week` horizon (7 days from the cursor, not a calendar week) — a sibling of
+  «Месяц», not its child. `<` `>`, date picker, «Сегодня».
+- **Gestures on the time strip**: click = focus a period; drag across ≥ 2 bars = time interval
+  (`from`/`to`, like Grafana/Kibana); double click = go one scale down; click on empty strip = one
+  scale up (mirrors «click on empty map = one level up»). No continuous scrubbing — it had no real
+  dispatcher task behind it. A one-bar interval isn't created (it would repeat the focus).
+- **«Сейчас»**: bars sit edge to edge (time is continuous, histogram-style); the current period is
+  marked on its bar at every scale; a precise «сейчас» line only on «День». Research:
+  `docs/research/now-marker-bars.md`.
+- **Correction coefficients**: slider 0.1–3.0 with **1.0 exactly in the middle** (0.1→1 on the left
+  half, 1→3 on the right) + a numeric field; the request goes on release / after 300 ms. Result shown
+  as «было → стало» at the focused period + an outline of the uncorrected forecast on the strip +
+  a «Сценарий изменён» badge. (See open question on US5.)
+- **Errors**: shown inside the card of the widget that failed, with «Повторить» where a retry makes
+  sense; toasts only for actions without a card; `FORECAST_NOT_READY` is retried automatically.
+- **Map**: click on empty map = one level up; zoom `− +` and «вписать» in a pill next to the
+  breadcrumbs (kept apart from them: breadcrumbs = where you are, the pill = camera only).
+- **Load colors** on the map and the strip are relative to the window's peak until vehicle capacity
+  exists (see the recommendation TODO above).
 
 ## Dashboards (reference for frontend scope)
 

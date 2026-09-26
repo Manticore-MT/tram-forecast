@@ -1,9 +1,7 @@
 import type { ReactNode } from "react";
 import { HashRouter, Navigate, Route, Routes } from "react-router-dom";
-import DashApp from "./products/forecast-dashboard/DashApp";
-import LoginScreen from "./products/forecast-dashboard/LoginScreen";
-import StopDetailCompare from "./mockups/stopDetail/Compare";
-import DispatcherOverviewMockup from "./mockups/dispatcherOverview";
+import LoginScreen from "./features/login/LoginScreen";
+import DispatcherApp from "./features/dispatcher";
 import { isAuthenticated } from "./api/auth";
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -15,9 +13,7 @@ export default function App() {
     <HashRouter>
       <Routes>
         <Route path="/login" element={<LoginScreen />} />
-        <Route path="/mockups" element={<StopDetailCompare />} />
-        <Route path="/dashboard-legacy" element={<DashApp />} />
-        <Route path="*" element={<RequireAuth><DispatcherOverviewMockup /></RequireAuth>} />
+        <Route path="*" element={<RequireAuth><DispatcherApp /></RequireAuth>} />
       </Routes>
     </HashRouter>
   );

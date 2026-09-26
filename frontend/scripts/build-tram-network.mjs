@@ -1,6 +1,6 @@
 // Joins tram-trips + the filtered stop-times slice + tram-stops into one ordered
 // per-route stop sequence with real coordinates, consumed directly by the app from
-// src/data/tram-network.json (see src/products/forecast-dashboard/MapScreens.tsx).
+// src/data/tram-network.json (see src/network/tramNetwork.ts).
 // Run with: node scripts/build-tram-network.mjs
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";

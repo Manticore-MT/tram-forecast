@@ -1,4 +1,4 @@
-import type { operations } from "./schema.d.ts";
+import type { components, operations } from "./schema.d.ts";
 import { getAuthHeader, isAuthenticated, logout } from "./auth";
 
 // Empty string = relative "/api/..." — correct for prod, where Caddy serves the frontend and
@@ -7,14 +7,18 @@ import { getAuthHeader, isAuthenticated, logout } from "./auth";
 // (not committed), e.g. VITE_API_BASE_URL=http://localhost:8080.
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
+export type ApiErrorCode = NonNullable<components["schemas"]["Problem"]["code"]>;
+
 export class ApiError extends Error {
   status: number;
+  code?: ApiErrorCode;
   detail?: string;
 
-  constructor(status: number, title: string, detail?: string) {
+  constructor(status: number, title: string, detail?: string, code?: ApiErrorCode) {
     super(title);
     this.status = status;
     this.detail = detail;
+    this.code = code;
   }
 }
 
@@ -30,7 +34,7 @@ function buildQuery(params?: Query): string {
   return qs ? `?${qs}` : "";
 }
 
-async function apiFetch<T>(path: string, params?: Query): Promise<T> {
+async function request(path: string, params?: Query): Promise<Response> {
   const res = await fetch(`${API_BASE_URL}${path}${buildQuery(params)}`, {
     headers: getAuthHeader(),
   });
@@ -43,16 +47,22 @@ async function apiFetch<T>(path: string, params?: Query): Promise<T> {
   if (!res.ok) {
     let title = res.statusText;
     let detail: string | undefined;
+    let code: ApiErrorCode | undefined;
     try {
-      const problem = await res.json();
+      const problem: components["schemas"]["Problem"] = await res.json();
       title = problem.title ?? title;
       detail = problem.detail;
+      code = problem.code;
     } catch {
       // body wasn't a problem+json document, keep the status text
     }
-    throw new ApiError(res.status, title, detail);
+    throw new ApiError(res.status, title, detail, code);
   }
-  return res.json() as Promise<T>;
+  return res;
+}
+
+async function apiFetch<T>(path: string, params?: Query): Promise<T> {
+  return (await request(path, params)).json() as Promise<T>;
 }
 
 export type ForecastParams = operations["routes"]["parameters"]["query"];
@@ -98,3 +108,14 @@ export function getModelStats(params?: operations["stats"]["parameters"]["query"
     params,
   );
 }
+
+export type ExportParams = NonNullable<operations["export"]["parameters"]["query"]>;
+
+/** The CSV is behind basic auth, so it can't be a plain link: fetch it and hand back the file. */
+export async function downloadExport(params: ExportParams): Promise<{ blob: Blob; filename: string }> {
+  const res = await request("/api/export", params as Query);
+  const disposition = res.headers.get("Content-Disposition") ?? "";
+  const filename = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)?.[1] ?? "forecast.csv";
+  return { blob: await res.blob(), filename: decodeURIComponent(filename) };
+}
+

@@ -239,6 +239,12 @@ export interface components {
         /** @description RFC 9457 problem document */
         Problem: {
             /**
+             * @description Machine-readable error code, stable across releases (codes are added, never renamed)
+             * @example ROUTE_NOT_FOUND
+             * @enum {string}
+             */
+            code?: "INVALID_REQUEST" | "INVALID_PARAMETER" | "ROUTE_NOT_FOUND" | "STOP_NOT_FOUND" | "NO_DATA" | "ENDPOINT_NOT_FOUND" | "METHOD_NOT_ALLOWED" | "FORECAST_NOT_READY" | "UNAUTHORIZED" | "TOO_MANY_ATTEMPTS" | "INTERNAL_ERROR";
+            /**
              * @description A message that can be shown to the user
              * @example One of the request parameters is missing or has the wrong format.
              */
@@ -250,6 +256,11 @@ export interface components {
              * @example 400
              */
             status?: number;
+            /**
+             * @description When the error happened, ISO 8601 with an explicit offset
+             * @example 2026-09-26T13:20:11.123+03:00
+             */
+            timestamp?: string;
             /** @example Invalid parameter */
             title?: string;
             /** @example about:blank */
@@ -318,10 +329,10 @@ export interface operations {
     attention: {
         parameters: {
             query?: {
-                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, month = daily, year = monthly. */
-                horizon?: "day" | "month" | "year";
+                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
+                horizon?: "day" | "week" | "month" | "year";
                 /**
-                 * @description Anchor date YYYY-MM-DD: the day itself, or any day inside the month or year. Defaults to today, at most one year ahead.
+                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.
                  * @example 2026-09-25
                  */
                 date?: string;
@@ -368,6 +379,24 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             /** @description No forecast is stored for the request and the ML service is unavailable */
             503: {
                 headers: {
@@ -385,10 +414,10 @@ export interface operations {
                 format?: string;
                 routeId?: string;
                 stopId?: string;
-                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, month = daily, year = monthly. */
-                horizon?: "day" | "month" | "year";
+                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
+                horizon?: "day" | "week" | "month" | "year";
                 /**
-                 * @description Anchor date YYYY-MM-DD: the day itself, or any day inside the month or year. Defaults to today, at most one year ahead.
+                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.
                  * @example 2026-09-25
                  */
                 date?: string;
@@ -435,8 +464,26 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             /** @description Unknown route or stop, or nothing to return for them */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -473,6 +520,24 @@ export interface operations {
                     "application/json": components["schemas"]["Meta"];
                 };
             };
+            /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
         };
     };
     stats: {
@@ -504,15 +569,33 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
         };
     };
     routes: {
         parameters: {
             query?: {
-                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, month = daily, year = monthly. */
-                horizon?: "day" | "month" | "year";
+                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
+                horizon?: "day" | "week" | "month" | "year";
                 /**
-                 * @description Anchor date YYYY-MM-DD: the day itself, or any day inside the month or year. Defaults to today, at most one year ahead.
+                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.
                  * @example 2026-09-25
                  */
                 date?: string;
@@ -559,6 +642,24 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             /** @description No forecast is stored for the request and the ML service is unavailable */
             503: {
                 headers: {
@@ -573,10 +674,10 @@ export interface operations {
     routeForecast: {
         parameters: {
             query?: {
-                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, month = daily, year = monthly. */
-                horizon?: "day" | "month" | "year";
+                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
+                horizon?: "day" | "week" | "month" | "year";
                 /**
-                 * @description Anchor date YYYY-MM-DD: the day itself, or any day inside the month or year. Defaults to today, at most one year ahead.
+                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.
                  * @example 2026-09-25
                  */
                 date?: string;
@@ -625,8 +726,26 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             /** @description Unknown route or stop, or nothing to return for them */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -674,8 +793,26 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             /** @description Unknown route or stop, or nothing to return for them */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -688,10 +825,10 @@ export interface operations {
     stopForecast: {
         parameters: {
             query?: {
-                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, month = daily, year = monthly. */
-                horizon?: "day" | "month" | "year";
+                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
+                horizon?: "day" | "week" | "month" | "year";
                 /**
-                 * @description Anchor date YYYY-MM-DD: the day itself, or any day inside the month or year. Defaults to today, at most one year ahead.
+                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.
                  * @example 2026-09-25
                  */
                 date?: string;
@@ -741,8 +878,26 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
+            /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
             /** @description Unknown route or stop, or nothing to return for them */
             404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/problem+json": components["schemas"]["Problem"];
+                };
+            };
+            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
+            429: {
                 headers: {
                     [name: string]: unknown;
                 };
