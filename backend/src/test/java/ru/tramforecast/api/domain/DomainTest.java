@@ -146,6 +146,22 @@ class DomainTest {
         assertThat(year.contains(Instant.parse("2026-06-01T00:00:00Z"))).isTrue();
     }
 
+    /**
+     * A week is seven days starting at the anchor date itself, not a calendar week, so the operator
+     * chooses the first day.
+     */
+    @Test
+    void weekIsSevenDaysStartingAtTheDate() {
+        ZoneId moscow = ZoneId.of("Europe/Moscow");
+        // Friday: a calendar week would start on Monday the 21st
+        ForecastPeriod week = ForecastPeriod.of(Horizon.WEEK, LocalDate.of(2026, 9, 25), moscow);
+
+        assertThat(week.start()).isEqualTo(Instant.parse("2026-09-24T21:00:00Z"));
+        assertThat(week.end()).isEqualTo(Instant.parse("2026-10-01T21:00:00Z"));
+        assertThat(week.contains(Instant.parse("2026-09-20T12:00:00Z"))).isFalse();
+        assertThat(Horizon.WEEK.granularity()).isEqualTo(ru.tramforecast.api.domain.model.Granularity.DAY);
+    }
+
     private static StopForecast stop(String route, String stop, ForecastPoint point) {
         return new StopForecast(
                 new RouteId(route), new StopId(stop), Horizon.DAY, LocalDate.of(2026, 9, 25),

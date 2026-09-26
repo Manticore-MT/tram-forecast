@@ -110,6 +110,24 @@ class PersistenceTest {
     }
 
     /**
+     * A week reads seven days starting at the given date, aggregated per day: it is not the calendar
+     * week around the date.
+     */
+    @Test
+    void weekReadsSevenDaysStartingAtTheDate() {
+        insertFact("R1", "S1", "2026-09-21T09:00:00+03:00", 100);
+        insertFact("R1", "S1", "2026-09-22T09:00:00+03:00", 5);
+        insertFact("R1", "S1", "2026-09-28T09:00:00+03:00", 7);
+        insertFact("R1", "S1", "2026-09-29T09:00:00+03:00", 9);
+
+        // window 22 Sep .. 28 Sep: the 21st is before it, the 29th after it
+        List<ActualValue> week = actuals.find(Horizon.WEEK, LocalDate.of(2026, 9, 22));
+
+        assertThat(week).extracting(ActualValue::value).containsExactly(5.0, 7.0);
+        assertThat(week.get(0).periodStart()).isEqualTo(Instant.parse("2026-09-21T21:00:00Z"));
+    }
+
+    /**
      * The load matrix averages the route total per day of week and hour.
      */
     @Test

@@ -25,10 +25,12 @@ Request:
 { "horizon": "day", "date": "2026-09-25" }
 ```
 
-- `horizon`: `day`, `month` or `year`. It fixes the step of the points: **day = hourly, month =
-  daily, year = monthly**.
-- `date`: anchor date `YYYY-MM-DD`. For `day` it is the day, for `month`/`year` any day inside
-  the month/year. Days, months and years begin at **Europe/Moscow** midnight.
+- `horizon`: `day`, `week`, `month` or `year`. It fixes the step of the points: **day = hourly,
+  week = daily, month = daily, year = monthly**.
+- `date`: anchor date `YYYY-MM-DD`. For `day` it is the day; for `week` it is the **first of seven
+  days** (a sliding window that starts at `date`, not a calendar week: the operator picks the first
+  day, so return exactly seven daily points from `date`); for `month`/`year` any day inside the
+  month/year. Days, months and years begin at **Europe/Moscow** midnight.
 
 Response:
 

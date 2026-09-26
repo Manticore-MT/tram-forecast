@@ -197,9 +197,29 @@ class ApiTest {
                 .andExpect(jsonPath("$.latestDate").value("2027-09-25"))
                 .andExpect(jsonPath("$.zone").value("Europe/Moscow"))
                 .andExpect(jsonPath("$.dataSource").value("stub"))
-                .andExpect(jsonPath("$.horizons", hasSize(3)))
-                .andExpect(jsonPath("$.horizons[1].horizon").value("month"))
-                .andExpect(jsonPath("$.horizons[1].step").value("day"));
+                .andExpect(jsonPath("$.horizons", hasSize(4)))
+                .andExpect(jsonPath("$.horizons[1].horizon").value("week"))
+                .andExpect(jsonPath("$.horizons[1].step").value("day"))
+                .andExpect(jsonPath("$.horizons[2].horizon").value("month"))
+                .andExpect(jsonPath("$.horizons[2].step").value("day"));
+    }
+
+    /**
+     * A week is seven daily points starting at the requested date (not at the start of a calendar
+     * week), and the date in the answer is that first day.
+     */
+    @Test
+    void weekIsSevenDailyPointsStartingAtTheDate() throws Exception {
+        mvc.perform(get("/api/routes/R1/forecast").param("horizon", "week").param("date", "2026-09-25"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.horizon").value("week"))
+                .andExpect(jsonPath("$.date").value("2026-09-25"))
+                .andExpect(jsonPath("$.points", hasSize(7)))
+                .andExpect(jsonPath("$.points[0].periodStart").value("2026-09-25T00:00:00+03:00"))
+                .andExpect(jsonPath("$.points[6].periodStart").value("2026-10-01T00:00:00+03:00"));
+        mvc.perform(get("/api/routes").param("horizon", "week").param("date", "2026-09-25"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.routes[0].points", hasSize(7)));
     }
 
     /**
@@ -207,12 +227,12 @@ class ApiTest {
      */
     @Test
     void errorsAreReadable() throws Exception {
-        mvc.perform(get("/api/routes").param("horizon", "week"))
+        mvc.perform(get("/api/routes").param("horizon", "decade"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
                 .andExpect(jsonPath("$.code").value("INVALID_PARAMETER"))
                 .andExpect(jsonPath("$.timestamp").value(matchesPattern(ISO_WITH_OFFSET)))
-                .andExpect(jsonPath("$.detail").value(containsString("horizon = day|month|year")));
+                .andExpect(jsonPath("$.detail").value(containsString("horizon = day|week|month|year")));
         mvc.perform(get("/api/routes").param("date", "2030-01-01"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("INVALID_REQUEST"))
