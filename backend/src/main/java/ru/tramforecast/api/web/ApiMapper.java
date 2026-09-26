@@ -137,7 +137,11 @@ public class ApiMapper {
                 stats.wapeScore(),
                 stats.history().stream()
                         .map(d -> new Responses.DailyAccuracy(d.date(), d.wape(), d.wapeScore()))
-                        .toList());
+                        .toList(),
+                stats.source(),
+                stats.note(),
+                stats.platformScore(),
+                stats.platformNote());
     }
 
     /**

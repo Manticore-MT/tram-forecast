@@ -1216,6 +1216,19 @@
               "$ref" : "#/components/schemas/DailyAccuracy"
             }
           },
+          "note" : {
+            "type" : "string"
+          },
+          "platformNote" : {
+            "type" : "string"
+          },
+          "platformScore" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "source" : {
+            "type" : "string"
+          },
           "wape" : {
             "type" : "number",
             "format" : "double"

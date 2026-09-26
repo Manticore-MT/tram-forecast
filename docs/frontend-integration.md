@@ -13,6 +13,22 @@ browser does not open its own login dialog. Only `/api/**` is protected; `/actua
 by hand) access control is off and no header is needed. The user name and password of the stand
 are not in the repository: ask the person who runs the server.
 
+**Quality (`GET /api/model/stats?days=30`).** `wape` is a **fraction** (0.11 means 11 %; multiply by 100 to
+show a percent) and `wapeScore` is `1 - wape` (0 to 1, higher is better); `history` has one entry per day,
+oldest first. With the ML service connected the numbers are **its own backtest** (`source: "ml-backtest"`,
+the block 1 Sep - 31 Oct 2025 measured on route x hour): the last `days` days of the block that lie before
+"today" (on the frozen day 1 Nov 2025 that is 2 - 31 Oct), and the overall value is the exact ratio of the
+summed errors to the summed observed values. `note` is a sentence to show as a caption (the blocks were
+used to tune the model, so this is not an independent test). If nothing falls in the window, `wape` and
+`wapeScore` are `null` (not zero) and `history` is empty. If the ML service cannot be asked, `source` is
+`facts` (the backend's own stored forecasts against the facts, empty today).
+
+`platformScore` (for example 0.88226) is a **different measurement**: the score the platform gave the submitted
+contest file on its hidden check, as the team reports it (`platformNote` says so). Show it on its own line,
+**never merge it with the backtest** (the backtest is about 0.89, a historical estimate whose blocks were used
+to tune the model). Both are route x hour scores: **do not show them as the quality of a stop**, the stop
+values are a demonstration. `platformScore` is `null` when the ML service does not report it.
+
 **The date range.** `GET /api/meta` reports `forecastFrom` and `forecastTo` (the range the model covers, for
 the stand 2025-11-01 .. 2026-12-31; both are `null` when the model has no fixed range) and `latestDate` (the
 end of the range). Limit the date picker to it: a period that is not **entirely** inside is refused with `400`

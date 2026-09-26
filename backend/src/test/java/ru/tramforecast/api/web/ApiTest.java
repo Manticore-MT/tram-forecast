@@ -276,6 +276,21 @@ class ApiTest {
     }
 
     /**
+     * The quality endpoint says where the numbers come from; without the ML service and without facts
+     * it has nothing to compare, so there are no values (not zeros) and the source is the facts.
+     */
+    @Test
+    void modelStatsSaysWhereTheNumbersComeFrom() throws Exception {
+        mvc.perform(get("/api/model/stats"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.source").value("facts"))
+                .andExpect(jsonPath("$.note").value(nullValue()))
+                .andExpect(jsonPath("$.platformScore").value(nullValue()))
+                .andExpect(jsonPath("$.wape").value(nullValue()))
+                .andExpect(jsonPath("$.history", hasSize(0)));
+    }
+
+    /**
      * Bad input yields a 400 with a readable message, an unknown route a 404.
      */
     @Test
