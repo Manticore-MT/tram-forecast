@@ -1,7 +1,7 @@
 {
   "openapi" : "3.1.0",
   "info" : {
-    "description" : "Forecast of tram ridership by route and stop for three horizons.\n\n**Conventions**\n- Timestamps are ISO 8601 with an explicit offset, for example\n  `2026-09-25T09:00:00+03:00`. Dates are `YYYY-MM-DD`. There are no unix timestamps.\n- Every forecast response carries the whole horizon, so a time slider on the client\n  reads points locally and needs no further requests.\n- Steps follow the horizon: day = hourly, month = daily, year = monthly.\n- Routes and stops are identified by opaque string IDs; geometry is not served.\n- `modelVersion = \"stub\"` and `dataSource = \"stub\"` mean synthetic demo data.\n- Errors are RFC 9457 problem documents (`application/problem+json`).\n",
+    "description" : "Forecast of tram ridership by route and stop for three horizons.\n\n**Conventions**\n- Timestamps are ISO 8601 with an explicit offset, for example\n  `2026-09-25T09:00:00+03:00`. Dates are `YYYY-MM-DD`. There are no unix timestamps.\n- Every forecast response carries the whole horizon, so a time slider on the client\n  reads points locally and needs no further requests.\n- Steps follow the horizon: day = hourly, month = daily, year = monthly.\n- Routes and stops are identified by opaque string IDs; geometry is not served.\n- `modelVersion = \"stub\"` and `dataSource = \"stub\"` mean synthetic demo data.\n- Errors are RFC 9457 problem documents (`application/problem+json`).\n- When access control is on, every `/api/**` request needs the header\n  `Authorization: Basic base64(user:password)`; there is no login endpoint.\n  A missing or wrong credential gives 401 (no `WWW-Authenticate` header).\n",
     "license" : {
       "name" : "MIT",
       "url" : "https://opensource.org/licenses/MIT"
@@ -12,6 +12,9 @@
   "servers" : [ {
     "url" : "http://localhost:8080",
     "description" : "Local backend"
+  } ],
+  "security" : [ {
+    "basicAuth" : [ ]
   } ],
   "paths" : {
     "/api/attention" : {
@@ -135,6 +138,16 @@
               }
             },
             "description" : "Invalid parameter or request"
+          },
+          "401" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
           },
           "503" : {
             "content" : {
@@ -295,6 +308,16 @@
             },
             "description" : "Invalid parameter or request"
           },
+          "401" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
+          },
           "404" : {
             "content" : {
               "application/problem+json" : {
@@ -333,6 +356,16 @@
               }
             },
             "description" : "OK"
+          },
+          "401" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
           }
         },
         "summary" : "Service metadata: current moment, selectable dates, horizons, data source",
@@ -372,6 +405,16 @@
               }
             },
             "description" : "Invalid parameter or request"
+          },
+          "401" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
           }
         },
         "summary" : "Forecast quality: WAPE of the initial daily forecasts against the facts",
@@ -499,6 +542,16 @@
               }
             },
             "description" : "Invalid parameter or request"
+          },
+          "401" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
           },
           "503" : {
             "content" : {
@@ -644,6 +697,16 @@
             },
             "description" : "Invalid parameter or request"
           },
+          "401" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
+          },
           "404" : {
             "content" : {
               "application/problem+json" : {
@@ -700,6 +763,16 @@
               }
             },
             "description" : "Invalid parameter or request"
+          },
+          "401" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
           },
           "404" : {
             "content" : {
@@ -851,6 +924,16 @@
               }
             },
             "description" : "Invalid parameter or request"
+          },
+          "401" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
           },
           "404" : {
             "content" : {
@@ -1284,6 +1367,12 @@
             "type" : "string"
           }
         }
+      }
+    },
+    "securitySchemes" : {
+      "basicAuth" : {
+        "scheme" : "basic",
+        "type" : "http"
       }
     }
   }
