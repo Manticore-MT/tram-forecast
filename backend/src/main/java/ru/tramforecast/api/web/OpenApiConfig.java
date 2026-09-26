@@ -11,6 +11,8 @@ import io.swagger.v3.oas.models.media.ObjectSchema;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.Map;
 import java.util.Set;
@@ -62,8 +64,14 @@ public class OpenApiConfig {
                                 - Routes and stops are identified by opaque string IDs; geometry is not served.
                                 - `modelVersion = "stub"` and `dataSource = "stub"` mean synthetic demo data.
                                 - Errors are RFC 9457 problem documents (`application/problem+json`).
+                                - When access control is on, every `/api/**` request needs the header
+                                  `Authorization: Basic base64(user:password)`; there is no login endpoint.
+                                  A missing or wrong credential gives 401 (no `WWW-Authenticate` header).
                                 """)
                         .license(new License().name("MIT").url("https://opensource.org/licenses/MIT")))
+                .components(new Components().addSecuritySchemes(
+                        "basicAuth", new SecurityScheme().type(SecurityScheme.Type.HTTP).scheme("basic")))
+                .addSecurityItem(new SecurityRequirement().addList("basicAuth"))
                 .addServersItem(new Server().url("http://localhost:8080").description("Local backend"));
     }
 
@@ -100,6 +108,8 @@ public class OpenApiConfig {
     public OperationCustomizer problemResponses() {
         return (operation, handlerMethod) -> {
             String handler = handlerMethod.getMethod().getName();
+            addProblem(operation.getResponses(), "401",
+                    "Missing or invalid Authorization: Basic header (only when access control is on)");
             if (!"meta".equals(handler)) {
                 addProblem(operation.getResponses(), "400", "Invalid parameter or request");
             }

@@ -4,6 +4,15 @@ The frontend draws the map and the routes/stops from its own static data (OpenDa
 backend never returns geometry, only values keyed by `routeId` and `stopId`, so those IDs must match
 the ones used by the ML service and the backend.
 
+**Authentication.** When access control is on (the deployed stand), every request under `/api/**`
+must carry `Authorization: Basic base64(user:password)`. There is no login endpoint and no
+session: send the header on each request. A missing or wrong credential gives `401` with the
+usual problem document (`title: "Unauthorized"`) and **no `WWW-Authenticate` header**, so the
+browser does not open its own login dialog. Only `/api/**` is protected; `/actuator/health`,
+`/v3/api-docs` and the static frontend stay open. Locally (`docker compose up` or the backend run
+by hand) access control is off and no header is needed. The user name and password of the stand
+are not in the repository: ask the person who runs the server.
+
 The formal contract is [`openapi.json`](openapi.json) (OpenAPI 3.1). It is generated from the
 backend code, and a CI test fails when the file is out of date, so it always matches what the
 backend really does. With the backend running there is also an interactive page at

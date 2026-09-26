@@ -36,6 +36,12 @@ tram:
     stub:
       routes: 3
       stops-per-route: 5
+  auth:
+    # HTTP Basic on every /api/** request. Off by default (local development); the production
+    # stack turns it on. With it on, username and password are required.
+    enabled: ${TRAM_AUTH_ENABLED:false}
+    username: ${TRAM_AUTH_USERNAME:}
+    password: ${TRAM_AUTH_PASSWORD:}
   attention:
     # Deviation thresholds in percent of the baseline. Values are provisional (to confirm).
     warning-pct: 10

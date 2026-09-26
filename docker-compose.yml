@@ -34,6 +34,11 @@ services:
       # Size of the synthetic network in stub mode (match scripts/seed-demo-actuals.sql).
       TRAM_ML_STUB_ROUTES: ${TRAM_ML_STUB_ROUTES:-3}
       TRAM_ML_STUB_STOPS_PER_ROUTE: ${TRAM_ML_STUB_STOPS_PER_ROUTE:-5}
+      # Access control: with TRAM_AUTH_ENABLED=true every /api/** request needs
+      # 'Authorization: Basic base64(user:password)'. Off by default; the values live in .env.
+      TRAM_AUTH_ENABLED: ${TRAM_AUTH_ENABLED:-false}
+      TRAM_AUTH_USERNAME: ${TRAM_AUTH_USERNAME:-}
+      TRAM_AUTH_PASSWORD: ${TRAM_AUTH_PASSWORD:-}
       # Optional: freeze "now" to emulate a moment inside the historical dataset, e.g. 2026-09-25T09:00:00Z
       TRAM_CLOCK_FIXED_INSTANT: ${TRAM_CLOCK_FIXED_INSTANT:-}
     # The size the challenge brief benchmarks against (one container, 2-4 vCPU / 2-4 GB).
