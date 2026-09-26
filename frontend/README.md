@@ -4,10 +4,9 @@ A dark-first, Russian-language React + TypeScript app for the **Хакатон �
 
 ## Context
 
-The hackathon is run by the **фонд «Транспортные инновации Москвы»**, the Moscow Government IT company **МТТЕХ**, and **ООО «ВСМ-400»**, with the support of the Moscow Department of Transport. МТТЕХ is the development centre behind the transport apps millions of passengers use daily — fares, journey planning, the driverless tram programme. Two surfaces are covered here:
+The hackathon is run by the **фонд «Транспортные инновации Москвы»**, the Moscow Government IT company **МТТЕХ**, and **ООО «ВСМ-400»**, with the support of the Moscow Department of Transport. МТТЕХ is the development centre behind the transport apps millions of passengers use daily — fares, journey planning, the driverless tram programme.
 
-1. **«Поток» — the product** (`src/products/forecast-dashboard/`). **This is the deliverable.** The track-02 dispatcher service: tram passenger-load forecasts at 1-day / 1-month / 1-year horizons, aggregated by route, stop and time window, on a real map of Moscow. Five screens: Карта загрузки, Обзор сети, Маршрут, Модель, Данные. It is a **proposal, not a recreation** — no existing product design was supplied, so it is the brand applied to the brief.
-2. **Hackathon site** (`src/products/hackathon-site/`) — **brand source, not a deliverable.** The organizers' landing page was the only evidence of the visual identity, so it is recreated here as the reference the product's look is derived from.
+**«Поток» — the product** (`src/products/forecast-dashboard/`). **This is the deliverable.** The track-02 dispatcher service: tram passenger-load forecasts at 1-day / 1-month / 1-year horizons, aggregated by route, stop and time window, on a real map of Moscow. Five screens: Карта загрузки, Обзор сети, Маршрут, Модель, Данные. It is a **proposal, not a recreation** — no existing product design was supplied, so it is the brand applied to the brief.
 
 ### What was NOT available — flagged substitutions
 - **No font binaries.** Substituted **Manrope** (geometric grotesque, full Cyrillic, closest match to the wordmark's angular «М») and **JetBrains Mono** for numerics. Loaded from Google Fonts in `src/styles/tokens/fonts.css`.
@@ -22,13 +21,13 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:5173/` for the dashboard (default route), or `http://localhost:5173/#/hackathon-site` for the brand-reference landing page.
+Open `http://localhost:5173/` for the dashboard (default route).
 
 ## Structure
 
 ```
 src/
-  main.tsx, App.tsx        entry point + route switch between the two products
+  main.tsx, App.tsx        entry point + route setup
   styles/
     index.css              single CSS entry point (@import list)
     tokens/                 fonts, colors, typography, spacing, radius, elevation, motion, base resets
@@ -41,7 +40,6 @@ src/
     data/                   Stat, LoadMeter, Timeline
   products/
     forecast-dashboard/     THE PRODUCT — «Поток» dispatcher dashboard, 5 screens, real Leaflet/OSM map
-    hackathon-site/         brand reference only — recreation of the organizers' landing page
 ```
 
 ## CONTENT FUNDAMENTALS
