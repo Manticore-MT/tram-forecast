@@ -34,6 +34,13 @@ export function DetailsPanel() {
   const unit = SCALE_UNITS[scale];
   const recommendation = formatRecommendation(series.stop?.recommendation);
   const factors = (series.stop?.factors ?? []).map((f) => ({ label: FACTOR_LABELS[f] ?? f }));
+  const peak = series.points.reduce<(typeof series.points)[number] | undefined>(
+    (best, p) => (!best || p.forecast > best.forecast ? p : best),
+    undefined,
+  );
+  const updated = series.lastUpdated
+    ? new Date(series.lastUpdated).toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" })
+    : undefined;
 
   return (
     <Card tone="glass" padding="var(--space-6)" className="flex flex-col gap-5">
@@ -51,6 +58,9 @@ export function DetailsPanel() {
             caption={`${fmtSigned(point.forecast - point.baseline)} ${unit} к базе`}
             tone={toneForPct(deviationPct(point.forecast, point.baseline))}
           />
+          {peak && (
+            <Stat label="Пик" value={pointLabel(scale, peak.periodStart)} caption={`${fmtInt(peak.forecast)} ${unit}`} />
+          )}
           {recommendation && <Stat label="Рекомендация" value={recommendation.label} />}
           {interval && (
             <div className="flex flex-col gap-4 border-t border-border-subtle pt-4">
@@ -74,6 +84,7 @@ export function DetailsPanel() {
             </div>
           )}
           {factors.length > 0 && <FactorsCard factors={factors} />}
+          {updated && <div className="text-caption text-text-muted">Обновлено в {updated}</div>}
         </>
       )}
     </Card>

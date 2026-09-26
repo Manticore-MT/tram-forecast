@@ -58,9 +58,11 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
   const lastWasDrag = React.useRef(false);
 
   const n = points.length;
-  // No vehicle-capacity data yet, so load is relative to the window's peak.
-  const max = Math.max(1, ...points.map((p) => p.forecast), ...(ghost ?? []).map((p) => p.forecast));
   const nowPos = nowPosition(points.map((p) => p.periodStart), now);
+  // Past periods show what actually happened where the API has it; the rest is still forecast.
+  const valueAt = (i: number, p: SeriesPoint) => (nowPos !== null && i + 1 <= nowPos && p.actual != null ? p.actual : p.forecast);
+  // No vehicle-capacity data yet, so load is relative to the window's peak.
+  const max = Math.max(1, ...points.map((p, i) => valueAt(i, p)), ...(ghost ?? []).map((p) => p.forecast));
   const { gap, step } = labelSpacing(scale, n, width);
   const focused = points[focus];
   // Time is continuous, so bars sit almost edge to edge like a histogram. The current period is
@@ -161,6 +163,8 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
         const past = nowPos !== null && i + 1 <= nowPos;
         const current = currentIndex === i;
         const g = ghost?.[i];
+        const hasActual = past && p.actual != null;
+        const value = valueAt(i, p);
         // The focused label is always shown; regular labels too close to it step aside.
         const labelled = isFocus || current || (i % step === 0 && Math.abs(i - focus) >= gap && Math.abs(i - currentIndex) >= gap);
         return (
@@ -174,9 +178,13 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
                   isFocus && "outline-2 outline-offset-1 outline-text-primary",
                 )}
                 style={{
-                  height: `${(p.forecast / (max * HEADROOM)) * 100}%`,
-                  minHeight: p.forecast > 0 ? 2 : 0,
-                  background: LOAD_VARS[loadStep(p.forecast / max)],
+                  height: `${(value / (max * HEADROOM)) * 100}%`,
+                  minHeight: value > 0 ? 2 : 0,
+                  backgroundColor: LOAD_VARS[loadStep(value / max)],
+                  // Solid fill for what actually happened; a hatch marks a bar that's still a forecast.
+                  backgroundImage: hasActual
+                    ? undefined
+                    : "repeating-linear-gradient(135deg, rgba(0,0,0,0.14) 0 4px, transparent 4px 8px)",
                 }}
               />
               {g && (

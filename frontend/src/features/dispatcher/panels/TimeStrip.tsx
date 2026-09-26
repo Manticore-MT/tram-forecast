@@ -8,6 +8,7 @@ import { Bars } from "./timeStrip/Bars";
 import { Readout } from "./timeStrip/Readout";
 import { StripHeader } from "./timeStrip/StripHeader";
 import { useInterval } from "./timeStrip/interval";
+import { StripLegend } from "./timeStrip/StripLegend";
 
 const INTERACTIVE = "button, input, a, label, [role='slider'], [role='tablist']";
 
@@ -41,7 +42,10 @@ export function TimeStrip() {
       </div>
       <div className="flex items-center justify-between gap-4">
         <Readout points={series.points} />
-        <div className="shrink-0"><LoadLegend /></div>
+        <div className="flex shrink-0 items-center gap-6">
+          <StripLegend hasActual={series.points.some((p) => p.actual != null)} showGhost={!!ghost} />
+          <LoadLegend />
+        </div>
       </div>
     </Card>
   );

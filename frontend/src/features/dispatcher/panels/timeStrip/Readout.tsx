@@ -33,6 +33,12 @@ export function Readout({ points }: { points: SeriesPoint[] }) {
       <span className="text-text-primary">
         {fmtInt(point.forecast)} {SCALE_UNITS[scale]}
       </span>
+      {point.actual != null && (
+        <>
+          {" · "}
+          <span className="text-text-primary">факт {fmtInt(point.actual)}</span>
+        </>
+      )}
       {point.baseline > 0 && ` · ${pct} к базе`}
     </span>
   );

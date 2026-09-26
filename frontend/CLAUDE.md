@@ -16,7 +16,7 @@ React + TypeScript + Vite app for **Хакатон Московского тра
 - `src/features/login/` — basic-auth login screen.
 - `src/shared/` — app-wide pieces: `Floating` (panel placement slots over the map — the one place for layout), charts, notices, load ramp + legend.
 - `src/network/` — static tram geometry (data.mos.ru) for the 9 dataset routes.
-- Removed features (old dashboard, layout mockups) live under git tag `legacy-dashboard`; `docs/legacy-dashboard-blocks.md` lists what wasn't ported and where to find it. Read it before building overview/model/export features.
+- The old dashboard is gone; everything useful was ported. Blocks still waiting for data are listed in `docs/open-questions.md` § «Блоки старого дашборда, которые ждут данных», with the git tags (`legacy-dashboard`, `legacy-dashboard-mock`) to recover their code from.
 
 ## Running it
 
