@@ -212,7 +212,11 @@ public final class Responses {
      * @param wape      overall WAPE, {@code null} when there is nothing to compare
      * @param wapeScore overall WAPE-score, {@code null} when there is nothing to compare
      * @param history   accuracy per day, oldest first
+     * @param source    {@code ml-backtest} (measured by the ML side on a historical block) or {@code facts}
+     *                  (the backend's own stored forecasts against the facts)
+     * @param note      what the numbers are and are not, for a caption; {@code null} when there is none
      */
-    public record ModelStats(Double wape, Double wapeScore, List<DailyAccuracy> history) {
+    public record ModelStats(
+            Double wape, Double wapeScore, List<DailyAccuracy> history, String source, String note) {
     }
 }

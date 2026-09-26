@@ -8,7 +8,9 @@ import ru.tramforecast.api.domain.model.ModelStats;
 public interface GetModelStatsUseCase {
 
     /**
-     * Compares the initial snapshot of each recent day with the facts.
+     * Reports the quality of the forecasts over recent days: as measured by the ML service on its
+     * backtest when it can be asked, otherwise by comparing the initial snapshot of each day with the
+     * facts.
      *
      * @param days how many recent days to include, between 1 and 90
      * @return the accuracy overall and per day

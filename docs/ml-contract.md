@@ -88,7 +88,7 @@ calendar year inside that range, so only 2026. The backend knows the range from 
 |---|---|---|
 | `POST /predict/routes` | the route totals with baseline, without the stop split (the real values) | no |
 | `GET /metadata` | model version, baseline method, corrections note, limitations, sources, supported routes | no |
-| `GET /metrics?origin=2025-07-01\|2025-09-01` | WAPE and score overall, by route and by day on the two historical 61-day backtest blocks | not yet; planned for `GET /api/model/stats` |
+| `GET /metrics?origin=2025-07-01\|2025-09-01` | WAPE and score overall, by route and by day on the two historical 61-day backtest blocks | **yes**: `GET /api/model/stats` (default block 2025-09-01; per day `absoluteError` and `actualSum` are combined into an exact WAPE) |
 | `GET /health` | liveness and the model version (the container health check) | Deploy checks it |
 
 ## Status of the earlier open questions
@@ -97,7 +97,8 @@ calendar year inside that range, so only 2026. The backend knows the range from 
 2. **Which day counts as the norm**: the median of the 56 days before 2025-11-01 per route, effective
    weekday and hour (answered above; `GET /metadata` documents it).
 3. **Quality metric**: WAPE-score `max(0, 1 - Σ|y-ŷ|/Σy)`. The ML service reports it from its backtests
-   (`GET /metrics`); passing those numbers through `GET /api/model/stats` is the next step, because the
-   backend has no facts to compute it itself.
+   (`GET /metrics`) and `GET /api/model/stats` passes it on (the backend has no facts to compute it
+   itself). If the ML service cannot be asked, the backend falls back to comparing its own stored forecasts
+   with the facts (empty today), and `source` says which one it is.
 4. **Facts for the dashboard**: not loaded into the backend (`actual_value` is empty), so `actual` is
    absent and the load matrix has no data. The organizers' labels are available in `ml/data/`.

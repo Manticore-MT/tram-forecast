@@ -1216,6 +1216,12 @@
               "$ref" : "#/components/schemas/DailyAccuracy"
             }
           },
+          "note" : {
+            "type" : "string"
+          },
+          "source" : {
+            "type" : "string"
+          },
           "wape" : {
             "type" : "number",
             "format" : "double"
