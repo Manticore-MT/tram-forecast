@@ -32,7 +32,7 @@
             "enum" : [ "day", "week", "month", "year" ]
           }
         }, {
-          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.",
+          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
           "example" : "2026-09-25",
           "in" : "query",
           "name" : "date",
@@ -40,7 +40,7 @@
           "schema" : {
             "type" : "string",
             "format" : "date",
-            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.",
+            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
             "example" : "2026-09-25"
           }
         }, {
@@ -211,7 +211,7 @@
             "enum" : [ "day", "week", "month", "year" ]
           }
         }, {
-          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.",
+          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
           "example" : "2026-09-25",
           "in" : "query",
           "name" : "date",
@@ -219,7 +219,7 @@
           "schema" : {
             "type" : "string",
             "format" : "date",
-            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.",
+            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
             "example" : "2026-09-25"
           }
         }, {
@@ -476,7 +476,7 @@
             "enum" : [ "day", "week", "month", "year" ]
           }
         }, {
-          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.",
+          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
           "example" : "2026-09-25",
           "in" : "query",
           "name" : "date",
@@ -484,7 +484,7 @@
           "schema" : {
             "type" : "string",
             "format" : "date",
-            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.",
+            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
             "example" : "2026-09-25"
           }
         }, {
@@ -640,7 +640,7 @@
             "enum" : [ "day", "week", "month", "year" ]
           }
         }, {
-          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.",
+          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
           "example" : "2026-09-25",
           "in" : "query",
           "name" : "date",
@@ -648,7 +648,7 @@
           "schema" : {
             "type" : "string",
             "format" : "date",
-            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.",
+            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
             "example" : "2026-09-25"
           }
         }, {
@@ -888,7 +888,7 @@
             "enum" : [ "day", "week", "month", "year" ]
           }
         }, {
-          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.",
+          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
           "example" : "2026-09-25",
           "in" : "query",
           "name" : "date",
@@ -896,7 +896,7 @@
           "schema" : {
             "type" : "string",
             "format" : "date",
-            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.",
+            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
             "example" : "2026-09-25"
           }
         }, {
@@ -1176,6 +1176,14 @@
           "dataSource" : {
             "type" : "string"
           },
+          "forecastFrom" : {
+            "type" : "string",
+            "format" : "date"
+          },
+          "forecastTo" : {
+            "type" : "string",
+            "format" : "date"
+          },
           "horizons" : {
             "type" : "array",
             "items" : {
@@ -1276,7 +1284,7 @@
           "code" : {
             "type" : "string",
             "description" : "Machine-readable error code, stable across releases (codes are added, never renamed)",
-            "enum" : [ "INVALID_REQUEST", "INVALID_PARAMETER", "ROUTE_NOT_FOUND", "STOP_NOT_FOUND", "NO_DATA", "ENDPOINT_NOT_FOUND", "METHOD_NOT_ALLOWED", "FORECAST_NOT_READY", "UNAUTHORIZED", "TOO_MANY_ATTEMPTS", "INTERNAL_ERROR" ],
+            "enum" : [ "INVALID_REQUEST", "INVALID_PARAMETER", "PERIOD_NOT_SUPPORTED", "ROUTE_NOT_FOUND", "STOP_NOT_FOUND", "NO_DATA", "ENDPOINT_NOT_FOUND", "METHOD_NOT_ALLOWED", "FORECAST_NOT_READY", "UNAUTHORIZED", "TOO_MANY_ATTEMPTS", "INTERNAL_ERROR" ],
             "example" : "ROUTE_NOT_FOUND"
           },
           "detail" : {

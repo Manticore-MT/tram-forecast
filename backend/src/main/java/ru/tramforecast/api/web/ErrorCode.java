@@ -10,6 +10,8 @@ public enum ErrorCode {
     INVALID_REQUEST,
     /** A parameter is missing or has the wrong format. */
     INVALID_PARAMETER,
+    /** The period is outside the range the model covers (see {@code forecastFrom} and {@code forecastTo}). */
+    PERIOD_NOT_SUPPORTED,
     /** There is no such route. */
     ROUTE_NOT_FOUND,
     /** The route exists but has no such stop. */

@@ -41,6 +41,7 @@ public class ForecastPreparer {
      */
     public PreparedForecast prepare(ForecastQuery query) {
         LocalDate date = dates.resolve(query.date());
+        dates.ensureSupported(query.horizon(), date);
         List<StopForecast> loaded = loader.load(query.horizon(), date, query.snapshot());
         Map<String, Double> facts = factsByKey(actuals.find(query.horizon(), date));
         double factor = query.coefficients().factor();

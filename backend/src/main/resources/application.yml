@@ -61,6 +61,10 @@ tram:
   forecast:
     # Forecasts further ahead than this are rejected (challenge brief: max 1 year).
     max-years-ahead: 1
+    # The range of dates the model covers (blank = no fixed range). A period that is not entirely inside
+    # it is refused with PERIOD_NOT_SUPPORTED before the model is asked, and /api/meta reports it.
+    from: ${TRAM_FORECAST_FROM:}
+    to: ${TRAM_FORECAST_TO:}
   cache:
     # Short read caches in front of the storage (aggregating a year of facts is the expensive query).
     forecast-ttl: 30s

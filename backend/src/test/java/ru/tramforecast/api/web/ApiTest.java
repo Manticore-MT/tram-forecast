@@ -3,6 +3,7 @@ package ru.tramforecast.api.web;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,10 +64,14 @@ class ApiTest {
     }
 
     private void buildWith(MlForecastClient ml) {
+        buildWith(ml, null, null);
+    }
+
+    private void buildWith(MlForecastClient ml, LocalDate from, LocalDate to) {
+        ForecastDates dates = new ForecastDates(CLOCK, MOSCOW, 1, from, to);
         InMemoryForecastRepository forecasts = new InMemoryForecastRepository();
         InMemoryActualRepository actuals = new InMemoryActualRepository(MOSCOW);
-        ForecastPreparer preparer = new ForecastPreparer(
-                new ForecastLoader(forecasts, ml), actuals, new ForecastDates(CLOCK, MOSCOW, 1));
+        ForecastPreparer preparer = new ForecastPreparer(new ForecastLoader(forecasts, ml), actuals, dates);
         AttentionPolicy attention = new AttentionPolicy(10, 25);
         RecommendationPolicy recommendation = new RecommendationPolicy(10);
         HistoryAligner history = new HistoryAligner(actuals, MOSCOW);
@@ -85,8 +91,7 @@ class ApiTest {
                         new ExportController(new ExportForecastService(preparer), new CsvForecastWriter(MOSCOW)),
                         new ModelController(new GetModelStatsService(forecasts, actuals), mapper),
                         new MetaController(
-                                new ru.tramforecast.api.application.GetMetaService(
-                                        CLOCK, new ForecastDates(CLOCK, MOSCOW, 1), MOSCOW, "stub"),
+                                new ru.tramforecast.api.application.GetMetaService(CLOCK, dates, MOSCOW, "stub"),
                                 mapper))
                 .setControllerAdvice(new GlobalExceptionHandler(MOSCOW))
                 .setConversionService(conversion)
@@ -220,6 +225,54 @@ class ApiTest {
         mvc.perform(get("/api/routes").param("horizon", "week").param("date", "2026-09-25"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.routes[0].points", hasSize(7)));
+    }
+
+    /**
+     * A period that is not entirely inside the model's range is a 400 with its own code and the range in
+     * the message (not a misleading "try again later"): a day before the range, a week or a month that
+     * sticks out of it. Periods inside are served.
+     */
+    @Test
+    void periodOutsideTheModelRangeIsA400WithItsOwnCode() throws Exception {
+        buildWith(new StubMlForecastClient(2, 3, CLOCK, MOSCOW), LocalDate.of(2026, 9, 1), LocalDate.of(2026, 12, 31));
+
+        mvc.perform(get("/api/routes/R1/forecast").param("date", "2026-08-15"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.code").value("PERIOD_NOT_SUPPORTED"))
+                .andExpect(jsonPath("$.title").value("Period not supported"))
+                .andExpect(jsonPath("$.detail").value(containsString("2026-09-01 .. 2026-12-31")))
+                .andExpect(jsonPath("$.detail").value(containsString("day covers 2026-08-15 .. 2026-08-15")));
+        mvc.perform(get("/api/routes").param("horizon", "week").param("date", "2026-12-28"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("PERIOD_NOT_SUPPORTED"));
+        mvc.perform(get("/api/routes").param("horizon", "month").param("date", "2026-08-20"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("PERIOD_NOT_SUPPORTED"));
+
+        mvc.perform(get("/api/routes/R1/forecast").param("date", "2026-09-25")).andExpect(status().isOk());
+        mvc.perform(get("/api/routes").param("horizon", "week").param("date", "2026-12-25"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.routes[0].points", hasSize(7)));
+    }
+
+    /**
+     * The metadata reports the model's range so a client can limit the date picker; without a fixed
+     * range the fields are empty and the latest date is "today plus a year".
+     */
+    @Test
+    void metaReportsTheModelRangeOrNone() throws Exception {
+        buildWith(new StubMlForecastClient(2, 3, CLOCK, MOSCOW), LocalDate.of(2026, 9, 1), LocalDate.of(2026, 12, 31));
+        mvc.perform(get("/api/meta"))
+                .andExpect(jsonPath("$.forecastFrom").value("2026-09-01"))
+                .andExpect(jsonPath("$.forecastTo").value("2026-12-31"))
+                .andExpect(jsonPath("$.latestDate").value("2026-12-31"));
+
+        buildWith(new StubMlForecastClient(2, 3, CLOCK, MOSCOW));
+        mvc.perform(get("/api/meta"))
+                .andExpect(jsonPath("$.forecastFrom").value(nullValue()))
+                .andExpect(jsonPath("$.forecastTo").value(nullValue()))
+                .andExpect(jsonPath("$.latestDate").value("2027-09-25"));
     }
 
     /**

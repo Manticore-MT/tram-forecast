@@ -50,6 +50,10 @@ services:
       TRAM_CORS_ALLOWED_ORIGINS: ${TRAM_CORS_ALLOWED_ORIGINS:-}
       # Optional: freeze "now" to a moment inside the historical dataset, e.g. 2025-11-01T00:00:00Z
       TRAM_CLOCK_FIXED_INSTANT: ${TRAM_CLOCK_FIXED_INSTANT:-}
+      # The range of dates the model covers (the ML service: 2025-11-01 .. 2026-12-31). A period that is not
+      # entirely inside it is refused with PERIOD_NOT_SUPPORTED before the model is asked.
+      TRAM_FORECAST_FROM: ${TRAM_FORECAST_FROM:-2025-11-01}
+      TRAM_FORECAST_TO: ${TRAM_FORECAST_TO:-2026-12-31}
     # Leave room for Postgres, Caddy and the ML container on a 4 GB server.
     mem_limit: 1536m
     # No published ports: the backend is reachable only through Caddy.

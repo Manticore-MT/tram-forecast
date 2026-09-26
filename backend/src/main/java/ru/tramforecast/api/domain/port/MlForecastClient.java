@@ -17,7 +17,9 @@ public interface MlForecastClient {
      * @param horizon planning horizon
      * @param date    anchor date
      * @return forecasts for every stop of every route
-     * @throws MlUnavailableException when ML did not answer in time or answered with an error
+     * @throws MlUnavailableException     when ML did not answer in time or answered with an error
+     * @throws MlRequestRejectedException when ML understood the request and refused it (for example a
+     *                                    period outside the range its model covers)
      */
     List<StopForecast> predict(Horizon horizon, LocalDate date);
 }

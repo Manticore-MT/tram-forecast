@@ -47,7 +47,14 @@ public class MetaController {
                 .map(h -> new HorizonInfo(ApiMapper.horizon(h), h.granularity().name().toLowerCase(java.util.Locale.ROOT)))
                 .toList();
         return new Meta(
-                mapper.time(value.now()), value.today(), value.latestDate(), value.zone(), value.dataSource(), horizons);
+                mapper.time(value.now()),
+                value.today(),
+                value.latestDate(),
+                value.forecastFrom(),
+                value.forecastTo(),
+                value.zone(),
+                value.dataSource(),
+                horizons);
     }
 
     /**
@@ -55,7 +62,12 @@ public class MetaController {
      *
      * @param now        the current moment the service works with (may be emulated)
      * @param today      the current calendar day
-     * @param latestDate the latest date a forecast can be requested for
+     * @param latestDate the latest date a forecast can be requested for (the end of the model's range when
+     *                   it is fixed)
+     * @param forecastFrom first date the model covers, {@code null} when there is no lower limit; a period
+     *                     that starts earlier is refused with {@code PERIOD_NOT_SUPPORTED}
+     * @param forecastTo   last date the model covers, {@code null} when the range is not fixed; a period that
+     *                     ends later is refused with {@code PERIOD_NOT_SUPPORTED}
      * @param zone       IANA zone of the calendar days
      * @param dataSource {@code model} for the real ML service, {@code stub} for synthetic demo data
      * @param horizons   supported horizons and the step of their points
@@ -64,6 +76,8 @@ public class MetaController {
             OffsetDateTime now,
             LocalDate today,
             LocalDate latestDate,
+            LocalDate forecastFrom,
+            LocalDate forecastTo,
             String zone,
             String dataSource,
             List<HorizonInfo> horizons) {

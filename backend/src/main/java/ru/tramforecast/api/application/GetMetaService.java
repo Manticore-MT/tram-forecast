@@ -30,6 +30,8 @@ public class GetMetaService implements GetMetaUseCase {
 
     @Override
     public ServiceMeta get() {
-        return new ServiceMeta(clock.instant(), dates.today(), dates.latest(), zone.getId(), dataSource);
+        return new ServiceMeta(
+                clock.instant(), dates.today(), dates.latest(), dates.earliest(), dates.forecastTo(), zone.getId(),
+                dataSource);
     }
 }
