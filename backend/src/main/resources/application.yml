@@ -36,6 +36,11 @@ tram:
     stub:
       routes: 3
       stops-per-route: 5
+  cors:
+    # Addresses allowed to call /api/** from a browser (comma separated, or * for any). Empty = CORS
+    # off, which is right on the deployed stand where the site and the API share one address. Meant
+    # for a frontend developed on localhost against a remote API.
+    allowed-origins: ${TRAM_CORS_ALLOWED_ORIGINS:}
   auth:
     # HTTP Basic on every /api/** request. Off by default (local development); the production
     # stack turns it on. With it on, username and password are required.

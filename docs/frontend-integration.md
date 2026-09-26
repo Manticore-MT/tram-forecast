@@ -13,6 +13,14 @@ browser does not open its own login dialog. Only `/api/**` is protected; `/actua
 by hand) access control is off and no header is needed. The user name and password of the stand
 are not in the repository: ask the person who runs the server.
 
+**CORS.** On the deployed stand the site and the API share one address, so no CORS is involved. For a
+frontend developed on `localhost` against the remote API, the server allows the addresses listed in
+`TRAM_CORS_ALLOWED_ORIGINS` (`*` for any; empty = off, the default). The browser's credential-less
+preflight (`OPTIONS`) is answered before the login check, and a `401` stays readable by the page.
+The methods `GET`/`HEAD`/`OPTIONS` and the headers `Authorization`, `Content-Type`, `Accept` are
+allowed; `Content-Disposition` is readable (the export names its file with it). A dev-server proxy
+(for example Vite's `server.proxy`) avoids CORS altogether.
+
 **Errors.** Every error is an RFC 9457 problem document (`application/problem+json`) with the same
 fields, so one error window can show them all:
 

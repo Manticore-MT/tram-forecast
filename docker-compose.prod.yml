@@ -45,6 +45,8 @@ services:
       TRAM_AUTH_ENABLED: ${TRAM_AUTH_ENABLED:-false}
       TRAM_AUTH_USERNAME: ${TRAM_AUTH_USERNAME:-}
       TRAM_AUTH_PASSWORD: ${TRAM_AUTH_PASSWORD:-}
+      # Browser calls to /api/** from other addresses (comma separated, or * for any). Empty = off.
+      TRAM_CORS_ALLOWED_ORIGINS: ${TRAM_CORS_ALLOWED_ORIGINS:-}
       # Optional: freeze "now" to a moment inside the historical dataset, e.g. 2025-11-01T00:00:00Z
       TRAM_CLOCK_FIXED_INSTANT: ${TRAM_CLOCK_FIXED_INSTANT:-}
     # Leave room for Postgres, Caddy and the ML container on a 4 GB server.
