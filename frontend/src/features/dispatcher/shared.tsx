@@ -1,9 +1,8 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Badge, Stat, Select } from "../../components";
+import { Badge, Stat } from "../../components";
 import { Sparkline } from "../../shared/charts";
-import { Panel } from "../../shared/Panel";
-import type { DeviationItem, FactorItem, PeriodOption } from "./types";
+import type { DeviationItem, FactorItem } from "./types";
 import type { Place } from "./store";
 
 export interface MetricCardProps {
@@ -65,7 +64,12 @@ export function DeviationList({ title, items, layout = "list", style, onSelect }
               <span className="text-caption text-text-muted">пик {z.peakTime}</span>
             </div>
             <div className="flex flex-none flex-col items-end gap-0.5">
-              <Badge tone={z.tone}>{z.relDeviation}</Badge>
+              <div className="flex items-center gap-1">
+                {z.action && (
+                  <Badge tone={z.action.tone}>{z.action.label}</Badge>
+                )}
+                <Badge tone={z.tone}>{z.relDeviation}</Badge>
+              </div>
               <span className="text-mono-s text-text-muted">{z.absDeviation}</span>
             </div>
           </div>
@@ -95,41 +99,5 @@ export function FactorsCard({ title = "Учтённые факторы", factors
         ))}
       </div>
     </div>
-  );
-}
-
-export interface PeriodCompareProps {
-  options: PeriodOption[];
-  style?: React.CSSProperties;
-}
-
-/** "Сравнение периодов" — произвольные период A / период B, диспетчер выбирает месяц↔месяц
- *  или неделю↔неделю через один и тот же список; разница считается на бэкенде, здесь — заглушка. */
-export function PeriodCompare({ options, style }: PeriodCompareProps) {
-  const [a, setA] = React.useState(options[0]?.value);
-  const [b, setB] = React.useState(options[1]?.value ?? options[0]?.value);
-  const labelFor = (v?: string) => options.find((o) => o.value === v)?.label ?? "";
-  return (
-    <div className="grid grid-cols-[1fr_1fr_auto] items-end gap-5" style={style}>
-      <Select label="Период A" value={a} onChange={(e) => setA(e.target.value)} options={options} />
-      <Select label="Период B" value={b} onChange={(e) => setB(e.target.value)} options={options} />
-      <Stat label="Разница" value="9.4" unit="%" trend={{ dir: "up", value: "9.4 %" }} caption={`${labelFor(a)} → ${labelFor(b)}`} />
-    </div>
-  );
-}
-
-export interface PlaceholderCardProps {
-  title: string;
-  note: string;
-}
-
-/** Reusable card type for sections whose mechanic is not yet finalized. */
-export function PlaceholderCard({ title, note }: PlaceholderCardProps) {
-  return (
-    <Panel title={title} action={<Badge tone="neutral">черновик</Badge>}>
-      <div className="flex min-h-35 items-center justify-center rounded-md border border-dashed border-border-default p-6 text-center text-body-s text-text-muted">
-        {note}
-      </div>
-    </Panel>
   );
 }

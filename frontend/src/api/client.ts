@@ -34,7 +34,7 @@ function buildQuery(params?: Query): string {
   return qs ? `?${qs}` : "";
 }
 
-async function apiFetch<T>(path: string, params?: Query): Promise<T> {
+async function request(path: string, params?: Query): Promise<Response> {
   const res = await fetch(`${API_BASE_URL}${path}${buildQuery(params)}`, {
     headers: getAuthHeader(),
   });
@@ -58,7 +58,11 @@ async function apiFetch<T>(path: string, params?: Query): Promise<T> {
     }
     throw new ApiError(res.status, title, detail, code);
   }
-  return res.json() as Promise<T>;
+  return res;
+}
+
+async function apiFetch<T>(path: string, params?: Query): Promise<T> {
+  return (await request(path, params)).json() as Promise<T>;
 }
 
 export type ForecastParams = operations["routes"]["parameters"]["query"];
@@ -104,3 +108,14 @@ export function getModelStats(params?: operations["stats"]["parameters"]["query"
     params,
   );
 }
+
+export type ExportParams = NonNullable<operations["export"]["parameters"]["query"]>;
+
+/** The CSV is behind basic auth, so it can't be a plain link: fetch it and hand back the file. */
+export async function downloadExport(params: ExportParams): Promise<{ blob: Blob; filename: string }> {
+  const res = await request("/api/export", params as Query);
+  const disposition = res.headers.get("Content-Disposition") ?? "";
+  const filename = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(disposition)?.[1] ?? "forecast.csv";
+  return { blob: await res.blob(), filename: decodeURIComponent(filename) };
+}
+

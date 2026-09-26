@@ -106,6 +106,21 @@ export function pointLabel(scale: Scale, periodStart: string): string {
   return scale === "year" ? SHORT_MONTH.format(d) : WEEKDAY_DAY.format(d);
 }
 
+const MONTH = utc({ month: "long" });
+
+/** Label of an interval of points: "07:00–10:00" · "пн, 28 – ср, 30" · "март – май". */
+export function rangeLabel(scale: Scale, periodStarts: string[], range: [number, number]): string {
+  const first = periodStarts[range[0]];
+  const last = periodStarts[range[1]];
+  if (!first || !last) return "";
+  if (scale === "day") {
+    const endHour = String(Number(last.slice(11, 13)) + 1).padStart(2, "0");
+    return `${first.slice(11, 16)}–${endHour}${last.slice(13, 16)}`;
+  }
+  const label = (s: string) => (scale === "year" ? MONTH.format(parse(s.slice(0, 10))) : pointLabel(scale, s));
+  return range[0] === range[1] ? label(first) : `${label(first)} – ${label(last)}`;
+}
+
 /** Index of the point whose period contains `now`, or -1 when `now` is outside the window. */
 export function nowIndex(periodStarts: string[], now: string | undefined): number {
   if (!now || periodStarts.length === 0) return -1;
@@ -145,4 +160,24 @@ export function resolveFocus(focus: number | null, periodStarts: string[], now: 
   if (periodStarts.length === 0) return -1;
   if (focus !== null && focus >= 0 && focus < periodStarts.length) return focus;
   return Math.max(0, nowIndex(periodStarts, now));
+}
+
+/** First day after the window (exclusive end), "YYYY-MM-DD". */
+export function windowEnd(scale: Scale, cursor: string): string {
+  switch (scale) {
+    case "day": return addDays(cursor, 1);
+    case "week": return addDays(cursor, 7);
+    case "month": return addMonths(cursor.slice(0, 8) + "01", 1);
+    case "year": return `${Number(cursor.slice(0, 4)) + 1}-01-01`;
+  }
+}
+
+/** API bounds of an interval of points: `from` inclusive, `to` exclusive (the next period's start,
+ *  or the window's end for the last point). Keeps the offset of the API's own timestamps. */
+export function rangeBounds(scale: Scale, cursor: string, periodStarts: string[], range: [number, number]): { from: string; to: string } | null {
+  const [start, end] = range;
+  if (start < 0 || start > end || end >= periodStarts.length) return null;
+  const from = periodStarts[start];
+  const to = end + 1 < periodStarts.length ? periodStarts[end + 1] : `${windowEnd(scale, cursor)}T00:00:00${from.slice(19)}`;
+  return { from, to };
 }

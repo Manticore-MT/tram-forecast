@@ -36,6 +36,9 @@ export interface PlaceSeries {
   /** A request is in flight, possibly while older points are still shown. */
   isFetching: boolean;
   error: unknown;
+  refetch: () => void;
+  /** When the backend last recomputed this forecast (ISO). */
+  lastUpdated?: string;
   /** Route level and below: the raw route answer (per-stop series, lastYear). */
   route?: RouteForecast;
   /** Stop level: the raw stop answer (factors, recommendation, peakAt). */
@@ -98,6 +101,11 @@ export function usePlaceSeries(place: Place, params: CommonParams | undefined): 
     isLoading: main.data === undefined && !error,
     isFetching: main.isFetching || (place.level === "stop" && route.isFetching),
     error,
+    lastUpdated: main.data?.lastUpdated,
+    refetch: () => {
+      if (place.level === "stop" && route.error) void route.refetch();
+      else void main.refetch();
+    },
     route: place.level === "network" ? undefined : route.data,
     stop: place.level === "stop" ? stop.data : undefined,
   };

@@ -8,6 +8,7 @@ import { useCurrentSeries, useFocusIndex, useForecastParams } from "../forecast"
 import { pointLabel, type Scale } from "../time";
 import { deviationPct, fmtPct, fmtSigned, toneForPct } from "../format";
 import { DeviationList } from "../shared";
+import { formatRecommendation } from "../recommendation";
 import type { DeviationItem } from "../types";
 
 type AttentionZone = components["schemas"]["AttentionZone"];
@@ -23,6 +24,7 @@ export function zonesFromAttention(zones: AttentionZone[], scale: Scale, limit =
     peakTime: z.peakAt ? pointLabel(scale, z.peakAt) : "—",
     tone: z.level === "CRITICAL" ? "danger" : z.level === "WARNING" ? "warn" : "ok",
     drillTo: z.routeId ? { level: "route", routeId: z.routeId } : undefined,
+    action: formatRecommendation(z.recommendation),
   }));
 }
 
@@ -68,7 +70,7 @@ export function AttentionPanel() {
 
   return (
     <Card tone="glass" padding="var(--space-4)">
-      {error ? <ErrorNotice error={error} /> : !ready ? <LoadingNotice /> : (
+      {error ? <ErrorNotice error={error} onRetry={network ? () => void attention.refetch() : series.refetch} /> : !ready ? <LoadingNotice /> : (
         <DeviationList title="Зоны внимания" items={items} onSelect={goTo} />
       )}
     </Card>

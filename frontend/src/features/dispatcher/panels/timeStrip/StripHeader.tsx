@@ -5,9 +5,15 @@ import { SCALES, SCALE_LABELS, shiftCursor, windowLabel, type Scale } from "../.
 // Coarse to fine, like the breadcrumbs: deeper is to the right.
 const SCALE_ITEMS = [...SCALES].reverse().map((s) => ({ value: s, label: SCALE_LABELS[s] }));
 
-/** Scale switch, window navigation, date jump and «Сегодня». */
-export function StripHeader() {
+export interface StripHeaderProps {
+  /** Label of the selected interval, null when none. */
+  rangeLabel: string | null;
+}
+
+/** Scale switch, window navigation, the selected interval, date jump and «Сегодня». */
+export function StripHeader({ rangeLabel }: StripHeaderProps) {
   const scale = useDispatcher((s) => s.scale);
+  const setRange = useDispatcher((s) => s.setRange);
   const cursor = useDispatcher((s) => s.cursor);
   const today = useDispatcher((s) => s.today);
   const latestDate = useDispatcher((s) => s.latestDate);
@@ -41,6 +47,20 @@ export function StripHeader() {
         />
       </div>
       <div className="ml-auto flex items-center gap-2">
+        {rangeLabel && (
+          <span className="flex h-9 items-center gap-1 rounded-md bg-status-info/15 pl-3 pr-1 text-ui-s text-text-primary">
+            {rangeLabel}
+            <button
+              type="button"
+              aria-label="Сбросить интервал"
+              title="Сбросить интервал (Esc)"
+              onClick={() => setRange(null)}
+              className="flex size-7 items-center justify-center rounded-sm text-text-secondary outline-none hover:bg-glass-fill hover:text-text-primary focus-visible:shadow-[inset_0_0_0_2px_var(--focus-ring)]"
+            >
+              ×
+            </button>
+          </span>
+        )}
         <input
           type="date"
           aria-label="Перейти к дате"

@@ -7,16 +7,18 @@ import { useCurrentSeries, useScenarioActive, useUncorrectedSeries } from "../fo
 import { Bars } from "./timeStrip/Bars";
 import { Readout } from "./timeStrip/Readout";
 import { StripHeader } from "./timeStrip/StripHeader";
+import { useInterval } from "./timeStrip/interval";
 
 const INTERACTIVE = "button, input, a, label, [role='slider'], [role='tablist']";
 
-/** Time control: scale, cursor date and the focused point of the window. */
+/** Time control: scale, cursor date, the focused point and the selected interval of the window. */
 export function TimeStrip() {
   const scaleUp = useDispatcher((s) => s.scaleUp);
   const series = useCurrentSeries();
   const uncorrected = useUncorrectedSeries();
   const scenario = useScenarioActive();
   const ghost = scenario && uncorrected.points.length === series.points.length ? uncorrected.points : null;
+  const interval = useInterval(series.points);
 
   // Like a click on empty map: a click on the strip's background goes up one scale.
   const onBackgroundClick = (e: React.MouseEvent) => {
@@ -25,10 +27,10 @@ export function TimeStrip() {
 
   return (
     <Card tone="glass" padding="var(--space-3) var(--space-4)" className="flex flex-col gap-1.5" onClick={onBackgroundClick}>
-      <StripHeader />
+      <StripHeader rangeLabel={interval?.label ?? null} />
       <div className="h-18">
         {series.error ? (
-          <div className="flex h-full items-center"><ErrorNotice error={series.error} /></div>
+          <div className="flex h-full items-center"><ErrorNotice error={series.error} onRetry={series.refetch} /></div>
         ) : series.isLoading ? (
           <div className="flex h-full items-center justify-center"><LoadingNotice /></div>
         ) : series.points.length === 0 ? (

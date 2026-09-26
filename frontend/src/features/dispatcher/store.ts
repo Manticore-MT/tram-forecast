@@ -13,13 +13,20 @@ export type Place =
 
 export type CorrectionKey = keyof Corrections;
 
+export type View = "dispatcher" | "overview";
+
 interface DispatcherState {
+  /** Open tab. Lives here so the overview can hand a route over to the dispatcher screen. */
+  view: View;
   place: Place;
   scale: Scale;
   /** Anchor date of the time window; null until /api/meta tells us "today". */
   cursor: string | null;
   /** Index of the focused point inside the window; null = automatic ("now" if visible, else first). */
   focus: number | null;
+  /** Selected interval of the window as inclusive point indices [start, end]; null = none.
+   *  Cleared whenever the window changes, since indices only make sense inside one window. */
+  range: [number, number] | null;
   corrections: Corrections;
   today: string | null;
   /** Furthest date the API accepts (one year ahead). */
@@ -28,6 +35,7 @@ interface DispatcherState {
   /** Seeds the clock from /api/meta once; later calls are no-ops. */
   init(today: string, latestDate: string): void;
 
+  setView(view: View): void;
   goTo(place: Place): void;
   /** stop → route → network. */
   placeUp(): void;
@@ -41,16 +49,19 @@ interface DispatcherState {
   setCursor(date: string): void;
   goToday(): void;
   setFocus(index: number | null): void;
+  setRange(range: [number, number] | null): void;
 
   setCorrection(key: CorrectionKey, value: number): void;
   resetCorrections(): void;
 }
 
 export const useDispatcher = create<DispatcherState>()((set, get) => ({
+  view: "dispatcher",
   place: { level: "network" },
   scale: "day",
   cursor: null,
   focus: null,
+  range: null,
   corrections: DEFAULT_CORRECTIONS,
   today: null,
   latestDate: null,
@@ -58,6 +69,10 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
   init(today, latestDate) {
     if (get().cursor !== null) return;
     set({ today, latestDate, cursor: today });
+  },
+
+  setView(view) {
+    set({ view });
   },
 
   goTo(place) {
@@ -71,17 +86,17 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
   },
 
   setScale(scale) {
-    set({ scale, focus: null });
+    set({ scale, focus: null, range: null });
   },
 
   scaleUp() {
     const next = scaleUp(get().scale);
-    if (next) set({ scale: next, focus: null });
+    if (next) set({ scale: next, focus: null, range: null });
   },
 
   drillTime(periodStart) {
     const target = drillDown(get().scale, periodStart);
-    if (target) set({ ...target, focus: null });
+    if (target) set({ ...target, focus: null, range: null });
   },
 
   shift(dir) {
@@ -89,20 +104,24 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
     if (!cursor) return;
     const next = shiftCursor(scale, cursor, dir);
     if (latestDate && next > latestDate) return;
-    set({ cursor: next, focus: null });
+    set({ cursor: next, focus: null, range: null });
   },
 
   setCursor(date) {
-    set({ cursor: date, focus: null });
+    set({ cursor: date, focus: null, range: null });
   },
 
   goToday() {
     const { today } = get();
-    if (today) set({ cursor: today, focus: null });
+    if (today) set({ cursor: today, focus: null, range: null });
   },
 
   setFocus(index) {
     set({ focus: index });
+  },
+
+  setRange(range) {
+    set({ range: range && range[0] > range[1] ? [range[1], range[0]] : range });
   },
 
   setCorrection(key, value) {

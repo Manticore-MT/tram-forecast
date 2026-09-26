@@ -7,6 +7,8 @@ import { useCurrentSeries, useFocusIndex } from "../forecast";
 import { SCALE_UNITS, pointLabel } from "../time";
 import { deviationPct, fmtInt, fmtPct, fmtSigned, toneForPct } from "../format";
 import { FactorsCard } from "../shared";
+import { useInterval } from "./timeStrip/interval";
+import { formatRecommendation } from "../recommendation";
 
 const FACTOR_LABELS: Record<string, string> = {
   weekend: "Выходной день",
@@ -28,15 +30,16 @@ export function DetailsPanel() {
   const series = useCurrentSeries();
   const focus = useFocusIndex(series.points);
   const point = series.points[focus];
+  const interval = useInterval(series.points);
   const unit = SCALE_UNITS[scale];
-  const recommendation = series.stop?.recommendation;
+  const recommendation = formatRecommendation(series.stop?.recommendation);
   const factors = (series.stop?.factors ?? []).map((f) => ({ label: FACTOR_LABELS[f] ?? f }));
 
   return (
     <Card tone="glass" padding="var(--space-6)" className="flex flex-col gap-5">
       <div className="mt-eyebrow">Детали{point ? ` · ${pointLabel(scale, point.periodStart)}` : ""}</div>
       <div className="text-h4">{placeTitle(place)}</div>
-      {series.error ? <ErrorNotice error={series.error} /> : series.isLoading || !point ? <LoadingNotice /> : (
+      {series.error ? <ErrorNotice error={series.error} onRetry={series.refetch} /> : series.isLoading || !point ? <LoadingNotice /> : (
         <>
           <div className="flex gap-6">
             <Stat label="Базовый уровень" value={fmtInt(point.baseline)} unit={unit} />
@@ -48,11 +51,21 @@ export function DetailsPanel() {
             caption={`${fmtSigned(point.forecast - point.baseline)} ${unit} к базе`}
             tone={toneForPct(deviationPct(point.forecast, point.baseline))}
           />
-          {recommendation?.action && recommendation.action !== "NONE" && (
-            <Stat
-              label="Рекомендация"
-              value={`${recommendation.action === "ADD_VEHICLE" ? "+" : "−"}${recommendation.vehicles ?? 1} трамвай`}
-            />
+          {recommendation && <Stat label="Рекомендация" value={recommendation.label} />}
+          {interval && (
+            <div className="flex flex-col gap-4 border-t border-border-subtle pt-4">
+              <div className="mt-eyebrow">За интервал {interval.label}</div>
+              <div className="flex gap-6">
+                <Stat label="Всего" value={fmtInt(interval.total)} unit="пасс" />
+                <Stat label="В среднем" value={fmtInt(interval.average)} unit={unit} />
+              </div>
+              <Stat
+                label="Отклонение"
+                value={fmtPct(deviationPct(interval.total, interval.baseline))}
+                caption={`${fmtSigned(interval.total - interval.baseline)} пасс к базе`}
+                tone={toneForPct(deviationPct(interval.total, interval.baseline))}
+              />
+            </div>
           )}
           {series.points.length > 1 && (
             <div>

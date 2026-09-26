@@ -40,17 +40,22 @@ export interface BarsProps {
   dimmed: boolean;
 }
 
-/** One bar per point of the window; click, drag or arrow keys move the focus. */
+/** One bar per point of the window. Click or arrows move the focus; a drag across bars selects an
+ *  interval, as on Grafana/Kibana time charts; Shift+arrows extend it. */
 export function Bars({ points, ghost, dimmed }: BarsProps) {
   const scale = useDispatcher((s) => s.scale);
   const setFocus = useDispatcher((s) => s.setFocus);
+  const setRange = useDispatcher((s) => s.setRange);
+  const range = useDispatcher((s) => s.range);
   const drillTime = useDispatcher((s) => s.drillTime);
   const scaleUp = useDispatcher((s) => s.scaleUp);
   const focus = useFocusIndex(points);
   const now = useMeta().data?.now;
   const ref = React.useRef<HTMLDivElement>(null);
   const width = useWidth(ref);
-  const dragging = React.useRef(false);
+  const drag = React.useRef<{ anchor: number; moved: boolean } | null>(null);
+  // The browser still fires dblclick for "click, then press-drag-release"; that gesture is an interval.
+  const lastWasDrag = React.useRef(false);
 
   const n = points.length;
   // No vehicle-capacity data yet, so load is relative to the window's peak.
@@ -71,15 +76,33 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
     if (useDispatcher.getState().focus !== i) setFocus(i);
   };
 
+  const band = range !== null && range[1] < n ? range : null;
+  const selectTo = (anchor: number, i: number) => {
+    const cur = useDispatcher.getState().range;
+    const lo = Math.min(anchor, i);
+    const hi = Math.max(anchor, i);
+    // A one-bar interval would just repeat the focus.
+    if (lo === hi) { if (cur) setRange(null); return; }
+    if (!cur || cur[0] !== lo || cur[1] !== hi) setRange([lo, hi]);
+  };
+  // Shift+arrows move the range's edge under the focus, or start a range at the focus.
+  const move = (i: number, extend: boolean) => {
+    if (extend) {
+      const anchor = band?.[0] === focus ? band[1] : band?.[1] === focus ? band[0] : focus;
+      selectTo(anchor, i);
+    }
+    pick(i);
+  };
+
   const onKeyDown = (e: React.KeyboardEvent) => {
     switch (e.key) {
-      case "ArrowLeft": pick(Math.max(0, focus - 1)); break;
-      case "ArrowRight": pick(Math.min(n - 1, focus + 1)); break;
-      case "Home": pick(0); break;
-      case "End": pick(n - 1); break;
+      case "ArrowLeft": move(Math.max(0, focus - 1), e.shiftKey); break;
+      case "ArrowRight": move(Math.min(n - 1, focus + 1), e.shiftKey); break;
+      case "Home": move(0, e.shiftKey); break;
+      case "End": move(n - 1, e.shiftKey); break;
       case "Enter": if (focused) drillTime(focused.periodStart); break;
-      case "Backspace":
-      case "Escape": scaleUp(); break;
+      case "Backspace": scaleUp(); break;
+      case "Escape": if (range) setRange(null); else scaleUp(); break;
       default: return;
     }
     e.preventDefault();
@@ -100,15 +123,26 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
       onPointerDown={(e) => {
         if (e.button !== 0) return;
         e.currentTarget.setPointerCapture(e.pointerId);
-        dragging.current = true;
-        pick(indexAt(e.clientX));
+        const i = indexAt(e.clientX);
+        drag.current = { anchor: i, moved: false };
+        pick(i);
       }}
       onPointerMove={(e) => {
-        if (dragging.current) pick(indexAt(e.clientX));
+        const d = drag.current;
+        if (!d) return;
+        const i = indexAt(e.clientX);
+        // Only a drag that leaves the first bar becomes an interval; a plain click keeps the current one.
+        if (i !== d.anchor) d.moved = true;
+        if (d.moved) selectTo(d.anchor, i);
       }}
-      onPointerUp={() => (dragging.current = false)}
-      onPointerCancel={() => (dragging.current = false)}
-      onDoubleClick={(e) => drillTime(points[indexAt(e.clientX)].periodStart)}
+      onPointerUp={() => {
+        lastWasDrag.current = drag.current?.moved ?? false;
+        drag.current = null;
+      }}
+      onPointerCancel={() => (drag.current = null)}
+      onDoubleClick={(e) => {
+        if (!lastWasDrag.current) drillTime(points[indexAt(e.clientX)].periodStart);
+      }}
       className={cn(
         "relative grid h-full cursor-pointer touch-none select-none rounded-md outline-none transition-opacity",
         "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring",
@@ -116,6 +150,12 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
       )}
       style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}
     >
+      {band && (
+        <div
+          className="pointer-events-none absolute inset-y-0 rounded-sm border-x border-status-info bg-status-info/15"
+          style={{ left: `${(band[0] / n) * 100}%`, width: `${((band[1] - band[0] + 1) / n) * 100}%` }}
+        />
+      )}
       {points.map((p, i) => {
         const isFocus = i === focus;
         const past = nowPos !== null && i + 1 <= nowPos;

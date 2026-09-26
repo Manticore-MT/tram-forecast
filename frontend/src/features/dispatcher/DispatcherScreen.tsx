@@ -21,7 +21,7 @@ export function DispatcherScreen() {
   if (!ready) {
     return (
       <div className="grid h-full min-h-155 place-items-center rounded-xl">
-        {meta.isError ? <ErrorNotice error={meta.error} /> : <LoadingNotice />}
+        {meta.isError ? <ErrorNotice error={meta.error} onRetry={() => void meta.refetch()} /> : <LoadingNotice />}
       </div>
     );
   }
