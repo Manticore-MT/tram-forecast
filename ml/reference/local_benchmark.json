@@ -5,31 +5,31 @@
   "benchmarks": [
     {
       "horizon": "day",
-      "coldMs": 51.08,
-      "warmMedianMs": 44.32,
-      "maxMs": 67.59,
-      "responseBytes": 817974
+      "coldMs": 57.96,
+      "warmMedianMs": 46.17,
+      "maxMs": 82.54,
+      "responseBytes": 839827
     },
     {
       "horizon": "week",
-      "coldMs": 17.9,
-      "warmMedianMs": 16.84,
-      "maxMs": 17.97,
-      "responseBytes": 389064
+      "coldMs": 21.69,
+      "warmMedianMs": 17.37,
+      "maxMs": 23.63,
+      "responseBytes": 425202
     },
     {
       "horizon": "month",
-      "coldMs": 60.25,
-      "warmMedianMs": 59.87,
-      "maxMs": 77.87,
-      "responseBytes": 1043182
+      "coldMs": 75.92,
+      "warmMedianMs": 67.18,
+      "maxMs": 83.9,
+      "responseBytes": 1080827
     },
     {
       "horizon": "year",
-      "coldMs": 90.77,
-      "warmMedianMs": 28.71,
-      "maxMs": 90.77,
-      "responseBytes": 573231
+      "coldMs": 84.96,
+      "warmMedianMs": 31.42,
+      "maxMs": 84.96,
+      "responseBytes": 610539
     }
   ]
 }

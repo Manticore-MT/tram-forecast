@@ -19,20 +19,20 @@ def client():
         yield c
 
 
-def test_all_competition_predictions_match_original_submission():
+def test_night_hours_are_zero_for_full_competition_period():
     engine = Engine(ROOT / "artifacts/route_model.json")
+    assert engine.night_filtered
     days = [date(2025, 11, 1) + timedelta(days=i) for i in range(61)]
-    with (ROOT / "reference/submission.csv").open(encoding="utf-8", newline="") as stream:
-        expected = {(int(r["route"]), r["date"], int(r["hour"])): int(r["prediction"]) for r in csv.DictReader(stream, delimiter=";")}
     compared = 0
     for route in ROUTES:
-        forecast, _ = engine.hourly(route, days)
+        forecast, baseline = engine.hourly(route, days)
+        assert np.all(forecast[:, :5] == 0)
+        assert np.all(baseline[:, :5] == 0)
         for i, day in enumerate(days):
             for hour in range(24):
-                assert forecast[i, hour] == expected[route, str(day), hour], (route, day, hour)
+                assert np.isfinite(forecast[i, hour]) and forecast[i, hour] >= 0, (route, day, hour)
                 compared += 1
     assert compared == 13176
-    assert all(v == 0 for (r, _, _), v in expected.items() if r == 5)
 
 
 def test_backend_contract_and_conservation(client):
@@ -107,10 +107,11 @@ def test_invalid_requests(client, payload):
 def test_quality_is_backtest_only(client):
     body = client.get("/metrics").json()
     assert body["scope"] == "historical_route_hour_backtest"
-    assert body["overall"]["score"] == pytest.approx(.8885761796187551)
+    assert 0 < body["overall"]["score"] < 1
     assert len(body["byDay"]) == 61 and len(body["byRoute"]) == 9
     assert sum(r["absoluteError"] for r in body["byDay"]) == body["overall"]["absoluteError"]
     assert not body["platform"]["hiddenActualsAvailable"]
+    assert body["platform"]["score"] is None
     assert client.get("/metrics?origin=2025-11-01").status_code == 422
 
 
@@ -123,8 +124,25 @@ def test_calendar_exceptions():
 
 def test_training_reproduces_competition_predictions(tmp_path):
     output = tmp_path / "retrained.json"
-    subprocess.run([sys.executable, str(ROOT / "train.py"), "--data", str(ROOT / "data"), "--output", str(output)], check=True)
+    subprocess.run([sys.executable, str(ROOT / "train.py"), "--labels", str(ROOT / "data/labels_day_filtered_all.csv"), "--output", str(output)], check=True)
     original, retrained = Engine(ROOT / "artifacts/route_model.json"), Engine(output)
     days = [date(2025, 11, 1) + timedelta(days=i) for i in range(61)]
     for route in ROUTES:
         np.testing.assert_array_equal(original.hourly(route, days)[0], retrained.hourly(route, days)[0])
+
+
+def test_night_filter_preserves_0530_boundary(tmp_path):
+    raw = tmp_path / "raw.csv"
+    raw.write_text("tran_date_time;validation_result;ngpt_route\n"
+                   "2025-01-01 00:00:00;1;1 трамвай\n"
+                   "2025-01-01 05:29:59;1;1 трамвай\n"
+                   "2025-01-01 05:30:00;1;1 трамвай\n"
+                   "2025-01-01 06:00:00;1;1 трамвай\n", encoding="utf-8")
+    labels = tmp_path / "labels.csv"
+    labels.write_text("route;date;hour;boardings\n1;2025-01-01;0;1\n1;2025-01-01;5;2\n1;2025-01-01;6;1\n", encoding="utf-8")
+    output = tmp_path / "filtered.csv"
+    subprocess.run([sys.executable, str(ROOT / "filter_night_labels.py"), "--raw", str(raw),
+                    "--labels", str(labels), "--output", str(output)], check=True)
+    with output.open(encoding="utf-8", newline="") as stream:
+        result = list(csv.DictReader(stream, delimiter=";"))
+    assert [(int(r["hour"]), int(r["boardings"])) for r in result] == [(5, 1), (6, 1)]

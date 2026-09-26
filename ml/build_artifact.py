@@ -55,8 +55,10 @@ def export_bundle(bundle, source_sha):
                 raw = np.asarray(raw, dtype=float)
                 shares[f"{route}:{summer}:{dow}"] = (raw / raw.sum() if raw.sum() else raw).tolist()
     closed = h[(h.route == 50) & (h.date >= "2025-09-06") & (h.dow >= 5)].groupby("hour").boardings.median()
+    target = ("successful_validations_excluding_0000_0529"
+              if config.get("exclude_before_local_time") == "05:30:00" else "successful_validations")
     return dict(schemaVersion=1, sourceSha256=source_sha, forecastOrigin=origin.date().isoformat(),
-                historyThrough=h.date.max().date().isoformat(), target="successful_validations",
+                historyThrough=h.date.max().date().isoformat(), target=target,
                 featureOrder=feature_names(), coefficients=bundle["regression"].coef_.tolist(),
                 intercept=float(bundle["regression"].intercept_),
                 correction={str(r): float(bundle["correction"].get(r, 0)) for r in ROUTES},

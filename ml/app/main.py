@@ -77,6 +77,8 @@ class ForecastService:
                                        baseline=float(baseline[indices].sum()), forecast=float(forecast[indices].sum())))
             factors = ["Календарь: дни недели, праздники, сокращённые дни", "Летняя сезонность",
                        "Исторический часовой профиль", "Поправка уровня по последним 28 дням истории"]
+            if self.engine.night_filtered:
+                factors.append("Технологические валидации 00:00–05:29 исключены из обучения и baseline")
             if any(calendar_fields(d)["holiday"] for d in days):
                 factors.append("В периоде есть праздничные или перенесённые выходные")
             if route == "50" and any(d.weekday() >= 5 and d <= self.engine.validated_last for d in days):
@@ -132,11 +134,12 @@ def health():
 @app.get("/metadata")
 def metadata():
     service = app.state.service
-    return dict(modelVersion=service.engine.version, target="successful_validations", timezone="Europe/Moscow",
+    return dict(modelVersion=service.engine.version, target=service.engine.artifact["target"], timezone="Europe/Moscow",
                 historyThrough="2025-10-31", forecastOrigin="2025-11-01",
                 competitionPeriod={"start": "2025-11-01", "end": "2025-12-31"},
                 scenarioPeriod={"start": "2026-01-01", "end": "2026-12-31"}, scenarioEnabled=service.allow_scenario,
                 supportedRoutes=[str(r) for r in ROUTES], stopCount=sum(map(len, service.stops.values())),
+                excludedBeforeLocalTime="05:30:00" if service.engine.night_filtered else None,
                 stopAllocation="uniform_demo_not_measured", segmentOccupancyAvailable=False,
                 baselineMethod="Медиана за 56 дней перед 01.11.2025: маршрут × эффективный день недели × час; праздники как воскресенье, рабочая суббота как пятница. Нули и ограничения в истории сохранены.",
                 corrections="Погода, событие и сезон — сценарные множители backend; в ML повторно не применяются.",
@@ -163,7 +166,8 @@ def predict_routes(request: PredictRequest):
 @lru_cache(maxsize=2)
 def backtest_metrics(origin):
     groups = {"all": [0., 0., 0]}
-    with (ROOT / "reference" / f"final_backtest_{origin}.csv").open(encoding="utf-8", newline="") as stream:
+    prefix = "filtered_backtest" if app.state.service.engine.night_filtered else "final_backtest"
+    with (ROOT / "reference" / f"{prefix}_{origin}.csv").open(encoding="utf-8", newline="") as stream:
         for row in csv.DictReader(stream):
             actual, predicted = float(row["boardings"]), round(float(row["selected"]))
             error = abs(actual-predicted)
@@ -184,7 +188,9 @@ def backtest_metrics(origin):
 @app.get("/metrics")
 def metrics(origin: Literal["2025-07-01", "2025-09-01"] = Query(default="2025-09-01")):
     return dict(scope="historical_route_hour_backtest", **backtest_metrics(origin),
-                platform={"score": .88220, "provenance": "reported_by_team", "hiddenActualsAvailable": False},
+                platform={"score": None if app.state.service.engine.night_filtered else .88220,
+                          "previousUnfilteredScore": .88220 if app.state.service.engine.night_filtered else None,
+                          "provenance": "reported_by_team", "hiddenActualsAvailable": False},
                 limitations=["Блоки использовались при подборе модели; это не независимый финальный тест.",
                              "Остановочных метрик и фактов нет. В actual_value не следует импортировать искусственно распределённые факты.",
                              "Доступны два отдельных 61-дневных блока; непрерывной 90-дневной проверки нет."])
