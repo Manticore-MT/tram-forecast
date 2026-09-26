@@ -13,6 +13,24 @@ browser does not open its own login dialog. Only `/api/**` is protected; `/actua
 by hand) access control is off and no header is needed. The user name and password of the stand
 are not in the repository: ask the person who runs the server.
 
+**Errors.** Every error is an RFC 9457 problem document (`application/problem+json`) with the same
+fields, so one error window can show them all:
+
+| Field | Meaning |
+|---|---|
+| `status` | HTTP status |
+| `title` | short name, fixed per kind of error |
+| `detail` | a sentence that can be shown to the user as is |
+| `code` | machine-readable code, see below; use it to group or style errors |
+| `timestamp` | when the error happened, ISO 8601 with offset |
+| `instance` | the request path that failed |
+
+Codes (added over time, never renamed): `INVALID_REQUEST` (400), `INVALID_PARAMETER` (400),
+`UNAUTHORIZED` (401), `NOT_FOUND` (404, unknown route or stop), `ENDPOINT_NOT_FOUND` (404, not an
+endpoint), `METHOD_NOT_ALLOWED` (405), `FORECAST_NOT_READY` (503, nothing stored and ML is
+unavailable: try again later), `INTERNAL_ERROR` (500, nothing internal is revealed). Samples:
+[`examples/error-*.json`](examples).
+
 The formal contract is [`openapi.json`](openapi.json) (OpenAPI 3.1). It is generated from the
 backend code, and a CI test fails when the file is out of date, so it always matches what the
 backend really does. With the backend running there is also an interactive page at

@@ -1,0 +1,9 @@
+{
+  "code": "UNAUTHORIZED",
+  "detail": "Authentication is required: send an 'Authorization: Basic' header with valid credentials.",
+  "instance": "/api/meta",
+  "status": 401,
+  "timestamp": "2026-09-26T13:20:11.123+03:00",
+  "title": "Unauthorized",
+  "type": "about:blank"
+}
