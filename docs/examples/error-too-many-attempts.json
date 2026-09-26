@@ -1,0 +1,9 @@
+{
+  "code": "TOO_MANY_ATTEMPTS",
+  "detail": "Too many failed login attempts. Try again in 10 seconds.",
+  "instance": "/api/meta",
+  "status": 429,
+  "timestamp": "2026-09-26T13:20:11.123+03:00",
+  "title": "Too many attempts",
+  "type": "about:blank"
+}

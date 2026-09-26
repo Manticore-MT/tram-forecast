@@ -1,7 +1,7 @@
 {
   "openapi" : "3.1.0",
   "info" : {
-    "description" : "Forecast of tram ridership by route and stop for the horizons day, week, month and year.\n\n**Conventions**\n- Timestamps are ISO 8601 with an explicit offset, for example\n  `2026-09-25T09:00:00+03:00`. Dates are `YYYY-MM-DD`. There are no unix timestamps.\n- Every forecast response carries the whole horizon, so a time slider on the client\n  reads points locally and needs no further requests.\n- Steps follow the horizon: day = hourly, week = daily, month = daily, year = monthly. A week is\n  seven days starting at the requested `date` (not a calendar week).\n- Routes and stops are identified by opaque string IDs; geometry is not served.\n- `modelVersion = \"stub\"` and `dataSource = \"stub\"` mean synthetic demo data.\n- Errors are RFC 9457 problem documents (`application/problem+json`).\n- When access control is on, every `/api/**` request needs the header\n  `Authorization: Basic base64(user:password)`; there is no login endpoint.\n  A missing or wrong credential gives 401 (no `WWW-Authenticate` header).\n",
+    "description" : "Forecast of tram ridership by route and stop for the horizons day, week, month and year.\n\n**Conventions**\n- Timestamps are ISO 8601 with an explicit offset, for example\n  `2026-09-25T09:00:00+03:00`. Dates are `YYYY-MM-DD`. There are no unix timestamps.\n- Every forecast response carries the whole horizon, so a time slider on the client\n  reads points locally and needs no further requests.\n- Steps follow the horizon: day = hourly, week = daily, month = daily, year = monthly. A week is\n  seven days starting at the requested `date` (not a calendar week).\n- Routes and stops are identified by opaque string IDs; geometry is not served.\n- `modelVersion = \"stub\"` and `dataSource = \"stub\"` mean synthetic demo data.\n- Errors are RFC 9457 problem documents (`application/problem+json`).\n- When access control is on, every `/api/**` request needs the header\n  `Authorization: Basic base64(user:password)`; there is no login endpoint.\n  A missing or wrong credential gives 401 (no `WWW-Authenticate` header). After 3 failed\n  attempts in a row a client is refused for 10 seconds with 429 and a\n  `Retry-After` header.\n",
     "license" : {
       "name" : "MIT",
       "url" : "https://opensource.org/licenses/MIT"
@@ -148,6 +148,16 @@
               }
             },
             "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
+          },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then"
           },
           "503" : {
             "content" : {
@@ -328,6 +338,16 @@
             },
             "description" : "Unknown route or stop, or nothing to return for them"
           },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then"
+          },
           "503" : {
             "content" : {
               "application/problem+json" : {
@@ -366,6 +386,16 @@
               }
             },
             "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
+          },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then"
           }
         },
         "summary" : "Service metadata: current moment, selectable dates, horizons, data source",
@@ -415,6 +445,16 @@
               }
             },
             "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
+          },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then"
           }
         },
         "summary" : "Forecast quality: WAPE of the initial daily forecasts against the facts",
@@ -552,6 +592,16 @@
               }
             },
             "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
+          },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then"
           },
           "503" : {
             "content" : {
@@ -717,6 +767,16 @@
             },
             "description" : "Unknown route or stop, or nothing to return for them"
           },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then"
+          },
           "503" : {
             "content" : {
               "application/problem+json" : {
@@ -783,6 +843,16 @@
               }
             },
             "description" : "Unknown route or stop, or nothing to return for them"
+          },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then"
           }
         },
         "summary" : "Typical week of a route: load by day of week and hour",
@@ -944,6 +1014,16 @@
               }
             },
             "description" : "Unknown route or stop, or nothing to return for them"
+          },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then"
           },
           "503" : {
             "content" : {
@@ -1196,7 +1276,7 @@
           "code" : {
             "type" : "string",
             "description" : "Machine-readable error code, stable across releases (codes are added, never renamed)",
-            "enum" : [ "INVALID_REQUEST", "INVALID_PARAMETER", "ROUTE_NOT_FOUND", "STOP_NOT_FOUND", "NO_DATA", "ENDPOINT_NOT_FOUND", "METHOD_NOT_ALLOWED", "FORECAST_NOT_READY", "UNAUTHORIZED", "INTERNAL_ERROR" ],
+            "enum" : [ "INVALID_REQUEST", "INVALID_PARAMETER", "ROUTE_NOT_FOUND", "STOP_NOT_FOUND", "NO_DATA", "ENDPOINT_NOT_FOUND", "METHOD_NOT_ALLOWED", "FORECAST_NOT_READY", "UNAUTHORIZED", "TOO_MANY_ATTEMPTS", "INTERNAL_ERROR" ],
             "example" : "ROUTE_NOT_FOUND"
           },
           "detail" : {
