@@ -6,7 +6,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import ru.tramforecast.api.domain.model.Horizon;
-import ru.tramforecast.api.domain.model.StopForecast;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.port.ForecastRepository;
 import ru.tramforecast.api.domain.port.MlForecastClient;
 import ru.tramforecast.api.domain.port.MlRequestRejectedException;
@@ -43,7 +43,7 @@ public class RefreshForecastService implements RefreshForecastUseCase {
             return false;
         }
         try {
-            List<StopForecast> fresh = ml.predict(horizon, date);
+            List<RouteForecast> fresh = ml.predict(horizon, date);
             repository.saveAll(fresh);
             return !fresh.isEmpty();
         } catch (MlRequestRejectedException e) {

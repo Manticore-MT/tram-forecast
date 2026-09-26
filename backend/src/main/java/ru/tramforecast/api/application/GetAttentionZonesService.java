@@ -5,12 +5,10 @@ import java.util.Comparator;
 import java.util.List;
 import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.service.AttentionZoneCalculator;
-import ru.tramforecast.api.domain.service.ForecastAggregator;
 
 /**
- * Implements {@link GetAttentionZonesUseCase}: reads the forecasts (asking ML when storage has
- * none), sums them per route and lets the domain calculator find the zones. Zones are per route: the
- * values of single stops are not a measurement.
+ * Implements {@link GetAttentionZonesUseCase}: reads the route forecasts (asking ML when storage has
+ * none) and lets the domain calculator find the zones.
  */
 public class GetAttentionZonesService implements GetAttentionZonesUseCase {
 
@@ -31,7 +29,7 @@ public class GetAttentionZonesService implements GetAttentionZonesUseCase {
     @Override
     public AttentionResult get(ForecastQuery query) {
         PreparedForecast prepared = preparer.prepare(query);
-        List<RouteForecast> routes = ForecastAggregator.byRoute(prepared.stops());
+        List<RouteForecast> routes = prepared.routes();
         Instant lastUpdated = routes.stream()
                 .map(RouteForecast::generatedAt)
                 .min(Comparator.naturalOrder())

@@ -4,8 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import ru.tramforecast.api.domain.model.Horizon;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.SnapshotKind;
-import ru.tramforecast.api.domain.model.StopForecast;
 import ru.tramforecast.api.domain.port.ForecastRepository;
 import ru.tramforecast.api.domain.port.MlForecastClient;
 import ru.tramforecast.api.domain.port.MlRequestRejectedException;
@@ -47,8 +47,8 @@ public class ForecastLoader {
      * @return forecasts for every stop, never empty
      * @throws ForecastUnavailableException when nothing is stored and ML cannot produce a forecast
      */
-    public List<StopForecast> load(Horizon horizon, LocalDate date, SnapshotKind kind) {
-        List<StopForecast> stored = read(horizon, date, kind);
+    public List<RouteForecast> load(Horizon horizon, LocalDate date, SnapshotKind kind) {
+        List<RouteForecast> stored = read(horizon, date, kind);
         if (!stored.isEmpty()) {
             return stored;
         }
@@ -84,7 +84,7 @@ public class ForecastLoader {
         }
     }
 
-    private List<StopForecast> read(Horizon horizon, LocalDate date, SnapshotKind kind) {
+    private List<RouteForecast> read(Horizon horizon, LocalDate date, SnapshotKind kind) {
         return kind == SnapshotKind.INITIAL
                 ? repository.findInitial(horizon, date)
                 : repository.findLatest(horizon, date);

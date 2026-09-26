@@ -1,7 +1,7 @@
 # Integrating a frontend with the backend
 
-The frontend draws the map and the routes/stops from its own static data (OpenData mos.ru). The
-backend never returns geometry, only values keyed by `routeId` and `stopId`, so those IDs must match
+The frontend draws the map and the routes from its own static data (OpenData mos.ru). The
+backend never returns geometry, only values keyed by `routeId`, so those IDs must match
 the ones used by the ML service and the backend.
 
 **Authentication.** When access control is on (the deployed stand), every request under `/api/**`
@@ -26,8 +26,7 @@ used to tune the model, so this is not an independent test). If nothing falls in
 `platformScore` (for example 0.88226) is a **different measurement**: the score the platform gave the submitted
 contest file on its hidden check, as the team reports it (`platformNote` says so). Show it on its own line,
 **never merge it with the backtest** (the backtest is about 0.89, a historical estimate whose blocks were used
-to tune the model). Both are route x hour scores: **do not show them as the quality of a stop**, the stop
-values are a demonstration. `platformScore` is `null` when the ML service does not report it.
+to tune the model). Both are route x hour scores. `platformScore` is `null` when the ML service does not report it.
 
 **The date range.** `GET /api/meta` reports `forecastFrom` and `forecastTo` (the range the model covers, for
 the stand 2025-11-01 .. 2026-12-31; both are `null` when the model has no fixed range) and `latestDate` (the
@@ -36,10 +35,18 @@ end of the range). Limit the date picker to it: a period that is not **entirely*
 is seven days from `date`, a month and a year are the calendar month and year that contain it. The clock of
 the stand is frozen (`now`/`today` in `/api/meta`), so "today" is the same day for every request.
 
-**Attention zones (`GET /api/attention`).** One zone per **route**, not per stop: the deviation and the peak
-are computed from the route total (the sum of the route's stops), and a zone has no `stopId`. The stop
-values of the ML service are a demonstration (an equal split of the route total), so ranking stops by them
-would list the same route once per stop. A zone drills into its route (`routeId`); `deviationAbs` and
+**Route level only.** The load is forecast per route and hour, and that is the smallest unit: the dataset
+has no link between validations and stops, so there is no stop endpoint, no `stops` in a route answer, no
+`stopId` in a zone or in the export, and no `STOP_NOT_FOUND` code. Draw the network and the routes; a stop
+has no value of its own.
+
+**Route forecast (`GET /api/routes/{routeId}/forecast`).** `points` (baseline, forecast, deviation, and the
+fact once it is known), `status` (`NORMAL`, `WARNING`, `CRITICAL`, from the largest deviation), `peakAt`,
+`maxDeviationAt`, `recommendation`, `lastYear`, `modelVersion` and `factors` (what the model took into
+account; `-scenario` in `modelVersion` and a scenario factor mark forecasts after 2025-12-31).
+
+**Attention zones (`GET /api/attention`).** One zone per route, computed from the route forecast. A zone
+drills into its route (`routeId`); `deviationAbs` and
 `deviationPct` are at the period of the largest deviation (`maxDeviationAt`), `peakAt` is the period with the
 highest forecast, `level` is `WARNING` or `CRITICAL`, and `recommendation` is a suggested action with a vehicle
 count.
@@ -76,7 +83,7 @@ fields, so one error window can show them all:
 Codes (added over time, never renamed): `INVALID_REQUEST` (400), `INVALID_PARAMETER` (400),
 `PERIOD_NOT_SUPPORTED` (400, the period is outside the range the model covers; retrying does not help, pick
 another date, see `forecastFrom`/`forecastTo` in `/api/meta`), `UNAUTHORIZED` (401), `TOO_MANY_ATTEMPTS` (429, see below), `ROUTE_NOT_FOUND` (404, no such route; `detail` lists the known routes),
-`STOP_NOT_FOUND` (404, the route exists but has no such stop), `NO_DATA` (404, route and stop exist
+`NO_DATA` (404, the route exists
 but there is nothing to answer with, for example no history for a load matrix),
 `ENDPOINT_NOT_FOUND` (404, not an endpoint), `METHOD_NOT_ALLOWED` (405), `FORECAST_NOT_READY` (503, nothing stored and ML is
 unavailable: try again later), `INTERNAL_ERROR` (500, nothing internal is revealed). Samples:

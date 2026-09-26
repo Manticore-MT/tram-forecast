@@ -32,7 +32,7 @@ public class MlConfig {
     @ConditionalOnProperty(name = "tram.ml.mode", havingValue = "stub", matchIfMissing = true)
     public MlForecastClient stubMlForecastClient(TramProperties properties, Clock clock, ZoneId zone) {
         TramProperties.Stub stub = properties.ml().stub();
-        return new StubMlForecastClient(stub.routes(), stub.stopsPerRoute(), clock, zone);
+        return new StubMlForecastClient(stub.routes(), clock, zone);
     }
 
     /**

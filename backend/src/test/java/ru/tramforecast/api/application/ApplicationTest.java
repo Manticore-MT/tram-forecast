@@ -19,10 +19,9 @@ import ru.tramforecast.api.domain.model.ForecastPoint;
 import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.ModelStats;
 import ru.tramforecast.api.domain.model.RecommendationAction;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.RouteId;
 import ru.tramforecast.api.domain.model.SnapshotKind;
-import ru.tramforecast.api.domain.model.StopForecast;
-import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.domain.port.MlForecastClient;
 import ru.tramforecast.api.domain.port.MlRequestRejectedException;
 import ru.tramforecast.api.domain.port.MlUnavailableException;
@@ -63,8 +62,8 @@ class ApplicationTest {
                 throw new MlUnavailableException("down", null);
             }
             return List.of(
-                    stop("S1", mlTime, new ForecastPoint(HOUR, 100, 130, null)),
-                    stop("S2", mlTime, new ForecastPoint(HOUR, 100, 102, null)));
+                    route("R1", mlTime, new ForecastPoint(HOUR, 100, 130, null)),
+                    route("R2", mlTime, new ForecastPoint(HOUR, 100, 102, null)));
         };
         loader = new ForecastLoader(forecasts, ml);
         ForecastDates dates = new ForecastDates(Clock.fixed(NOON, ZONE), ZONE, 1);
@@ -106,8 +105,8 @@ class ApplicationTest {
         loader.load(Horizon.DAY, DATE, SnapshotKind.LATEST);
         mlTime = NOON.plusSeconds(900);
         new RefreshForecastService(forecasts, (h, d) -> List.of(
-                stop("S1", mlTime, new ForecastPoint(HOUR, 100, 160, null)),
-                stop("S2", mlTime, new ForecastPoint(HOUR, 100, 101, null)))).refresh(Horizon.DAY, DATE);
+                route("R1", mlTime, new ForecastPoint(HOUR, 100, 160, null)),
+                route("R2", mlTime, new ForecastPoint(HOUR, 100, 101, null)))).refresh(Horizon.DAY, DATE);
 
         assertThat(loader.load(Horizon.DAY, DATE, SnapshotKind.INITIAL).get(0).points().get(0).forecast())
                 .isEqualTo(130);
@@ -116,7 +115,7 @@ class ApplicationTest {
     }
 
     /**
-     * Attention zones are computed by the backend per route, from the stops summed into the route.
+     * Attention zones are computed by the backend per route.
      */
     @Test
     void attentionZonesComeFromLoadedAggregates() {
@@ -126,8 +125,8 @@ class ApplicationTest {
 
         assertThat(result.zones()).hasSize(1);
         assertThat(result.zones().get(0).routeId().value()).isEqualTo("R1");
-        assertThat(result.zones().get(0).deviationPct()).isCloseTo(16.0, org.assertj.core.data.Offset.offset(1e-9));
-        assertThat(result.zones().get(0).level()).isEqualTo(AttentionLevel.WARNING);
+        assertThat(result.zones().get(0).deviationPct()).isCloseTo(30.0, org.assertj.core.data.Offset.offset(1e-9));
+        assertThat(result.zones().get(0).level()).isEqualTo(AttentionLevel.CRITICAL);
     }
 
     /**
@@ -135,17 +134,17 @@ class ApplicationTest {
      */
     @Test
     void preparerAppliesCorrectionFactsAndInterval() {
-        actuals.add(new ActualValue(new RouteId("R1"), new StopId("S1"), HOUR, 111));
+        actuals.add(new ActualValue(new RouteId("R1"), HOUR, 111));
         ForecastQuery query = new ForecastQuery(
                 Horizon.DAY, DATE, SnapshotKind.LATEST, new CorrectionCoefficients(1.0, 1.1, 1.0), null, null);
 
-        StopForecast s1 = preparer.prepare(query).stops().get(0);
-        assertThat(s1.points().get(0).forecast()).isCloseTo(143.0, org.assertj.core.data.Offset.offset(1e-9));
-        assertThat(s1.points().get(0).actual()).isEqualTo(111.0);
+        RouteForecast r1 = preparer.prepare(query).routes().get(0);
+        assertThat(r1.points().get(0).forecast()).isCloseTo(143.0, org.assertj.core.data.Offset.offset(1e-9));
+        assertThat(r1.points().get(0).actual()).isEqualTo(111.0);
 
         ForecastQuery outside = new ForecastQuery(
                 Horizon.DAY, DATE, SnapshotKind.LATEST, null, HOUR.plusSeconds(3600), null);
-        assertThat(preparer.prepare(outside).stops().get(0).points()).isEmpty();
+        assertThat(preparer.prepare(outside).routes().get(0).points()).isEmpty();
     }
 
     /**
@@ -159,26 +158,25 @@ class ApplicationTest {
     }
 
     /**
-     * Stop details carry the verdict, the recommendation and the year-ago facts aligned to now.
+     * Route details carry the verdict, the recommendation and the year-ago facts aligned to now.
      */
     @Test
-    void stopDetailsCarryVerdictAndYearAgoFacts() {
-        actuals.add(new ActualValue(
-                new RouteId("R1"), new StopId("S1"), HOUR.atZone(ZONE).minusYears(1).toInstant(), 95));
-        GetStopForecastService service = new GetStopForecastService(
+    void routeDetailsCarryVerdictAndYearAgoFacts() {
+        actuals.add(new ActualValue(new RouteId("R1"), HOUR.atZone(ZONE).minusYears(1).toInstant(), 95));
+        GetRouteForecastService service = new GetRouteForecastService(
                 preparer,
                 new HistoryAligner(actuals, ZONE),
                 new AttentionPolicy(10, 25),
                 new RecommendationPolicy(10));
 
-        StopForecastResult result = service.get(new RouteId("R1"), new StopId("S1"), ForecastQuery.of(Horizon.DAY, DATE));
+        RouteForecastResult result = service.get(new RouteId("R1"), ForecastQuery.of(Horizon.DAY, DATE));
 
         assertThat(result.level()).isEqualTo(AttentionLevel.CRITICAL);
         assertThat(result.recommendation().action()).isEqualTo(RecommendationAction.ADD_VEHICLE);
         assertThat(result.peak().forecast()).isEqualTo(130);
         assertThat(result.lastYear()).hasSize(1);
         assertThat(result.lastYear().get(0).periodStart()).isEqualTo(HOUR);
-        assertThatThrownBy(() -> service.get(new RouteId("R1"), new StopId("nope"), ForecastQuery.of(Horizon.DAY, DATE)))
+        assertThatThrownBy(() -> service.get(new RouteId("nope"), ForecastQuery.of(Horizon.DAY, DATE)))
                 .isInstanceOf(NotFoundException.class);
     }
 
@@ -188,8 +186,8 @@ class ApplicationTest {
     @Test
     void modelStatsMeasureInitialSnapshotAgainstFacts() {
         loader.load(Horizon.DAY, DATE, SnapshotKind.LATEST);
-        actuals.add(new ActualValue(new RouteId("R1"), new StopId("S1"), HOUR, 100));
-        actuals.add(new ActualValue(new RouteId("R1"), new StopId("S2"), HOUR, 100));
+        actuals.add(new ActualValue(new RouteId("R1"), HOUR, 100));
+        actuals.add(new ActualValue(new RouteId("R2"), HOUR, 100));
 
         ModelStats stats = new GetModelStatsService(forecasts, actuals).get(30);
 
@@ -285,8 +283,8 @@ class ApplicationTest {
                 .hasMessage("No such route");
     }
 
-    private static StopForecast stop(String stop, Instant generatedAt, ForecastPoint point) {
-        return new StopForecast(
-                new RouteId("R1"), new StopId(stop), Horizon.DAY, DATE, generatedAt, "test", List.of(point), List.of());
+    private static RouteForecast route(String route, Instant generatedAt, ForecastPoint point) {
+        return new RouteForecast(
+                new RouteId(route), Horizon.DAY, DATE, generatedAt, "test", List.of(point), List.of());
     }
 }

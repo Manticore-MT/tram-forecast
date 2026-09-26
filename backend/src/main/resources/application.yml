@@ -38,7 +38,6 @@ tram:
     read-timeout: 10s
     stub:
       routes: 3
-      stops-per-route: 5
   cors:
     # Addresses allowed to call /api/** from a browser (comma separated, or * for any). Empty = CORS
     # off, which is right on the deployed stand where the site and the API share one address. Meant

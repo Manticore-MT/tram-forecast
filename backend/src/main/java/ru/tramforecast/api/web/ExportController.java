@@ -19,9 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.tramforecast.api.application.ExportForecastUseCase;
 import ru.tramforecast.api.application.ForecastQuery;
 import ru.tramforecast.api.application.InvalidRequestException;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopForecast;
-import ru.tramforecast.api.domain.model.StopId;
 
 /**
  * Tabular export of forecast results.
@@ -52,12 +51,11 @@ public class ExportController {
      *
      * @param format  {@code csv} (default); {@code xlsx} is not supported yet
      * @param routeId optional route filter
-     * @param stopId  optional stop filter
      * @param params  common query parameters (horizon, date, interval, correction)
      * @return the file as an attachment
      */
     @Operation(
-            summary = "Export the forecast as CSV (one row per stop and period)",
+            summary = "Export the forecast as CSV (one row per route and period)",
             responses = @ApiResponse(
                     responseCode = "200",
                     description = "A CSV attachment, UTF-8, header row first",
@@ -66,17 +64,12 @@ public class ExportController {
     public ResponseEntity<String> export(
             @RequestParam(defaultValue = "csv") String format,
             @RequestParam(required = false) String routeId,
-            @RequestParam(required = false) String stopId,
             @ParameterObject ForecastParams params) {
         if (!"csv".equalsIgnoreCase(format)) {
             throw new InvalidRequestException("Unsupported export format '" + format + "', only csv is available");
         }
-        if (stopId != null && routeId == null) {
-            throw new InvalidRequestException("'stopId' requires 'routeId'");
-        }
         ForecastQuery query = params.toQuery();
-        List<StopForecast> rows = export.export(
-                query, routeId == null ? null : new RouteId(routeId), stopId == null ? null : new StopId(stopId));
+        List<RouteForecast> rows = export.export(query, routeId == null ? null : new RouteId(routeId));
         String name = "forecast-" + query.horizon().name().toLowerCase(Locale.ROOT) + "-" + rows.get(0).date() + ".csv";
         return ResponseEntity.ok()
                 .contentType(CSV)

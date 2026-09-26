@@ -33,7 +33,6 @@ services:
       TRAM_ML_BASE_URL: ${TRAM_ML_BASE_URL:-http://ml:8000}
       # Size of the synthetic network in stub mode (match scripts/seed-demo-actuals.sql).
       TRAM_ML_STUB_ROUTES: ${TRAM_ML_STUB_ROUTES:-3}
-      TRAM_ML_STUB_STOPS_PER_ROUTE: ${TRAM_ML_STUB_STOPS_PER_ROUTE:-5}
       # Access control: with TRAM_AUTH_ENABLED=true every /api/** request needs
       # 'Authorization: Basic base64(user:password)'. Off by default; the values live in .env.
       TRAM_AUTH_ENABLED: ${TRAM_AUTH_ENABLED:-false}

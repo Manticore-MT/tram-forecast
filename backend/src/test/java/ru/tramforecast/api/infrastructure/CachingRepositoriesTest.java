@@ -13,9 +13,8 @@ import ru.tramforecast.api.domain.model.ActualValue;
 import ru.tramforecast.api.domain.model.ForecastPoint;
 import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.LoadMatrix;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopForecast;
-import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.domain.port.ActualRepository;
 import ru.tramforecast.api.infrastructure.persistence.CachingActualRepository;
 import ru.tramforecast.api.infrastructure.persistence.CachingForecastRepository;
@@ -39,7 +38,7 @@ class CachingRepositoriesTest {
         AtomicInteger reads = new AtomicInteger();
         InMemoryForecastRepository real = new InMemoryForecastRepository() {
             @Override
-            public List<StopForecast> findLatest(Horizon horizon, LocalDate date) {
+            public List<RouteForecast> findLatest(Horizon horizon, LocalDate date) {
                 reads.incrementAndGet();
                 return super.findLatest(horizon, date);
             }
@@ -50,12 +49,12 @@ class CachingRepositoriesTest {
         assertThat(cache.findLatest(Horizon.DAY, DATE)).isEmpty();
         assertThat(reads).hasValue(2);
 
-        cache.saveAll(List.of(stop(130)));
+        cache.saveAll(List.of(route(130)));
         assertThat(cache.findLatest(Horizon.DAY, DATE)).hasSize(1);
         assertThat(cache.findLatest(Horizon.DAY, DATE)).hasSize(1);
         assertThat(reads).hasValue(3);
 
-        cache.saveAll(List.of(stop(160).withPoints(List.of(new ForecastPoint(NOW, 100, 160, null)))));
+        cache.saveAll(List.of(route(160).withPoints(List.of(new ForecastPoint(NOW, 100, 160, null)))));
         assertThat(cache.findLatest(Horizon.DAY, DATE)).hasSize(1);
         assertThat(reads).hasValue(4);
     }
@@ -68,7 +67,7 @@ class CachingRepositoriesTest {
         AtomicInteger finds = new AtomicInteger();
         AtomicInteger matrices = new AtomicInteger();
         InMemoryActualRepository real = new InMemoryActualRepository(ZoneId.of("Europe/Moscow"));
-        real.add(new ActualValue(new RouteId("R1"), new StopId("S1"), NOW, 5));
+        real.add(new ActualValue(new RouteId("R1"), NOW, 5));
         ActualRepository counting = new ActualRepository() {
             @Override
             public List<ActualValue> find(Horizon horizon, LocalDate date) {
@@ -94,9 +93,9 @@ class CachingRepositoriesTest {
         assertThat(matrices).hasValue(1);
     }
 
-    private static StopForecast stop(double forecast) {
-        return new StopForecast(
-                new RouteId("R1"), new StopId("S1"), Horizon.DAY, DATE, NOW.plusSeconds((long) forecast), "test",
+    private static RouteForecast route(double forecast) {
+        return new RouteForecast(
+                new RouteId("R1"), Horizon.DAY, DATE, NOW.plusSeconds((long) forecast), "test",
                 List.of(new ForecastPoint(NOW, 100, forecast, null)), List.of());
     }
 }

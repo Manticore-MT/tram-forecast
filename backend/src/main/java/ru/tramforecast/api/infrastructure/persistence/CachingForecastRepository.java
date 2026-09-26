@@ -6,7 +6,7 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import ru.tramforecast.api.domain.model.Horizon;
-import ru.tramforecast.api.domain.model.StopForecast;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.port.ForecastRepository;
 
 /**
@@ -17,8 +17,8 @@ import ru.tramforecast.api.domain.port.ForecastRepository;
 public class CachingForecastRepository implements ForecastRepository {
 
     private final ForecastRepository delegate;
-    private final Cache<Key, List<StopForecast>> latest;
-    private final Cache<Key, List<StopForecast>> initial;
+    private final Cache<Key, List<RouteForecast>> latest;
+    private final Cache<Key, List<RouteForecast>> initial;
 
     /**
      * Creates the cache.
@@ -34,17 +34,17 @@ public class CachingForecastRepository implements ForecastRepository {
     }
 
     @Override
-    public List<StopForecast> findLatest(Horizon horizon, LocalDate date) {
+    public List<RouteForecast> findLatest(Horizon horizon, LocalDate date) {
         return cached(latest, new Key(horizon, date), () -> delegate.findLatest(horizon, date));
     }
 
     @Override
-    public List<StopForecast> findInitial(Horizon horizon, LocalDate date) {
+    public List<RouteForecast> findInitial(Horizon horizon, LocalDate date) {
         return cached(initial, new Key(horizon, date), () -> delegate.findInitial(horizon, date));
     }
 
     @Override
-    public void saveAll(List<StopForecast> forecasts) {
+    public void saveAll(List<RouteForecast> forecasts) {
         delegate.saveAll(forecasts);
         latest.invalidateAll();
         initial.invalidateAll();
@@ -55,13 +55,13 @@ public class CachingForecastRepository implements ForecastRepository {
         return delegate.recentDates(horizon, limit);
     }
 
-    private static List<StopForecast> cached(
-            Cache<Key, List<StopForecast>> cache, Key key, java.util.function.Supplier<List<StopForecast>> load) {
-        List<StopForecast> hit = cache.getIfPresent(key);
+    private static List<RouteForecast> cached(
+            Cache<Key, List<RouteForecast>> cache, Key key, java.util.function.Supplier<List<RouteForecast>> load) {
+        List<RouteForecast> hit = cache.getIfPresent(key);
         if (hit != null) {
             return hit;
         }
-        List<StopForecast> loaded = List.copyOf(load.get());
+        List<RouteForecast> loaded = List.copyOf(load.get());
         if (!loaded.isEmpty()) {
             cache.put(key, loaded);
         }

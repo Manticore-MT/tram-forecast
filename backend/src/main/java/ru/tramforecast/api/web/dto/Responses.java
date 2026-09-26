@@ -72,36 +72,6 @@ public final class Responses {
     }
 
     /**
-     * Series of one stop inside a route response.
-     *
-     * @param stopId stop identifier
-     * @param points compact points
-     */
-    public record StopSeries(String stopId, List<SlimPoint> points) {
-    }
-
-    /**
-     * Response of {@code GET /api/routes/{routeId}/forecast}.
-     *
-     * @param routeId     route identifier
-     * @param horizon     {@code day}, {@code month} or {@code year}
-     * @param date        resolved anchor date
-     * @param lastUpdated when the oldest underlying snapshot was generated
-     * @param points      route total per period
-     * @param lastYear    route total a year earlier
-     * @param stops       series of every stop of the route
-     */
-    public record RouteForecast(
-            String routeId,
-            String horizon,
-            LocalDate date,
-            OffsetDateTime lastUpdated,
-            List<Point> points,
-            List<LastYearPoint> lastYear,
-            List<StopSeries> stops) {
-    }
-
-    /**
      * A suggested dispatcher action.
      *
      * @param action   {@code ADD_VEHICLE}, {@code REMOVE_VEHICLE} or {@code NONE}
@@ -111,10 +81,9 @@ public final class Responses {
     }
 
     /**
-     * Response of {@code GET /api/routes/{routeId}/stops/{stopId}/forecast}.
+     * Response of {@code GET /api/routes/{routeId}/forecast}.
      *
      * @param routeId        route identifier
-     * @param stopId         stop identifier
      * @param horizon        {@code day}, {@code month} or {@code year}
      * @param date           resolved anchor date
      * @param lastUpdated    when the snapshot was generated
@@ -127,9 +96,8 @@ public final class Responses {
      * @param lastYear       facts a year earlier
      * @param factors        factors the model took into account
      */
-    public record StopForecast(
+    public record RouteForecast(
             String routeId,
-            String stopId,
             String horizon,
             LocalDate date,
             OffsetDateTime lastUpdated,
