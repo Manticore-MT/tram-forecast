@@ -1,0 +1,2 @@
+-r requirements-dev.txt
+catboost==1.2.10
