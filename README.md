@@ -26,15 +26,7 @@
 
 ## Быстрый старт
 
-Нужен Docker. Весь стек — backend, frontend, ML-сервис, Postgres — одной командой:
-
-```bash
-docker compose -f docker-compose.local.yml up --build
-```
-
-Открыть <http://localhost:8080>, войти: `jury` / `jury-local-demo`. Первая сборка — несколько минут
-(Maven, npm, pip), дальше — секунды. Часы внутри зафиксированы на 01.11.2025, начало периода прогноза,
-так что «сегодня» сразу попадает в данные.
+См. «[3. Запускаемый веб-сервис](#3-запускаемый-веб-сервис)».
 
 ## 1. ML-модель
 
@@ -49,9 +41,27 @@ docker compose -f docker-compose.local.yml up --build
 
 ## 3. Запускаемый веб-сервис
 
-Команда — см. «[Быстрый старт](#быстрый-старт)» выше: [`docker-compose.local.yml`](docker-compose.local.yml)
-поднимает backend + frontend + ML + Postgres одной командой, без внешних зависимостей. Тот же стек
-круглосуточно работает на <https://24manticore.ru>.
+Тот же стек круглосуточно работает на <https://24manticore.ru> (Basic-auth, логин/пароль — организаторам отдельно).
+
+Локально — нужен Docker, backend + frontend + ML + Postgres одной командой, без внешних зависимостей:
+
+```bash
+docker compose -f docker-compose.local.yml up --build
+```
+
+Открыть <http://localhost:8080>, войти: `jury` / `jury-local-demo`. Первая сборка — несколько минут
+(Maven, npm, pip качают зависимости), дальше — секунды. Часы внутри зафиксированы на 01.11.2025, начало
+периода прогноза, так что «сегодня» сразу попадает в данные. Остановить — Ctrl+C; убрать вместе с БД —
+`docker compose -f docker-compose.local.yml down -v`.
+
+Точки входа API: [`docs/openapi.json`](docs/openapi.json) (полный контракт), Swagger UI на
+`http://localhost:8080/swagger-ui.html` при поднятом стенде, таблицы эндпоинтов — в разделе 4 ниже.
+Пример:
+
+```bash
+curl -u jury:jury-local-demo http://localhost:8080/api/meta
+curl -u jury:jury-local-demo "http://localhost:8080/api/routes?horizon=day"
+```
 
 ## 4. Архитектура и модули
 
