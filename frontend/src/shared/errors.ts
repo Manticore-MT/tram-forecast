@@ -33,6 +33,12 @@ const BY_CODE: Record<ApiErrorCode, ErrorDescription> = {
     tone: "error",
     retryable: false,
   },
+  PERIOD_NOT_SUPPORTED: {
+    title: "Период недоступен",
+    hint: "Выберите дату в пределах диапазона, который поддерживает модель.",
+    tone: "info",
+    retryable: false,
+  },
   NO_DATA: {
     title: "Нет данных за этот период",
     hint: "Попробуйте выбрать другую дату.",

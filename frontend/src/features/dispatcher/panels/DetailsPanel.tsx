@@ -1,4 +1,4 @@
-import { Card, Stat } from "../../../components";
+import { Badge, Card, Stat } from "../../../components";
 import { routeStops } from "../../../network/tramNetwork";
 import { Sparkline } from "../../../shared/charts";
 import { ErrorNotice, LoadingNotice } from "../../../shared/notices";
@@ -27,9 +27,31 @@ function placeTitle(place: Place): string {
 export function DetailsPanel() {
   const place = useDispatcher((s) => s.place);
   const scale = useDispatcher((s) => s.scale);
+  const segment = useDispatcher((s) => s.segment);
   const series = useCurrentSeries();
   const focus = useFocusIndex(series.points);
   const point = series.points[focus];
+  const segmentOnRoute = place.level !== "network" && segment ? segment : null;
+  const segmentStops = segmentOnRoute && place.level !== "network" ? routeStops(place.routeId) : undefined;
+  const segmentAgg =
+    segmentOnRoute && segmentStops
+      ? (() => {
+          const [from, to] = segmentOnRoute;
+          let forecast = 0;
+          let baseline = 0;
+          for (let i = from; i <= to; i++) {
+            const p = series.route?.stops?.[i]?.points?.[focus];
+            forecast += p?.forecast ?? 0;
+            baseline += p?.baseline ?? 0;
+          }
+          return {
+            fromName: segmentStops[from]?.name ?? "",
+            toName: segmentStops[to]?.name ?? "",
+            forecast,
+            baseline,
+          };
+        })()
+      : null;
   const interval = useInterval(series.points);
   const unit = SCALE_UNITS[scale];
   const recommendation = formatRecommendation(series.stop?.recommendation);
@@ -48,6 +70,22 @@ export function DetailsPanel() {
       <div className="text-h4">{placeTitle(place)}</div>
       {series.error ? <ErrorNotice error={series.error} onRetry={series.refetch} /> : series.isLoading || !point ? <LoadingNotice /> : (
         <>
+          {segmentAgg && (
+            <div className="flex flex-col gap-2 border-b border-border-subtle pb-4">
+              <div className="flex items-center gap-2">
+                <div className="mt-eyebrow">
+                  Участок: {segmentAgg.fromName} – {segmentAgg.toName}
+                </div>
+                <Badge tone="neutral">демо</Badge>
+              </div>
+              <Stat
+                label="Отклонение"
+                value={fmtPct(deviationPct(segmentAgg.forecast, segmentAgg.baseline))}
+                caption={`${fmtInt(segmentAgg.forecast)} ${unit} · ${fmtSigned(segmentAgg.forecast - segmentAgg.baseline)} к базе`}
+                tone={toneForPct(deviationPct(segmentAgg.forecast, segmentAgg.baseline))}
+              />
+            </div>
+          )}
           <div className="flex gap-6">
             <Stat label="Базовый уровень" value={fmtInt(point.baseline)} unit={unit} />
             <Stat label="Прогноз" value={fmtInt(point.forecast)} unit={unit} />

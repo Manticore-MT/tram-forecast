@@ -164,7 +164,6 @@ export interface components {
             peakAt?: string;
             recommendation?: components["schemas"]["Recommendation"];
             routeId?: string;
-            stopId?: string;
         };
         DailyAccuracy: {
             /** Format: date */
@@ -198,6 +197,10 @@ export interface components {
         };
         Meta: {
             dataSource?: string;
+            /** Format: date */
+            forecastFrom?: string;
+            /** Format: date */
+            forecastTo?: string;
             horizons?: components["schemas"]["HorizonInfo"][];
             /** Format: date */
             latestDate?: string;
@@ -209,6 +212,11 @@ export interface components {
         };
         ModelStats: {
             history?: components["schemas"]["DailyAccuracy"][];
+            note?: string;
+            platformNote?: string;
+            /** Format: double */
+            platformScore?: number;
+            source?: string;
             /** Format: double */
             wape?: number;
             /** Format: double */
@@ -243,7 +251,7 @@ export interface components {
              * @example ROUTE_NOT_FOUND
              * @enum {string}
              */
-            code?: "INVALID_REQUEST" | "INVALID_PARAMETER" | "ROUTE_NOT_FOUND" | "STOP_NOT_FOUND" | "NO_DATA" | "ENDPOINT_NOT_FOUND" | "METHOD_NOT_ALLOWED" | "FORECAST_NOT_READY" | "UNAUTHORIZED" | "TOO_MANY_ATTEMPTS" | "INTERNAL_ERROR";
+            code?: "INVALID_REQUEST" | "INVALID_PARAMETER" | "PERIOD_NOT_SUPPORTED" | "ROUTE_NOT_FOUND" | "STOP_NOT_FOUND" | "NO_DATA" | "ENDPOINT_NOT_FOUND" | "METHOD_NOT_ALLOWED" | "FORECAST_NOT_READY" | "UNAUTHORIZED" | "TOO_MANY_ATTEMPTS" | "INTERNAL_ERROR";
             /**
              * @description A message that can be shown to the user
              * @example One of the request parameters is missing or has the wrong format.
@@ -332,7 +340,7 @@ export interface operations {
                 /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
                 horizon?: "day" | "week" | "month" | "year";
                 /**
-                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.
+                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).
                  * @example 2026-09-25
                  */
                 date?: string;
@@ -417,7 +425,7 @@ export interface operations {
                 /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
                 horizon?: "day" | "week" | "month" | "year";
                 /**
-                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.
+                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).
                  * @example 2026-09-25
                  */
                 date?: string;
@@ -595,7 +603,7 @@ export interface operations {
                 /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
                 horizon?: "day" | "week" | "month" | "year";
                 /**
-                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.
+                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).
                  * @example 2026-09-25
                  */
                 date?: string;
@@ -677,7 +685,7 @@ export interface operations {
                 /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
                 horizon?: "day" | "week" | "month" | "year";
                 /**
-                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.
+                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).
                  * @example 2026-09-25
                  */
                 date?: string;
@@ -828,7 +836,7 @@ export interface operations {
                 /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
                 horizon?: "day" | "week" | "month" | "year";
                 /**
-                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today, at most one year ahead.
+                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).
                  * @example 2026-09-25
                  */
                 date?: string;

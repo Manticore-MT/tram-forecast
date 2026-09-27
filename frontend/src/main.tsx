@@ -17,7 +17,7 @@ function shouldRetry(failureCount: number, error: unknown): boolean {
 }
 
 function retryDelay(failureCount: number, error: unknown): number {
-  if (error instanceof ApiError && error.code === "FORECAST_NOT_READY") return 3000;
+  if (error instanceof ApiError && error.code === "FORECAST_NOT_READY") return 12000;
   return Math.min(1000 * 2 ** failureCount, 5000);
 }
 
