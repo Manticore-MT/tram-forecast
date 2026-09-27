@@ -67,6 +67,7 @@
   --color-overlay-scrim: var(--overlay-scrim);
   --color-glass-fill: var(--glass-fill);
   --color-glass-stroke: var(--glass-stroke);
+  --color-glass-well: var(--glass-well);
 
   /* ── Type ────────────────────────────────────────────────── */
   /* Aliased via --src- prefixed tokens (renamed in tokens/*.css) to avoid

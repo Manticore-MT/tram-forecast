@@ -1,4 +1,5 @@
 import React from "react";
+import { Icon, Input } from "../../../../components";
 import { clampValue, parseValueInput, posToValue, roundValue, SLIDER_MAX, valueToPos } from "./sliderMath";
 
 const DEBOUNCE_MS = 300;
@@ -79,7 +80,10 @@ export function ScenarioSlider({ label, value, onCommit }: ScenarioSliderProps) 
           aria-label={label}
         />
       </div>
-      <input
+      <span aria-hidden="true" className="shrink-0 select-none text-ui-s text-text-muted">×</span>
+      <Input
+        size="sm"
+        align="right"
         type="text"
         inputMode="decimal"
         value={text}
@@ -88,9 +92,18 @@ export function ScenarioSlider({ label, value, onCommit }: ScenarioSliderProps) 
         onKeyDown={(e) => {
           if (e.key === "Enter") (e.target as HTMLInputElement).blur();
         }}
-        className="w-16 shrink-0 rounded-md bg-bg-surface-2 px-2 py-1 text-right text-ui-s text-text-primary shadow-(--inset-hairline) focus:outline-none focus:shadow-[inset_0_0_0_2px_var(--focus-ring)]"
+        style={{ width: "4rem", flexShrink: 0 }}
       />
-      <span className="shrink-0 text-ui-s text-text-secondary">×</span>
+      <button
+        type="button"
+        aria-label={`Сбросить «${label}» к 1.00`}
+        title="Сбросить к 1.00"
+        disabled={value === 1}
+        onClick={() => commitNow(1)}
+        className="flex size-7 shrink-0 items-center justify-center rounded-sm text-text-secondary outline-none hover:bg-glass-fill hover:text-text-primary disabled:pointer-events-none disabled:opacity-40 focus-visible:shadow-[inset_0_0_0_2px_var(--focus-ring)]"
+      >
+        <Icon name="refresh-cw" size={14} />
+      </button>
     </div>
   );
 }

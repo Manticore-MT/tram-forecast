@@ -60,10 +60,10 @@ export function Button({
         onClick={onClick}
         style={style}
         className={cn(
-          "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-focus-ring focus-visible:ring-3 focus-visible:ring-focus-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 gap-2",
+          "group/button inline-flex shrink-0 items-center justify-center rounded-md border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-focus-ring focus-visible:ring-3 focus-visible:ring-focus-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 gap-2",
           sizeClasses,
           shadcnVariant === "default" && "bg-brand text-on-accent hover:bg-brand/80",
-          shadcnVariant === "outline" && "border-border-default bg-bg-page hover:bg-bg-surface-2 hover:text-text-primary",
+          shadcnVariant === "outline" && "border-border-default bg-transparent hover:bg-glass-fill hover:text-text-primary",
           shadcnVariant === "ghost" && "hover:bg-bg-surface-2 hover:text-text-primary",
           variantClasses,
           blockClasses,

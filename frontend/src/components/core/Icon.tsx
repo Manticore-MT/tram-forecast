@@ -37,6 +37,7 @@ export interface IconProps {
   /** override the fill; defaults to currentColor */
   strokeAccent?: string;
   style?: React.CSSProperties;
+  className?: string;
 }
 
 /** Glyphs used across this design system — bundled at build time, keyed by the same

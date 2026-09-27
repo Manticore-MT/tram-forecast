@@ -9,9 +9,12 @@ import { Empty, QueryGate, TONE_TEXT } from "./QueryGate";
 
 type RoutesQuery = ReturnType<typeof useRoutes>;
 
-function KpiCard({ children }: { children: ReactNode }) {
+/** Title lives on the card shell, not inside the Stat, so it's visible even when the
+ *  content below is an error or loading state instead of a value. */
+function KpiCard({ title, children }: { title: string; children: ReactNode }) {
   return (
     <Card tone="surface" padding="var(--space-5)" className="flex min-w-0 flex-col gap-3">
+      <span className="text-eyebrow text-text-muted">{title}</span>
       {children}
     </Card>
   );
@@ -19,7 +22,7 @@ function KpiCard({ children }: { children: ReactNode }) {
 
 export function TotalCard({ network, scale }: { network: RoutesQuery; scale: Scale }) {
   return (
-    <KpiCard>
+    <KpiCard title="Пассажиропоток за период">
       <QueryGate q={network}>
         {() => {
           const points = networkPoints(network.data?.routes ?? []);
@@ -29,7 +32,6 @@ export function TotalCard({ network, scale }: { network: RoutesQuery; scale: Sca
           const peak = points[peakIndex(points)];
           return (
             <Stat
-              label="Пассажиропоток за период"
               value={fmtInt(total)}
               unit="пасс"
               caption={
@@ -58,7 +60,7 @@ export interface CompareCardProps {
 export function CompareCard({ network, comparison, scale, mode, onMode, comparisonLabel }: CompareCardProps) {
   const options = compareOptions(scale);
   return (
-    <KpiCard>
+    <KpiCard title="Сравнение с периодом">
       <Select
         value={effectiveMode(scale, mode)}
         options={options}
@@ -95,7 +97,7 @@ export function CompareCard({ network, comparison, scale, mode, onMode, comparis
 
 export function AttentionCard({ attention }: { attention: ReturnType<typeof useAttention> }) {
   return (
-    <KpiCard>
+    <KpiCard title="Зоны внимания">
       <QueryGate q={attention}>
         {() => {
           const zones = attention.data?.zones ?? [];
@@ -103,7 +105,6 @@ export function AttentionCard({ attention }: { attention: ReturnType<typeof useA
           const warning = zones.filter((z) => z.level === "WARNING").length;
           return (
             <Stat
-              label="Зоны внимания"
               value={fmtInt(zones.length)}
               tone={critical > 0 ? "danger" : warning > 0 ? "warn" : undefined}
               caption={
@@ -124,7 +125,7 @@ export function AttentionCard({ attention }: { attention: ReturnType<typeof useA
 
 export function QualityCard({ stats }: { stats: ReturnType<typeof useModelStats> }) {
   return (
-    <KpiCard>
+    <KpiCard title="Качество прогноза">
       <QueryGate q={stats}>
         {() => {
           const data = stats.data;
@@ -134,7 +135,6 @@ export function QualityCard({ stats }: { stats: ReturnType<typeof useModelStats>
           return (
             <>
               <Stat
-                label="Качество прогноза"
                 value={wapeScore == null ? "—" : wapeScore.toFixed(2)}
                 unit="WAPE-score"
                 caption={

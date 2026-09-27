@@ -1,4 +1,4 @@
-import { Button, Icon, IconButton, Tabs } from "../../../../components";
+import { Button, Icon, IconButton, Input, Tabs } from "../../../../components";
 import { useDispatcher } from "../../store";
 import { SCALES, SCALE_LABELS, shiftCursor, windowLabel, type Scale } from "../../time";
 
@@ -64,7 +64,8 @@ export function StripHeader({ rangeLabel }: StripHeaderProps) {
             </button>
           </span>
         )}
-        <input
+        <Input
+          size="sm"
           type="date"
           aria-label="Перейти к дате"
           value={cursor}
@@ -75,7 +76,6 @@ export function StripHeader({ rangeLabel }: StripHeaderProps) {
             if (date && (!latestDate || date <= latestDate) && (!forecastFrom || date >= forecastFrom))
               setCursor(date);
           }}
-          className="h-9 rounded-md bg-bg-surface-2 px-3 text-ui-s text-text-primary shadow-(--inset-hairline) outline-none [color-scheme:dark] focus-visible:shadow-[inset_0_0_0_2px_var(--focus-ring)]"
         />
         <Button variant="secondary" size="sm" disabled={cursor === today} onClick={goToday}>
           Сегодня
