@@ -88,7 +88,7 @@ curl -u jury:jury-local-demo "http://localhost:8080/api/routes?horizon=day"
 | Карта сети / полоса времени | `GET /api/routes?horizon=day` |
 | Панель деталей | `GET /api/routes/{routeId}/forecast?horizon=day` |
 | Зоны внимания | `GET /api/attention?horizon=day` |
-| Типичная неделя маршрута | `GET /api/routes/{routeId}/load-matrix` |
+| Типичная неделя маршрута (Обзор) | `GET /api/history/comparison?date=2025-11-01&routeId=17` |
 | Качество модели | `GET /api/model/stats?days=30` |
 | Метаданные (даты, горизонты) | `GET /api/meta` |
 | Выгрузка в CSV | `GET /api/export?format=csv&horizon=day` |
