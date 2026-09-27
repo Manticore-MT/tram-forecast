@@ -2,7 +2,7 @@
 
 ИИ-прогноз загрузки трамвайных маршрутов (Хакатон Московского транспорта). Команда **Manticore**.
 
-**Стенд:** <https://24manticore.ru>
+**Стенд:** <https://24manticore.ru> — логин `organizer`, пароль `gagImtDR6iZl3C1L`
 
 ![Java](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1-6DB33F?logo=springboot&logoColor=white)
@@ -49,10 +49,14 @@
 docker compose -f docker-compose.local.yml up --build
 ```
 
-Открыть <http://localhost:8080>, войти: `jury` / `jury-local-demo`. Первая сборка — несколько минут
-(Maven, npm, pip качают зависимости), дальше — секунды. Часы внутри зафиксированы на 01.11.2025, начало
-периода прогноза, так что «сегодня» сразу попадает в данные. Остановить — Ctrl+C; убрать вместе с БД —
-`docker compose -f docker-compose.local.yml down -v`.
+Открыть <http://localhost:8080>.
+
+> **Логин:** `jury`
+> **Пароль:** `jury-local-demo`
+
+Первая сборка — несколько минут (Maven, npm, pip качают зависимости), дальше — секунды. Часы внутри
+зафиксированы на 01.11.2025, начало периода прогноза, так что «сегодня» сразу попадает в данные.
+Остановить — Ctrl+C; убрать вместе с БД — `docker compose -f docker-compose.local.yml down -v`.
 
 Точки входа API: [`docs/openapi.json`](docs/openapi.json) (полный контракт), Swagger UI на
 `http://localhost:8080/swagger-ui.html` при поднятом стенде, таблицы эндпоинтов — в разделе 4 ниже.
