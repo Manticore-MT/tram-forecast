@@ -38,7 +38,7 @@ export function Select({ label, hint, options = [], value, onChange, disabled = 
         <SelectTrigger
           id={id}
           className={cn(
-            "h-12 w-full rounded-md border-none bg-bg-surface-2 px-4 py-0 text-body-s text-text-primary",
+            "h-12! w-full rounded-md border-none bg-bg-surface-2 px-4 py-0 text-body-s text-text-primary",
             "shadow-(--inset-hairline-strong) transition-ui",
             "focus-visible:shadow-[inset_0_0_0_2px_var(--focus-ring)] focus-visible:ring-0",
             "data-[state=open]:shadow-[inset_0_0_0_2px_var(--focus-ring)] data-[state=open]:ring-0 data-[state=closed]:ring-0",

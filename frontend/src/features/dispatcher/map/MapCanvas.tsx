@@ -93,6 +93,14 @@ export const MapCanvas = React.forwardRef<MapHandle, MapCanvasProps>(function Ma
           .addTo(g);
       }
     } else {
+      // Background: every other route, dimmed and clickable, same as the network view.
+      for (const r of Object.values(TRAM_ROUTES)) {
+        if (r.number === routeId) continue;
+        L.polyline(r.stops.map((s) => s.ll), { color: NEUTRAL_HEX, weight: 4, opacity: 0.8 })
+          .bindTooltip(`Маршрут № ${r.number}`, { sticky: true })
+          .on("click", (e) => { stopClicks(e); onRouteClick?.(r.number); })
+          .addTo(g);
+      }
       const stops = routeStops(routeId);
       const lineColor = routeColors?.[routeId] ?? ACCENT_HEX;
       for (let i = 0; i < stops.length - 1; i++) {
@@ -100,7 +108,7 @@ export const MapCanvas = React.forwardRef<MapHandle, MapCanvasProps>(function Ma
       }
       stops.forEach((s) => {
         // Stops carry no forecast data (route-level only) — just geometry and a name tooltip.
-        L.circleMarker(s.ll, { radius: 7, color: "#0E1113", weight: 2, fillColor: NEUTRAL_HEX, fillOpacity: 1 })
+        L.circleMarker(s.ll, { radius: 7, color: "#0E1113", weight: 2, fillColor: NEUTRAL_HEX, fillOpacity: 1, className: "tram-stop-marker" })
           .bindTooltip(s.name, { direction: "top" })
           .on("click", stopClicks)
           .addTo(g);

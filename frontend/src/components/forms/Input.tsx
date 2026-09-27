@@ -1,6 +1,5 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Input as ShadcnInput } from "@/components/ui/input";
 
 export interface InputProps {
   label?: string;
@@ -46,7 +45,7 @@ export function Input({ label, hint, error, value, defaultValue, placeholder, ty
         )}
       >
         {prefix && <span className="flex text-text-muted">{prefix}</span>}
-        <ShadcnInput
+        <input
           id={id}
           type={type}
           value={value}
@@ -55,7 +54,7 @@ export function Input({ label, hint, error, value, defaultValue, placeholder, ty
           disabled={disabled}
           onChange={onChange}
           className={cn(
-            "h-full min-w-0 flex-1 border-none bg-transparent p-0 text-text-primary shadow-none scheme-dark focus-visible:ring-0 placeholder:text-text-muted",
+            "h-full min-w-0 flex-1 border-0 bg-transparent p-0 text-text-primary shadow-none outline-none scheme-dark placeholder:text-text-muted disabled:pointer-events-none disabled:cursor-not-allowed",
             size === "sm" ? "text-ui-s" : "text-body-s",
             align === "right" && "text-right"
           )}

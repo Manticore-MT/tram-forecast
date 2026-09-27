@@ -23,3 +23,18 @@ export function toneForPct(pct: number): "danger" | "warn" | "ok" {
   const a = Math.abs(pct);
   return a > 30 ? "danger" : a > 15 ? "warn" : "ok";
 }
+
+// Calm rows recede (no border) — only what actually needs attention gets flagged, so a list of
+// mostly-ok zones doesn't read as a wall of color. Danger/warn use the same status tokens as the
+// deviation text itself, so the bar and the number always agree.
+export const TONE_BORDER: Record<"danger" | "warn" | "ok", string> = {
+  danger: "border-l-status-danger",
+  warn: "border-l-status-warn",
+  ok: "border-l-transparent",
+};
+
+export const TONE_TEXT: Record<"danger" | "warn" | "ok", string> = {
+  danger: "text-status-danger",
+  warn: "text-status-warn",
+  ok: "text-status-ok",
+};
