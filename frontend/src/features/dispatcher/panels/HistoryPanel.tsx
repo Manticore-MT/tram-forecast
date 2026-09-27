@@ -75,13 +75,9 @@ export function HistoryPanel({ date, routeId }: { date: string; routeId: string 
                     series={hourly}
           labels={HOURS}
           height={160}
-          maxTicks={6}
+          maxTicks={4}
         />
       </div>
-      <p className="text-caption text-text-muted">
-        Сравнение с прошлым прогнозом не является фактом; для него используются исходные значения без текущих ползунков коррекции.
-        {" "}{data.note} Прочерк — нет данных, не ноль. Это сравнение выбранного дня, не всего горизонта.
-      </p>
     </section>
   );
 }
