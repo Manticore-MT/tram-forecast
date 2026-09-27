@@ -94,8 +94,9 @@ export const MapCanvas = React.forwardRef<MapHandle, MapCanvasProps>(function Ma
       }
     } else {
       const stops = routeStops(routeId);
+      const lineColor = routeColors?.[routeId] ?? ACCENT_HEX;
       for (let i = 0; i < stops.length - 1; i++) {
-        L.polyline([stops[i].ll, stops[i + 1].ll], { color: ACCENT_HEX, weight: 6, opacity: 0.85 }).addTo(g);
+        L.polyline([stops[i].ll, stops[i + 1].ll], { color: lineColor, weight: 6, opacity: 0.85 }).addTo(g);
       }
       stops.forEach((s) => {
         // Stops carry no forecast data (route-level only) — just geometry and a name tooltip.

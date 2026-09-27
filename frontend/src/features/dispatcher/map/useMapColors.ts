@@ -38,8 +38,19 @@ export function useMapColors(): MapColors {
     return { routeColors, routeValues };
   }, [place.level, network.data, focus]);
 
+  // Route level: color the selected route's own line by its load relative to its own window,
+  // same basis the time strip bars use — so the map agrees with what's under it.
+  const routeLevelColors = React.useMemo(() => {
+    if (place.level === "network" || focus < 0) return {};
+    const points = series.points;
+    if (!points.length) return {};
+    const max = Math.max(1, ...points.map((p) => p.actual ?? p.forecast ?? 0));
+    const value = points[focus]?.actual ?? points[focus]?.forecast ?? 0;
+    return { [place.routeId]: LOAD_HEX[loadStep(value / max)] };
+  }, [place, series.points, focus]);
+
   return {
-    routeColors: networkColors.routeColors,
+    routeColors: place.level === "network" ? networkColors.routeColors : routeLevelColors,
     routeValues: networkColors.routeValues,
   };
 }

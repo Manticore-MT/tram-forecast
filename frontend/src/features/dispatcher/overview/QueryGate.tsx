@@ -9,8 +9,8 @@ export interface GateQuery {
 }
 
 /** Error with retry, or «Загрузка…» until the first answer, else the content. */
-export function QueryGate({ q, children }: { q: GateQuery; children: () => ReactNode }) {
-  if (q.isError) return <ErrorNotice error={q.error} onRetry={() => void q.refetch()} />;
+export function QueryGate({ q, children, errorHint }: { q: GateQuery; children: () => ReactNode; errorHint?: string }) {
+  if (q.isError) return <ErrorNotice error={q.error} onRetry={() => void q.refetch()} hintOverride={errorHint} />;
   if (q.data === undefined) return <LoadingNotice />;
   return <>{children()}</>;
 }
