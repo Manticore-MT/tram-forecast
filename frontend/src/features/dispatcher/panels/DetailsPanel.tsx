@@ -41,7 +41,7 @@ export function DetailsPanel() {
     : undefined;
 
   return (
-    <Card tone="glass" padding="var(--space-6)" className="flex flex-col gap-5">
+    <Card tone="glass" padding="var(--space-4)" className="flex flex-col gap-5">
       <div className="mt-eyebrow">Детали{point ? ` · ${pointLabel(scale, point.periodStart)}` : ""}</div>
       <div className="text-h4">{placeTitle(place)}</div>
       {series.error ? <ErrorNotice error={series.error} onRetry={series.refetch} /> : series.isLoading || !point ? <LoadingNotice /> : (

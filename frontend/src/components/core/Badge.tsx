@@ -38,7 +38,7 @@ export function Badge({
     <ShadcnBadge
       variant="outline"
       className={cn(
-        "inline-flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium",
+        "inline-flex items-center gap-2 px-2.5 py-1 text-ui-s leading-none",
         toneClasses
       )}
       style={style}

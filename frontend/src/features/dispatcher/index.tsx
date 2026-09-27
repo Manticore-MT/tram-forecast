@@ -21,9 +21,12 @@ export default function DispatcherApp() {
 
   return (
     <div className="flex h-screen flex-col bg-bg-page px-8 py-6 text-text-primary">
-      <div className="mb-6 flex flex-none items-start justify-between gap-2">
+      <div className="mb-4 flex flex-none items-start justify-between gap-2">
         <div className="flex flex-col gap-2">
-          <div className="mt-eyebrow">Поток · прогноз загрузки трамваев</div>
+          <div className="flex items-baseline gap-2">
+            <span className="mt-eyebrow">Поток · прогноз загрузки трамваев</span>
+            <span className="text-caption text-text-muted">Manticore · трек 02</span>
+          </div>
           <Tabs value={screen} onChange={(v) => setScreen(v as View)} items={[
             { value: "dispatcher", label: "Диспетчер" },
             { value: "overview", label: "Обзор" },

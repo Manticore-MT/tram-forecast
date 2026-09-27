@@ -90,7 +90,7 @@ export function ScenarioSlider({ label, value, onCommit }: ScenarioSliderProps) 
         }}
         className="w-16 shrink-0 rounded-md bg-bg-surface-2 px-2 py-1 text-right text-ui-s text-text-primary shadow-(--inset-hairline) focus:outline-none focus:shadow-[inset_0_0_0_2px_var(--focus-ring)]"
       />
-      <span className="shrink-0 text-ui-s text-text-muted">×</span>
+      <span className="shrink-0 text-ui-s text-text-secondary">×</span>
     </div>
   );
 }

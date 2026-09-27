@@ -1,4 +1,4 @@
-const HATCH = "repeating-linear-gradient(135deg, rgba(0,0,0,0.35) 0 2px, transparent 2px 4px)";
+import { FORECAST_HATCH as HATCH } from "./hatch";
 
 function Item({ swatch, label }: { swatch: React.ReactNode; label: string }) {
   return (
