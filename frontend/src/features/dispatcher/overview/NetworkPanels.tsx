@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Checkbox, Icon, Input } from "../../../components";
+import { Badge, Checkbox, Icon, Input } from "../../../components";
 import { useRoutes, type CommonParams } from "../../../api/hooks";
 import type { useAttention } from "../../../api/hooks";
 import { ErrorNotice } from "../../../shared/notices";
@@ -156,7 +156,7 @@ const TOP_ROUTES = 8;
 
 export function TopRoutesPanel({ network }: { network: RoutesQuery }) {
   return (
-    <Panel title="Топ маршрутов по отклонению" action={<span className="inline-flex items-center rounded-pill bg-glass-fill px-2.5 py-1 text-ui-s leading-none text-text-secondary">к базовому уровню</span>}>
+    <Panel title="Топ маршрутов по отклонению" action={<Badge tone="neutral">к базовому уровню</Badge>}>
       <QueryGate q={network}>
         {() => {
           const rows = routeTotals(network.data?.routes ?? [])
