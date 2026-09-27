@@ -21,22 +21,22 @@ export function Badge({
   // Map tone to Tailwind classes using brand tokens
   const toneClasses =
     tone === "neutral"
-      ? "bg-glass-fill text-text-secondary ring-1 ring-border-default"
+      ? "bg-glass-fill text-text-secondary"
       : tone === "accent"
-        ? "bg-brand-quiet text-text-accent ring-1 ring-brand/35"
+        ? "bg-brand-quiet text-text-accent"
         : tone === "ok"
-          ? "bg-status-ok/15 text-status-ok ring-1 ring-status-ok/35"
+          ? "bg-status-ok/15 text-status-ok"
           : tone === "warn"
-            ? "bg-status-warn/15 text-status-warn ring-1 ring-status-warn/35"
+            ? "bg-status-warn/15 text-status-warn"
             : tone === "danger"
-              ? "bg-red-500/15 text-status-danger ring-1 ring-red-500/35"
+              ? "bg-red-500/15 text-status-danger"
               : tone === "info"
-                ? "bg-cyan-500/15 text-status-info ring-1 ring-cyan-500/35"
-                : "bg-glass-fill text-text-secondary ring-1 ring-border-default";
+                ? "bg-cyan-500/15 text-status-info"
+                : "bg-glass-fill text-text-secondary";
 
   return (
     <ShadcnBadge
-      variant="outline"
+      variant="secondary"
       className={cn(
         "inline-flex items-center gap-2 px-2.5 py-1 text-ui-s leading-none",
         toneClasses

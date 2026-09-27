@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Stat } from "../../components";
+import { Badge, Stat } from "../../components";
 import { Sparkline } from "../../shared/charts";
 import { TONE_TEXT } from "./format";
 import type { DeviationItem, FactorItem } from "./types";
@@ -85,11 +85,7 @@ export function DeviationList({ title, items, layout = "list", style, onSelect, 
               <span className={cn("text-ui-s font-mono font-semibold whitespace-nowrap tabular-nums", TONE_TEXT[z.tone])}>
                 {z.relDeviation}
               </span>
-              {z.action && (
-                <span className="inline-flex items-center whitespace-nowrap rounded-pill bg-glass-fill px-2.5 py-1 text-ui-s leading-none text-text-secondary">
-                  {z.action.label}
-                </span>
-              )}
+              {z.action && <Badge tone="neutral">{z.action.label}</Badge>}
               <span className="text-mono-s text-text-secondary tabular-nums">{z.absDeviation}</span>
             </div>
           </div>
