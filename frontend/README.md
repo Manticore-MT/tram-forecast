@@ -35,12 +35,14 @@ src/
     index.css              единая точка входа CSS (список @import)
     tokens/                 шрифты, цвета, типографика, отступы, радиусы, elevation, motion, базовые сбросы
   assets/                   логотип, знак-булавка (SVG)
-  components/               19 общих компонентов, типизированные, по категориям
-    core/                   Button, IconButton, Icon, Card, Badge, Tag
+  components/               общие компоненты, типизированные, по категориям
+    core/                   Button, IconButton, Icon, Card, Badge, Tag, DatePicker
     forms/                  Input, Select, Checkbox, Radio, Switch
     navigation/             Tabs, Accordion
     feedback/               Dialog, Toast, Tooltip
     data/                   Stat, LoadMeter, Timeline
+    ui/                     примитивы shadcn (Button, Calendar, Select, Dialog и др.) —
+                            низкоуровневая база, поверх которой построены core/forms/feedback
   features/
     dispatcher/             ПРОДУКТ — диспетчерский дашборд «Поток», 2 экрана, настоящая карта Leaflet/OSM
     login/                  экран входа (basic auth)
@@ -88,4 +90,4 @@ src/
 
 **Иконки.** Lucide (обводка 1.5px, скруглённые концы), подтягиваются по-глифно и инлайнятся как настоящий SVG через `src/components/core/Icon.tsx`, чтобы глифы наследовали `currentColor`. Размеры: 14px в чипах/бейджах, 16px инлайн, 18px в кнопках/навигации, 20–24px как ведущий глиф карточки.
 
-**Синтетические данные.** Все числа в дашборде генерируются `seedSeries` с двухпиковой (утро/вечер) формой. Ничто не является реальным измерением. Позиции остановок на карте — приблизительные координаты именованных ориентиров; соединители — прямые отрезки, не съёмка пути.
+**Синтетические данные.** Все числа в дашборде генерируются `seedSeries` с двухпиковой (утро/вечер) формой. Ничто не является реальным измерением. Позиции остановок на карте — реальные координаты и порядок из датасета `data.mos.ru` (`src/network/tramNetwork.ts`, собрано `scripts/build-tram-network.mjs`); соединители между соседними остановками — прямые отрезки, не съёмка пути.
