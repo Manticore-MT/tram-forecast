@@ -49,6 +49,7 @@ export function RouteSection({ routeIds, params, scale, cursor }: RouteSectionPr
         value={routeId}
         options={routeIds.map((id) => ({ value: id, label: `Маршрут № ${id}` }))}
         onChange={(e) => setPicked(e.target.value)}
+        size="sm"
         style={{ minWidth: "11rem" }}
       />
       {routeId && (
