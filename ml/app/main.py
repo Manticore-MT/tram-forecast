@@ -15,6 +15,7 @@ from fastapi.responses import RedirectResponse
 from pydantic import BaseModel, ConfigDict, Field
 
 from .engine import Engine, ROUTES, calendar_fields, period_days
+from .champion import load_champion, SHA256 as CHAMPION_SHA256
 
 ROOT = Path(__file__).resolve().parents[1]
 ZONE = ZoneInfo("Europe/Moscow")
@@ -34,6 +35,7 @@ def timestamp(day: Date, hour: int = 0) -> str:
 class ForecastService:
     def __init__(self):
         self.engine = Engine(Path(os.getenv("ML_ARTIFACT_PATH", ROOT / "artifacts/route_model.json")))
+        self.champion = load_champion(ROOT / "reference/submission_calendar_service_candidate.csv")
         network_path = Path(os.getenv("ML_NETWORK_PATH", ROOT / "network/tram-stops.json"))
         self.network = json.loads(network_path.read_text(encoding="utf-8"))
         self.network_sha = hashlib.sha256(network_path.read_bytes()).hexdigest()[:8]
@@ -65,6 +67,9 @@ class ForecastService:
         result = []
         for route in routes:
             forecast, baseline = self.engine.hourly(int(route), days)
+            for i, day in enumerate(days):
+                if day <= self.engine.validated_last:
+                    forecast[i] = [self.champion[(route, day, h)] for h in range(24)]
             points = []
             if horizon == "day":
                 points = [dict(periodStart=timestamp(days[0], h), baseline=float(baseline[0, h]), forecast=float(forecast[0, h])) for h in range(24)]
@@ -81,8 +86,10 @@ class ForecastService:
                 factors.append("Технологические валидации 00:00–05:29 исключены из обучения и baseline")
             if any(calendar_fields(d)["holiday"] for d in days):
                 factors.append("В периоде есть праздничные или перенесённые выходные")
-            if route == "50" and any(d.weekday() >= 5 and d <= self.engine.validated_last for d in days):
-                factors.append("Маршрут 50: допущение продолжения ограничений по выходным до конца 2025")
+            if any(d <= self.engine.validated_last for d in days):
+                factors.append("Конкурсный гибрид 0.89212: календарные исключения и изменения движения; ночные значения сохранены для сопоставимости с платформой")
+            if route in ("7", "50") and any(d.weekday() >= 5 and d <= self.engine.validated_last for d in days):
+                factors.append("Ограничения выходных и восстановление движения с 15.11.2025 учтены в конкурсном прогнозе")
             result.append(dict(routeId=route, points=points, factors=factors))
         return result
 
@@ -104,6 +111,8 @@ class ForecastService:
             else:
                 items.append(dict(routeId=entry["routeId"], points=entry["points"], factors=factors))
         version = self.engine.version
+        if any(d <= self.engine.validated_last for d in days):
+            version = f"champion-089212-{CHAMPION_SHA256[:12]}-baseline-{version}"
         if stops:
             version += f"-uniform-stops-demo-{self.network_sha}"
         if scenario:
@@ -134,7 +143,8 @@ def health():
 @app.get("/metadata")
 def metadata():
     service = app.state.service
-    return dict(modelVersion=service.engine.version, target=service.engine.artifact["target"], timezone="Europe/Moscow",
+    return dict(modelVersion=f"champion-089212-{CHAMPION_SHA256[:12]}", scenarioModelVersion=service.engine.version,
+                target=service.engine.artifact["target"], timezone="Europe/Moscow",
                 historyThrough="2025-10-31", forecastOrigin="2025-11-01",
                 competitionPeriod={"start": "2025-11-01", "end": "2025-12-31"},
                 scenarioPeriod={"start": "2026-01-01", "end": "2026-12-31"}, scenarioEnabled=service.allow_scenario,
@@ -188,12 +198,16 @@ def backtest_metrics(origin):
 @app.get("/metrics")
 def metrics(origin: Literal["2025-07-01", "2025-09-01"] = Query(default="2025-09-01")):
     return dict(scope="historical_route_hour_backtest", **backtest_metrics(origin),
-                platform={"score": .89174,
-                          "submissionFile": "reference/submission_service_dates_candidate.csv",
+                platform={"score": .89212,
+                          "submissionFile": "reference/submission_calendar_service_candidate.csv",
+                          "previousServiceDatesScore": .89174,
                           "previousHybridScore": .88226,
-                          "servingModelMatchesSubmission": False,
+                          "servingModelMatchesSubmission": True,
+                          "matchingScope": "2025-11-01..2025-12-31, nine supported routes, before backend scenario multipliers; route 5 is submission-only",
+                          "submissionSha256": CHAMPION_SHA256,
                           "previousUnfilteredScore": .88220,
                           "provenance": "reported_by_team", "hiddenActualsAvailable": False},
-                limitations=["Блоки использовались при подборе модели; это не независимый финальный тест.",
+                limitations=["Бэктест относится к базовой Ridge, не к полному конкурсному гибриду 0.89212.",
+                             "Блоки использовались при подборе модели; это не независимый финальный тест.",
                              "Остановочных метрик и фактов нет. В actual_value не следует импортировать искусственно распределённые факты.",
                              "Доступны два отдельных 61-дневных блока; непрерывной 90-дневной проверки нет."])

@@ -35,7 +35,7 @@ def export_bundle(bundle, source_sha):
     baseline = recent_all.groupby(["route", "effective_dow", "hour"]).boardings.median()
     baseline_fallback = recent_all.groupby(["route", "hour"]).boardings.median()
     total = h.groupby(["route", "date"]).boardings.transform("sum")
-    good = (total > 500) & ~disrupted(h)
+    good = (total > config.get("minimum_shape_total", 500)) & ~disrupted(h)
     h["share"] = h.boardings / total.replace(0, np.nan)
     shape_h = h[good]
     seasonal = shape_h.groupby(["route", "summer", "effective_dow", "hour"]).share.median()

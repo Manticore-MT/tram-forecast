@@ -111,9 +111,9 @@ def test_quality_is_backtest_only(client):
     assert len(body["byDay"]) == 61 and len(body["byRoute"]) == 9
     assert sum(r["absoluteError"] for r in body["byDay"]) == body["overall"]["absoluteError"]
     assert not body["platform"]["hiddenActualsAvailable"]
-    assert body["platform"]["score"] == .89174
-    assert body["platform"]["submissionFile"] == "reference/submission_service_dates_candidate.csv"
-    assert body["platform"]["servingModelMatchesSubmission"] is False
+    assert body["platform"]["score"] == .89212
+    assert body["platform"]["submissionFile"] == "reference/submission_calendar_service_candidate.csv"
+    assert body["platform"]["servingModelMatchesSubmission"] is True
     assert client.get("/metrics?origin=2025-11-01").status_code == 422
 
 
@@ -122,6 +122,20 @@ def test_calendar_exceptions():
     assert calendar_fields(date(2025, 11, 1))["shortday"] == 1
     assert calendar_fields(date(2025, 11, 3))["holiday"] == 1
     assert calendar_fields(date(2025, 12, 31))["workday"] == 0
+
+
+def test_http_matches_champion_for_every_competition_hour(client):
+    with (ROOT / "reference/submission_calendar_service_candidate.csv").open(encoding="utf-8", newline="") as stream:
+        expected = {(r["route"], r["date"], int(r["hour"])): int(r["prediction"])
+                    for r in csv.DictReader(stream, delimiter=";")}
+    for offset in range(61):
+        day = date(2025, 11, 1) + timedelta(days=offset)
+        response = client.post("/predict/routes", json={"horizon": "day", "date": str(day)})
+        assert response.status_code == 200
+        assert response.json()["modelVersion"].startswith("champion-089212-")
+        for route in response.json()["forecasts"]:
+            for hour, point in enumerate(route["points"]):
+                assert point["forecast"] == expected[(route["routeId"], str(day), hour)]
 
 
 def test_training_reproduces_competition_predictions(tmp_path):

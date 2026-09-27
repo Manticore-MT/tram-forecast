@@ -43,6 +43,10 @@ export function ScenarioPanel() {
       </div>
 
       <div className="flex flex-col gap-3">
+        <p className="text-caption text-text-muted">
+          Сценарные множители прогноза, не веса обученной модели. Значение 1 — без поправки.
+          Коэффициенты перемножаются; базовая нагрузка и факты не меняются.
+        </p>
         {ROWS.map(({ key, label }) => (
           <ScenarioSlider
             key={key}

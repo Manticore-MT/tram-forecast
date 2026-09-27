@@ -141,6 +141,11 @@ class ApplicationTest {
         RouteForecast r1 = preparer.prepare(query).routes().get(0);
         assertThat(r1.points().get(0).forecast()).isCloseTo(143.0, org.assertj.core.data.Offset.offset(1e-9));
         assertThat(r1.points().get(0).actual()).isEqualTo(111.0);
+        assertThat(r1.points().get(0).baseline()).isEqualTo(100.0);
+        assertThat(preparer.prepare(query).routes().get(0).points().get(0).forecast())
+                .isCloseTo(143.0, org.assertj.core.data.Offset.offset(1e-9));
+        assertThat(preparer.prepare(ForecastQuery.of(Horizon.DAY, DATE))
+                .routes().get(0).points().get(0).forecast()).isEqualTo(130.0);
 
         ForecastQuery outside = new ForecastQuery(
                 Horizon.DAY, DATE, SnapshotKind.LATEST, null, HOUR.plusSeconds(3600), null);
@@ -201,6 +206,30 @@ class ApplicationTest {
     private ForecastDates rangedDates() {
         return new ForecastDates(
                 Clock.fixed(NOON, ZONE), ZONE, 1, LocalDate.of(2025, 11, 1), LocalDate.of(2026, 12, 31));
+    }
+
+    @Test
+    void zeroDemandDayErrorsStillCountInOverallWape() {
+        loader.load(Horizon.DAY, DATE, SnapshotKind.LATEST);
+        actuals.add(new ActualValue(new RouteId("R1"), HOUR, 100));
+        actuals.add(new ActualValue(new RouteId("R2"), HOUR, 100));
+        Instant nextHour = HOUR.plusSeconds(86400);
+        forecasts.saveAll(List.of(new RouteForecast(
+                new RouteId("R1"), Horizon.DAY, DATE.plusDays(1), NOON,
+                "test", List.of(new ForecastPoint(nextHour, 100, 50, null)), List.of())));
+        actuals.add(new ActualValue(new RouteId("R1"), nextHour, 0));
+        ModelStats stats = new GetModelStatsService(forecasts, actuals).get(30);
+        assertThat(stats.wape()).isCloseTo(0.41, org.assertj.core.data.Offset.offset(1e-9));
+        assertThat(stats.history()).hasSize(1);
+    }
+
+    @Test
+    void missingFactsDoNotMeanPerfectOrZeroQuality() {
+        loader.load(Horizon.DAY, DATE, SnapshotKind.LATEST);
+        ModelStats stats = new GetModelStatsService(forecasts, actuals).get(90);
+        assertThat(stats.wape()).isNull();
+        assertThat(stats.wapeScore()).isNull();
+        assertThat(stats.history()).isEmpty();
     }
 
     /**

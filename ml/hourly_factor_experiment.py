@@ -103,6 +103,18 @@ def features(frame, weather, origin, mode):
     if "weather" in mode:
         f = f.merge(weather, on=["date", "hour"], how="left", validate="many_to_one")
         columns += ["temperature_anomaly", "precipitation", "snowfall", "wind_speed_10m", "rain_3h", "rain_6h"]
+    if "traffic" in mode:
+        reports = pd.DataFrame(json.loads((ROOT / "data/traffic_reports_2025_deptrans.json").read_text(encoding="utf-8"))["observations"])
+        reports["stamp"] = pd.to_datetime(reports.publishedAt, utc=True).dt.tz_convert("Europe/Moscow").dt.tz_localize(None)
+        reports = reports.sort_values("stamp")
+        f["stamp"] = f.date + pd.to_timedelta(f.hour, unit="h")
+        f["row_order"] = np.arange(len(f))
+        f = pd.merge_asof(f.sort_values("stamp"), reports[["stamp", "averageSpeedKmh", "congestionPoints"]],
+                          on="stamp", direction="backward", tolerance=pd.Timedelta(hours=3)).sort_values("row_order")
+        for name in ["averageSpeedKmh", "congestionPoints"]:
+            f[name+"_missing"] = f[name].isna().astype(int)
+            f[name] = f[name].fillna(-1)
+            columns += [name, name+"_missing"]
     for c in cats:
         f[c] = f[c].astype(str)
     if f[columns].isna().any().any():

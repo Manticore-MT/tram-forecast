@@ -146,10 +146,11 @@ public class GetModelStatsService implements GetModelStatsUseCase {
                 }
             }
             OptionalDouble wape = Wape.wape(actual, predicted);
+            // Zero-demand days still contribute forecast errors to the overall WAPE.
+            allActual.addAll(actual);
+            allPredicted.addAll(predicted);
             if (wape.isPresent()) {
                 history.add(new DailyAccuracy(date, wape.getAsDouble(), Wape.score(wape.getAsDouble())));
-                allActual.addAll(actual);
-                allPredicted.addAll(predicted);
             }
         }
         history.sort(Comparator.comparing(DailyAccuracy::date));
