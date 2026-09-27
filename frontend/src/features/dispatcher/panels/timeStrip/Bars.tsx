@@ -4,7 +4,7 @@ import { useMeta } from "../../../../api/hooks";
 import { LOAD_VARS, loadStep } from "../../../../shared/load";
 import { useDispatcher } from "../../store";
 import { useFocusIndex, type SeriesPoint } from "../../forecast";
-import { SCALE_UNITS, nowPosition, pointLabel, type Scale } from "../../time";
+import { SCALE_UNITS, nowIndex, nowPosition, pointLabel, type Scale } from "../../time";
 import { fmtInt } from "../../format";
 import { FORECAST_HATCH } from "./hatch";
 
@@ -73,7 +73,10 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
   // Time is continuous, so bars sit almost edge to edge like a histogram. The current period is
   // marked on the bar itself at every scale; the exact "now" line only helps inside an hour.
   const showNowLine = scale === "day";
-  const currentIndex = nowPos !== null && nowPos < n ? Math.floor(nowPos) : -1;
+  // nowPos clamps to 0 when the whole window is still ahead of "now" (by design, for the
+  // progress-style uses below) - that 0 isn't a real "this is the live period" and must not be
+  // read as one, so the actual current bar comes from nowIndex instead.
+  const currentIndex = nowIndex(points.map((p) => p.periodStart), now);
 
   const indexAt = (clientX: number): number => {
     const rect = ref.current!.getBoundingClientRect();
