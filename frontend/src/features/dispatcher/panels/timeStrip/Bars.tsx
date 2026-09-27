@@ -158,6 +158,9 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
       }}
       className={cn(
         "relative grid h-full cursor-pointer touch-none select-none rounded-md outline-none transition-opacity",
+        // The global `:focus-visible` reset (base.css) reacts to any keydown while focused, incl.
+        // Shift for range-select — override it here and drive the ring from keyboardFocus instead.
+        "focus-visible:outline-none",
         keyboardFocus && "outline-1 outline-offset-2 outline-focus-ring",
         dimmed && "opacity-60",
       )}
