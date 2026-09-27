@@ -129,7 +129,7 @@ export const MapCanvas = React.forwardRef<MapHandle, MapCanvasProps>(function Ma
     <div className={cn("relative isolate z-0 overflow-hidden", className)}>
       <div ref={ref} style={{ position: "absolute", inset: 0, background: "var(--ink-800)" }} />
       {caption && (
-        <div style={{ position: "absolute", left: 12, bottom: 12, zIndex: 500 }}>
+        <div style={{ position: "absolute", left: 12, bottom: 240, zIndex: 500 }}>
           <Card tone="glass" padding="6px var(--space-3)">
             <span style={{ font: "var(--type-caption)", color: "var(--text-secondary)" }}>{caption}</span>
           </Card>
