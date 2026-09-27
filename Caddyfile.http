@@ -1,0 +1,14 @@
+# Local run (docker-compose.local.yml): plain HTTP on :80 inside the container, no domain, no certificate.
+# Same routing as the production Caddyfile: the API and the docs go to the backend, the rest to the frontend.
+:80 {
+	encode zstd gzip
+
+	@backend path /api/* /actuator/* /swagger-ui* /v3/api-docs*
+	handle @backend {
+		reverse_proxy backend:8080
+	}
+
+	handle {
+		reverse_proxy frontend:80
+	}
+}

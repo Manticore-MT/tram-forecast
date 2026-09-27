@@ -2,7 +2,7 @@
 
 ИИ-прогноз загрузки трамвайных маршрутов (Хакатон Московского транспорта). Команда **Manticore**.
 
-**Стенд:** <https://24manticore.ru>
+**Стенд:** <https://24manticore.ru> — логин `organizer`, пароль `gagImtDR6iZl3C1L`
 
 ![Java](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1-6DB33F?logo=springboot&logoColor=white)
@@ -26,19 +26,7 @@
 
 ## Быстрый старт
 
-Нужен Docker.
-
-```bash
-docker compose up --build
-```
-
-Бэкенд отвечает на <http://localhost:8080>:
-
-```bash
-curl http://localhost:8080/actuator/health
-curl "http://localhost:8080/api/meta"
-curl "http://localhost:8080/api/routes?horizon=day"
-```
+См. «[3. Запускаемый веб-сервис](#3-запускаемый-веб-сервис)».
 
 ## 1. ML-модель
 
@@ -52,6 +40,32 @@ curl "http://localhost:8080/api/routes?horizon=day"
 [Яндекс.Диск](https://disk.yandex.ru/d/_6a1pMQOQNdr9A)
 
 ## 3. Запускаемый веб-сервис
+
+Тот же стек круглосуточно работает на <https://24manticore.ru> (Basic-auth, логин/пароль — организаторам отдельно).
+
+Локально — нужен Docker, backend + frontend + ML + Postgres одной командой, без внешних зависимостей:
+
+```bash
+docker compose -f docker-compose.local.yml up --build
+```
+
+Открыть <http://localhost:8080>.
+
+> **Логин:** `jury`
+> **Пароль:** `jury-local-demo`
+
+Первая сборка — несколько минут (Maven, npm, pip качают зависимости), дальше — секунды. Часы внутри
+зафиксированы на 01.11.2025, начало периода прогноза, так что «сегодня» сразу попадает в данные.
+Остановить — Ctrl+C; убрать вместе с БД — `docker compose -f docker-compose.local.yml down -v`.
+
+Точки входа API: [`docs/openapi.json`](docs/openapi.json) (полный контракт), Swagger UI на
+`http://localhost:8080/swagger-ui.html` при поднятом стенде, таблицы эндпоинтов — в разделе 4 ниже.
+Пример:
+
+```bash
+curl -u jury:jury-local-demo http://localhost:8080/api/meta
+curl -u jury:jury-local-demo "http://localhost:8080/api/routes?horizon=day"
+```
 
 ## 4. Архитектура и модули
 
