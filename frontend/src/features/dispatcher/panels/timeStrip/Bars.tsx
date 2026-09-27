@@ -6,6 +6,7 @@ import { useDispatcher } from "../../store";
 import { useFocusIndex, type SeriesPoint } from "../../forecast";
 import { SCALE_UNITS, nowPosition, pointLabel, type Scale } from "../../time";
 import { fmtInt } from "../../format";
+import { FORECAST_HATCH } from "./hatch";
 
 // Rough label widths in px, used to thin the axis so neighbours never overlap.
 const LABEL_PX: Record<Scale, number> = { day: 40, week: 56, month: 52, year: 44 };
@@ -56,6 +57,10 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
   const drag = React.useRef<{ anchor: number; moved: boolean } | null>(null);
   // The browser still fires dblclick for "click, then press-drag-release"; that gesture is an interval.
   const lastWasDrag = React.useRef(false);
+  // :focus-visible flips on for any keydown while focused, even Shift for range-select — track
+  // Tab-vs-pointer origin ourselves so the ring only shows up after real keyboard navigation.
+  const pointerFocus = React.useRef(false);
+  const [keyboardFocus, setKeyboardFocus] = React.useState(false);
 
   const n = points.length;
   const nowPos = nowPosition(points.map((p) => p.periodStart), now);
@@ -125,10 +130,16 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
       onPointerDown={(e) => {
         if (e.button !== 0) return;
         e.currentTarget.setPointerCapture(e.pointerId);
+        pointerFocus.current = true;
         const i = indexAt(e.clientX);
         drag.current = { anchor: i, moved: false };
         pick(i);
       }}
+      onFocus={() => {
+        setKeyboardFocus(!pointerFocus.current);
+        pointerFocus.current = false;
+      }}
+      onBlur={() => setKeyboardFocus(false)}
       onPointerMove={(e) => {
         const d = drag.current;
         if (!d) return;
@@ -147,7 +158,10 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
       }}
       className={cn(
         "relative grid h-full cursor-pointer touch-none select-none rounded-md outline-none transition-opacity",
-        "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring",
+        // The global `:focus-visible` reset (base.css) reacts to any keydown while focused, incl.
+        // Shift for range-select — override it here and drive the ring from keyboardFocus instead.
+        "focus-visible:outline-none",
+        keyboardFocus && "outline-1 outline-offset-2 outline-focus-ring",
         dimmed && "opacity-60",
       )}
       style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}
@@ -169,27 +183,25 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
         const labelled = isFocus || current || (i % step === 0 && Math.abs(i - focus) >= gap && Math.abs(i - currentIndex) >= gap);
         return (
           <div key={p.periodStart} className="flex min-w-0 flex-col px-px">
-            <div className={cn("relative flex h-14 items-end justify-center rounded-sm", isFocus && "bg-glass-fill")}>
+            <div className={cn("relative flex h-16 items-end justify-center rounded-sm", isFocus && "bg-glass-fill")}>
               <div
                 className={cn(
                   "w-full rounded-t-xs transition-[height,opacity]",
                   past && !isFocus && "opacity-40",
                   current && "shadow-[inset_0_2px_0_0_var(--text-accent)]",
-                  isFocus && "outline-2 outline-offset-1 outline-text-primary",
+                  isFocus && "outline-1 outline-offset-1 outline-text-primary",
                 )}
                 style={{
                   height: `${(value / (max * HEADROOM)) * 100}%`,
                   minHeight: value > 0 ? 2 : 0,
                   backgroundColor: LOAD_VARS[loadStep(value / max)],
                   // Solid fill for what actually happened; a hatch marks a bar that's still a forecast.
-                  backgroundImage: hasActual
-                    ? undefined
-                    : "repeating-linear-gradient(135deg, rgba(0,0,0,0.14) 0 4px, transparent 4px 8px)",
+                  backgroundImage: hasActual ? undefined : FORECAST_HATCH,
                 }}
               />
               {g && (
                 <div
-                  className="pointer-events-none absolute inset-x-0 bottom-0 rounded-t-xs border border-b-0 border-dashed border-text-secondary"
+                  className="pointer-events-none absolute inset-x-0 bottom-0 rounded-t-xs border border-b-0 border-dashed border-text-secondary/50"
                   style={{ height: `${(g.forecast / (max * HEADROOM)) * 100}%` }}
                 />
               )}
@@ -197,7 +209,7 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
             <div
               className={cn(
                 "flex h-4 justify-center whitespace-nowrap text-caption leading-4",
-                current ? "text-text-accent" : isFocus ? "text-text-primary" : "text-text-muted",
+                current ? "text-text-accent" : isFocus ? "text-text-primary" : "text-text-secondary",
               )}
             >
               {labelled ? pointLabel(scale, p.periodStart) : ""}
@@ -207,7 +219,7 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
       })}
       {showNowLine && nowPos !== null && nowPos > 0 && nowPos < n && (
         <div
-          className="pointer-events-none absolute top-0 h-14 w-px bg-text-primary"
+          className="pointer-events-none absolute top-0 h-16 w-px bg-text-primary"
           style={{ left: `${(nowPos / n) * 100}%` }}
         >
           <span

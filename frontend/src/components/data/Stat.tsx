@@ -26,10 +26,10 @@ export function Stat({ label, value, unit, caption, trend, tone, align = "left",
       {label && <span className="text-eyebrow text-text-muted">{label}</span>}
       <span className={cn("flex items-baseline gap-1.5 tabular-nums", size === "lg" ? "text-metric-xl" : "text-metric", tone ? "" : "text-text-primary")} style={{ color: tone ? TONE_COLOR[tone] : undefined }}>
         {value}
-        {unit && <span className="text-h4 text-text-secondary">{unit}</span>}
+        {unit && <span className="whitespace-nowrap text-h4 text-text-secondary">{unit}</span>}
       </span>
       {(caption || trend) && (
-        <span className="flex items-center gap-2 text-caption text-text-muted">
+        <span className="flex items-center gap-2 text-caption text-text-muted tabular-nums">
           {trend && <span className="font-mono" style={{ color: trendColor }}>{trend.dir === "down" ? "▼" : "▲"} {trend.value}</span>}
           {caption}
         </span>
