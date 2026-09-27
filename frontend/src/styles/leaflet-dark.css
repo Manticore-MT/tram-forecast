@@ -12,3 +12,7 @@
 .leaflet-control-attribution a {
   color: var(--slate-200) !important;
 }
+/* Stops have no data behind them — a click just swallows the event, so no pointer affordance. */
+.tram-stop-marker {
+  cursor: default !important;
+}

@@ -5,7 +5,7 @@
 @import url("tokens/radius.css");
 @import url("tokens/elevation.css");
 @import url("tokens/motion.css");
-@import url("tokens/base.css");
+@import url("tokens/base.css") layer(base);
 @import "tailwind-theme.css";
 
 @import "tailwindcss";

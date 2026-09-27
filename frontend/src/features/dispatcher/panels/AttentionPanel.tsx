@@ -43,6 +43,7 @@ function zonesFromRouteSeries(points: SeriesPoint[], scale: Scale, focus: number
       tone: toneForPct(pct),
       selected: i === focus,
       focusIndex: i,
+      periodStart: points[i].periodStart,
     }));
 }
 
@@ -54,6 +55,7 @@ export function AttentionPanel() {
   const attention = useAttention(useForecastParams());
   const series = useCurrentSeries();
   const focus = useFocusIndex(series.points);
+  const drillTime = useDispatcher((s) => s.drillTime);
 
   const network = place.level === "network";
   const error = network ? attention.error : series.error;
@@ -70,6 +72,7 @@ export function AttentionPanel() {
           items={items}
           onSelect={goTo}
           onSelectIndex={network ? undefined : (i) => setFocus(i)}
+          onDrillDay={network ? undefined : drillTime}
         />
       )}
     </Card>
