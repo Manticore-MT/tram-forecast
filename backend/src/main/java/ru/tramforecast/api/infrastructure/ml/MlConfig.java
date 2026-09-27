@@ -11,6 +11,7 @@ import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import ru.tramforecast.api.domain.port.MlForecastClient;
 import ru.tramforecast.api.domain.port.MlMetricsClient;
+import ru.tramforecast.api.domain.port.MlHistoryClient;
 import ru.tramforecast.api.infrastructure.config.TramProperties;
 
 /**
@@ -67,5 +68,11 @@ public class MlConfig {
         JdkClientHttpRequestFactory factory = new JdkClientHttpRequestFactory(httpClient);
         factory.setReadTimeout(ml.readTimeout());
         return RestClient.builder().baseUrl(ml.baseUrl()).requestFactory(factory).build();
+    }
+
+    @Bean
+    @ConditionalOnProperty(name = "tram.ml.mode", havingValue = "http")
+    public MlHistoryClient httpMlHistoryClient(TramProperties properties) {
+        return new HttpMlHistoryClient(restClient(properties.ml()));
     }
 }

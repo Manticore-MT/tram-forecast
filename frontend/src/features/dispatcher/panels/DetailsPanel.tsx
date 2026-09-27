@@ -8,6 +8,7 @@ import { deviationPct, fmtInt, fmtPct, fmtSigned, toneForPct } from "../format";
 import { FactorsCard } from "../shared";
 import { useInterval } from "./timeStrip/interval";
 import { formatRecommendation } from "../recommendation";
+import { HistoryPanel } from "./HistoryPanel";
 
 const FACTOR_LABELS: Record<string, string> = {
   weekend: "Выходной день",
@@ -82,6 +83,7 @@ export function DetailsPanel() {
             </div>
           )}
           {factors.length > 0 && <FactorsCard factors={factors} />}
+          <HistoryPanel date={point.periodStart.slice(0, 10)} routeId={place.level === "route" ? place.routeId : "all"} />
           {updated && <div className="text-caption text-text-muted">Обновлено в {updated}</div>}
         </>
       )}

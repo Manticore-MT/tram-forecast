@@ -16,6 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from .engine import Engine, ROUTES, calendar_fields, period_days
 from .champion import load_champion, SHA256 as CHAMPION_SHA256
+from .history import History
 
 ROOT = Path(__file__).resolve().parents[1]
 ZONE = ZoneInfo("Europe/Moscow")
@@ -36,6 +37,7 @@ class ForecastService:
     def __init__(self):
         self.engine = Engine(Path(os.getenv("ML_ARTIFACT_PATH", ROOT / "artifacts/route_model.json")))
         self.champion = load_champion(ROOT / "reference/submission_calendar_service_candidate.csv")
+        self.history = History(ROOT / "data/labels_day_filtered_all.csv")
         network_path = Path(os.getenv("ML_NETWORK_PATH", ROOT / "network/tram-stops.json"))
         self.network = json.loads(network_path.read_text(encoding="utf-8"))
         self.network_sha = hashlib.sha256(network_path.read_bytes()).hexdigest()[:8]
@@ -90,6 +92,8 @@ class ForecastService:
                 factors.append("Конкурсный гибрид 0.89212: календарные исключения и изменения движения; ночные значения сохранены для сопоставимости с платформой")
             if route in ("7", "50") and any(d.weekday() >= 5 and d <= self.engine.validated_last for d in days):
                 factors.append("Ограничения выходных и восстановление движения с 15.11.2025 учтены в конкурсном прогнозе")
+            if route == "50" and Date(2025, 11, 1) in days:
+                factors.append("01.11 — рабочая суббота: baseline использует пятничный профиль; конкурсный прогноз сохраняет допущение субботнего ограничения. Работа маршрута именно в эту дату отдельно не подтверждена. Отклонение нельзя трактовать как измеренное падение спроса.")
             result.append(dict(routeId=route, points=points, factors=factors))
         return result
 
@@ -211,3 +215,13 @@ def metrics(origin: Literal["2025-07-01", "2025-09-01"] = Query(default="2025-09
                              "Блоки использовались при подборе модели; это не независимый финальный тест.",
                              "Остановочных метрик и фактов нет. В actual_value не следует импортировать искусственно распределённые факты.",
                              "Доступны два отдельных 61-дневных блока; непрерывной 90-дневной проверки нет."])
+
+
+@app.get("/history/comparison")
+def history_comparison(date: Date, routeId: str = "all"):
+    if routeId != "all" and routeId not in {str(r) for r in ROUTES}:
+        raise HTTPException(422, detail="Unsupported route")
+    if not Date(2025, 1, 1) <= date <= Date(2026, 12, 31):
+        raise HTTPException(422, detail="Unsupported date")
+    routes = tuple(str(r) for r in ROUTES) if routeId == "all" else (routeId,)
+    return app.state.service.history.compare(routes, date)
