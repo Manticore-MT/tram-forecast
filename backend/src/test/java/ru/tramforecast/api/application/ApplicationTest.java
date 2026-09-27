@@ -120,7 +120,7 @@ class ApplicationTest {
     @Test
     void attentionZonesComeFromLoadedAggregates() {
         AttentionResult result = new GetAttentionZonesService(preparer, new AttentionZoneCalculator(
-                new AttentionPolicy(10, 25), new RecommendationPolicy(10)))
+                new AttentionPolicy(10, 25, 10), new RecommendationPolicy(10)))
                 .get(ForecastQuery.of(Horizon.DAY, DATE));
 
         assertThat(result.zones()).hasSize(1);
@@ -166,7 +166,7 @@ class ApplicationTest {
         GetRouteForecastService service = new GetRouteForecastService(
                 preparer,
                 new HistoryAligner(actuals, ZONE),
-                new AttentionPolicy(10, 25),
+                new AttentionPolicy(10, 25, 10),
                 new RecommendationPolicy(10));
 
         RouteForecastResult result = service.get(new RouteId("R1"), ForecastQuery.of(Horizon.DAY, DATE));

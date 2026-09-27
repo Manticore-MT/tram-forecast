@@ -6,10 +6,14 @@ import ru.tramforecast.api.domain.model.AttentionLevel;
  * Classifies a percent deviation from the baseline. Owned by the backend: ML supplies the
  * aggregates, the backend decides what counts as unusual.
  *
- * @param warningPct  absolute deviation from which a point is a warning
- * @param criticalPct absolute deviation from which a point is critical
+ * @param warningPct          absolute deviation from which a point is a warning
+ * @param criticalPct         absolute deviation from which a point is critical
+ * @param minBaselineSharePct a point is only considered for the maximum deviation when its baseline is
+ *                            at least this percent of the series' highest baseline; below that, a
+ *                            deviation is noise (a stray boarding or two against an almost-zero
+ *                            baseline reads as hundreds of percent) rather than something unusual
  */
-public record AttentionPolicy(double warningPct, double criticalPct) {
+public record AttentionPolicy(double warningPct, double criticalPct, double minBaselineSharePct) {
 
     /**
      * Validates that the thresholds are ordered.
@@ -17,6 +21,9 @@ public record AttentionPolicy(double warningPct, double criticalPct) {
     public AttentionPolicy {
         if (warningPct <= 0 || criticalPct < warningPct) {
             throw new IllegalArgumentException("Thresholds must satisfy 0 < warning <= critical");
+        }
+        if (minBaselineSharePct < 0 || minBaselineSharePct >= 100) {
+            throw new IllegalArgumentException("minBaselineSharePct must satisfy 0 <= share < 100");
         }
     }
 

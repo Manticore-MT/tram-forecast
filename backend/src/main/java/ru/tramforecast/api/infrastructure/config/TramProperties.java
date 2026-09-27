@@ -50,10 +50,13 @@ public record TramProperties(
     /**
      * Attention thresholds, percent of the baseline.
      *
-     * @param warningPct  from this deviation a point is a warning and an action is recommended
-     * @param criticalPct from this deviation a point is critical
+     * @param warningPct          from this deviation a point is a warning and an action is recommended
+     * @param criticalPct         from this deviation a point is critical
+     * @param minBaselineSharePct a point only competes for "largest deviation" when its baseline is at
+     *                            least this percent of the route's busiest hour; filters out the false
+     *                            "+300 %" a near-zero night-time baseline gives a stray boarding or two
      */
-    public record Attention(double warningPct, double criticalPct) {
+    public record Attention(double warningPct, double criticalPct, double minBaselineSharePct) {
     }
 
     /**
