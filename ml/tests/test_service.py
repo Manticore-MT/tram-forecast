@@ -113,7 +113,7 @@ def test_quality_is_backtest_only(client):
     assert not body["platform"]["hiddenActualsAvailable"]
     assert body["platform"]["score"] == .89212
     assert body["platform"]["submissionFile"] == "reference/submission_calendar_service_candidate.csv"
-    assert body["platform"]["servingModelMatchesSubmission"] is True
+    assert body["platform"]["servingModelMatchesSubmission"] is False
     assert client.get("/metrics?origin=2025-11-01").status_code == 422
 
 
@@ -165,7 +165,7 @@ def test_typical_week_excludes_selected_day_and_future(tmp_path):
     assert history.values(("17", "50"), date(2025, 10, 3)) is None
 
 
-def test_http_matches_champion_for_every_competition_hour(client):
+def test_http_matches_champion_only_after_filtered_night_hours(client):
     with (ROOT / "reference/submission_calendar_service_candidate.csv").open(encoding="utf-8", newline="") as stream:
         expected = {(r["route"], r["date"], int(r["hour"])): int(r["prediction"])
                     for r in csv.DictReader(stream, delimiter=";")}
@@ -175,8 +175,14 @@ def test_http_matches_champion_for_every_competition_hour(client):
         assert response.status_code == 200
         assert response.json()["modelVersion"].startswith("champion-089212-")
         for route in response.json()["forecasts"]:
+            ridge, _ = app.state.service.engine.hourly(int(route["routeId"]), [day])
             for hour, point in enumerate(route["points"]):
-                assert point["forecast"] == expected[(route["routeId"], str(day), hour)]
+                if hour < 5:
+                    assert point["forecast"] == point["baseline"] == 0
+                elif hour == 5:
+                    assert point["forecast"] == ridge[0, 5]
+                else:
+                    assert point["forecast"] == expected[(route["routeId"], str(day), hour)]
 
 
 def test_training_reproduces_competition_predictions(tmp_path):
