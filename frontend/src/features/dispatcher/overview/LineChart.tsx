@@ -81,7 +81,9 @@ export function LineChart({ series, labels, height = 220, marker, ariaLabel, max
       >
         {[0.25, 0.5, 0.75].map((g) => (
           <div key={g} className="absolute inset-x-0 border-t border-border-subtle" style={{ top: `${(1 - g) * 100}%` }}>
-            <span className="absolute left-0 -translate-y-full pb-0.5 text-mono-s text-text-muted">{fmtInt(max * g)}</span>
+            <span className="absolute left-0 -translate-y-full rounded-sm bg-bg-surface-2 px-1 pb-0.5 text-mono-s text-text-muted">
+              {fmtInt(max * g)}
+            </span>
           </div>
         ))}
         <div className="absolute inset-x-0 bottom-0 border-t border-border-default" />

@@ -81,11 +81,14 @@ export function DetailsPanel() {
               <div className="mt-eyebrow mb-2">Прогноз и базовый уровень за выбранное окно</div>
               <LineLegend series={[{ label: "прогноз", color: "var(--brand-accent)" }, { label: "база", color: "var(--cyan-500)", dashed: true }]} />
               <LineChart ariaLabel="Прогноз и базовый уровень по периодам" height={150}
-                maxTicks={6}
+                maxTicks={4}
                 labels={series.points.map((p) => pointLabel(scale, p.periodStart))}
                 series={[{ label: "прогноз", color: "var(--brand-accent)", values: series.points.map((p) => p.forecast) },
                   { label: "база", color: "var(--cyan-500)", dashed: true, values: series.points.map((p) => p.baseline) }]} />
-              <div className="text-caption text-text-muted">Для «7 дней» показаны семь суточных сумм, начиная с выбранной даты. Нулевая линия означает 0, а не отсутствие данных.</div>
+              <div className="text-caption text-text-muted">
+                {scale === "week" && "Для «7 дней» показаны семь суточных сумм, начиная с выбранной даты. "}
+                Нулевая линия означает 0, а не отсутствие данных.
+              </div>
             </div>
           )}
           {factors.length > 0 && <FactorsCard factors={factors} />}
