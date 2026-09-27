@@ -45,7 +45,7 @@ curl "http://localhost:8080/api/routes?horizon=day"
 - Обучение: [`ml/train.py`](ml/train.py), [`ml/build_artifact.py`](ml/build_artifact.py)
 - Инференс (HTTP-сервис): [`ml/app/`](ml/app)
 - Артефакт модели: [`ml/artifacts/route_model.json`](ml/artifacts/route_model.json)
-- Инструкция запуска: [`ml_readme.md`](ml_readme.md)
+- Инструкция запуска: [`ml_readme.md`](ml/ml_readme.md)
 
 ## 2. Внешние данные
 
