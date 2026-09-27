@@ -18,10 +18,12 @@ export interface LineChartProps {
   height?: number;
   marker?: { index: number; value: number; label: string };
   ariaLabel: string;
+  /** Upper bound on x-axis labels; lower it for narrow charts to avoid collisions. */
+  maxTicks?: number;
 }
 
 const W = 1000;
-const MAX_TICKS = 8;
+const DEFAULT_MAX_TICKS = 8;
 
 function x(i: number, n: number): number {
   return n > 1 ? (i / (n - 1)) * W : W / 2;
@@ -52,11 +54,11 @@ export function LineLegend({ series }: { series: Pick<LineSeries, "label" | "col
 }
 
 /** Index-aligned line chart: SVG for the lines, HTML for text so it never stretches. */
-export function LineChart({ series, labels, height = 220, marker, ariaLabel }: LineChartProps) {
+export function LineChart({ series, labels, height = 220, marker, ariaLabel, maxTicks = DEFAULT_MAX_TICKS }: LineChartProps) {
   const n = labels.length;
   const all = series.flatMap((s) => s.values.slice(0, n).filter((v): v is number => v !== null));
   const max = Math.max(1, ...all) * 1.12;
-  const step = Math.max(1, Math.ceil(n / MAX_TICKS));
+  const step = Math.max(1, Math.ceil(n / maxTicks));
   const pct = (i: number) => (x(i, n) / W) * 100;
 
   return (
