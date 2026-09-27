@@ -71,7 +71,14 @@ class ForecastService:
             forecast, baseline = self.engine.hourly(int(route), days)
             for i, day in enumerate(days):
                 if day <= self.engine.validated_last:
+                    filtered_05 = forecast[i, 5]
                     forecast[i] = [self.champion[(route, day, h)] for h in range(24)]
+                    if self.engine.night_filtered:
+                        # The submission retains night validations for platform scoring.
+                        # The dispatcher API excludes technological 00:00–05:29:
+                        # hour 05 uses the filtered Ridge estimate for 05:30–05:59.
+                        forecast[i, :5] = 0
+                        forecast[i, 5] = filtered_05
             points = []
             if horizon == "day":
                 points = [dict(periodStart=timestamp(days[0], h), baseline=float(baseline[0, h]), forecast=float(forecast[0, h])) for h in range(24)]
@@ -89,7 +96,7 @@ class ForecastService:
             if any(calendar_fields(d)["holiday"] for d in days):
                 factors.append("В периоде есть праздничные или перенесённые выходные")
             if any(d <= self.engine.validated_last for d in days):
-                factors.append("Конкурсный гибрид 0.89212: календарные исключения и изменения движения; ночные значения сохранены для сопоставимости с платформой")
+                factors.append("Конкурсный гибрид 0.89212 для 06:00–23:59; в API ночные технологические валидации исключены, 05:00 оценён по данным 05:30–05:59")
             if route in ("7", "50") and any(d.weekday() >= 5 and d <= self.engine.validated_last for d in days):
                 factors.append("Ограничения выходных и восстановление движения с 15.11.2025 учтены в конкурсном прогнозе")
             if route == "50" and Date(2025, 11, 1) in days:
@@ -116,7 +123,7 @@ class ForecastService:
                 items.append(dict(routeId=entry["routeId"], points=entry["points"], factors=factors))
         version = self.engine.version
         if any(d <= self.engine.validated_last for d in days):
-            version = f"champion-089212-{CHAMPION_SHA256[:12]}-baseline-{version}"
+            version = f"champion-089212-{CHAMPION_SHA256[:12]}-serving-night-filtered-baseline-{version}"
         if stops:
             version += f"-uniform-stops-demo-{self.network_sha}"
         if scenario:
@@ -154,6 +161,7 @@ def metadata():
                 scenarioPeriod={"start": "2026-01-01", "end": "2026-12-31"}, scenarioEnabled=service.allow_scenario,
                 supportedRoutes=[str(r) for r in ROUTES], stopCount=sum(map(len, service.stops.values())),
                 excludedBeforeLocalTime="05:30:00" if service.engine.night_filtered else None,
+                servingNightPolicy="00:00–04:59 = 0; 05:00 = Ridge trained on 05:30–05:59; 06:00–23:59 = competition hybrid",
                 stopAllocation="uniform_demo_not_measured", segmentOccupancyAvailable=False,
                 baselineMethod="Медиана за 56 дней перед 01.11.2025: маршрут × эффективный день недели × час; праздники как воскресенье, рабочая суббота как пятница. Нули и ограничения в истории сохранены.",
                 corrections="Погода, событие и сезон — сценарные множители backend; в ML повторно не применяются.",
@@ -206,8 +214,8 @@ def metrics(origin: Literal["2025-07-01", "2025-09-01"] = Query(default="2025-09
                           "submissionFile": "reference/submission_calendar_service_candidate.csv",
                           "previousServiceDatesScore": .89174,
                           "previousHybridScore": .88226,
-                          "servingModelMatchesSubmission": True,
-                          "matchingScope": "2025-11-01..2025-12-31, nine supported routes, before backend scenario multipliers; route 5 is submission-only",
+                          "servingModelMatchesSubmission": False,
+                          "matchingScope": "2025-11-01..2025-12-31, nine supported routes, 06:00–23:59 only, before backend scenario multipliers; route 5 is submission-only",
                           "submissionSha256": CHAMPION_SHA256,
                           "previousUnfilteredScore": .88220,
                           "provenance": "reported_by_team", "hiddenActualsAvailable": False},

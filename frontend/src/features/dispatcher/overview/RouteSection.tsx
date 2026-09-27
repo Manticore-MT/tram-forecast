@@ -1,7 +1,9 @@
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import type { ReactNode } from "react";
 import { Button, Icon, Select, Stat } from "../../../components";
-import { useLoadMatrix, useRouteForecast, type CommonParams } from "../../../api/hooks";
+import { getHistoryComparison } from "../../../api/client";
+import { useRouteForecast, type CommonParams } from "../../../api/hooks";
 import { Panel } from "../../../shared/Panel";
 import { pointLabel, windowLabel, type Scale } from "../time";
 import { deviationPct, fmtInt, fmtPct, toneForPct } from "../format";
@@ -34,7 +36,12 @@ export function RouteSection({ routeIds, params, scale, cursor }: RouteSectionPr
   const [picked, setPicked] = React.useState<string | undefined>(undefined);
   const routeId = picked && routeIds?.includes(picked) ? picked : routeIds?.[0];
   const forecast = useRouteForecast(routeId, params);
-  const matrix = useLoadMatrix(routeId);
+  const history = useQuery({
+    queryKey: ["history-comparison", cursor, routeId],
+    queryFn: () => getHistoryComparison(cursor, routeId!),
+    enabled: !!routeId,
+    staleTime: 300_000,
+  });
 
   const header = routeIds && routeIds.length > 0 && (
     <div className="flex items-center gap-3">
@@ -59,11 +66,16 @@ export function RouteSection({ routeIds, params, scale, cursor }: RouteSectionPr
           <FactVsForecast forecast={forecast} scale={scale} />
           <LastYear forecast={forecast} scale={scale} cursor={cursor} />
           <div className="lg:col-span-2 2xl:col-span-1">
-            <Block title="Типичная неделя">
-              <QueryGate q={matrix} errorHint="История по часам для этого маршрута ещё не накоплена.">
+            <Block title="Типичная неделя по фактическим валидациям">
+              <QueryGate q={history}>
                 {() => {
-                  const cells = matrix.data?.cells ?? [];
-                  return cells.length === 0 ? <Empty>Нет данных о загрузке по часам</Empty> : <WeekHeatmap cells={cells} />;
+                  const week = history.data?.typicalWeek;
+                  const cells = week?.days.flatMap((day) => day.points.flatMap((point) =>
+                    point.value === null ? [] : [{ dayOfWeek: day.weekday + 1, hour: point.hour, value: point.value }])) ?? [];
+                  return cells.length === 0 ? <Empty>Нет исторических наблюдений для этой даты</Empty> : <>
+                    <WeekHeatmap cells={cells} />
+                    <span className="text-caption text-text-muted">Медиана по одинаковым дням недели за {week?.start} — {week?.end}; это не прогноз остановок.</span>
+                  </>;
                 }}
               </QueryGate>
             </Block>

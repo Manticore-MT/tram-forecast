@@ -1,5 +1,4 @@
 import { Card, Stat } from "../../../components";
-import { Sparkline } from "../../../shared/charts";
 import { ErrorNotice, LoadingNotice } from "../../../shared/notices";
 import { useDispatcher, type Place } from "../store";
 import { useCurrentSeries, useFocusIndex } from "../forecast";
@@ -9,6 +8,7 @@ import { FactorsCard } from "../shared";
 import { useInterval } from "./timeStrip/interval";
 import { formatRecommendation } from "../recommendation";
 import { HistoryPanel } from "./HistoryPanel";
+import { LineChart, LineLegend } from "../overview/LineChart";
 
 const FACTOR_LABELS: Record<string, string> = {
   weekend: "Выходной день",
@@ -53,8 +53,8 @@ export function DetailsPanel() {
           </div>
           <Stat
             label="Отклонение"
-            value={fmtPct(deviationPct(point.forecast, point.baseline))}
-            caption={`${fmtSigned(point.forecast - point.baseline)} ${unit} к базе`}
+            value={point.baseline > 0 ? fmtPct(deviationPct(point.forecast, point.baseline)) : "—"}
+            caption={`${fmtSigned(point.forecast - point.baseline)} ${unit} к базе${point.baseline > 0 && point.forecast > 0 && deviationPct(point.forecast, point.baseline) < -99.95 ? "; округлено до −100 %, но прогноз не нулевой" : ""}`}
             tone={toneForPct(deviationPct(point.forecast, point.baseline))}
           />
           {peak && (
@@ -70,7 +70,7 @@ export function DetailsPanel() {
               </div>
               <Stat
                 label="Отклонение"
-                value={fmtPct(deviationPct(interval.total, interval.baseline))}
+                value={interval.baseline > 0 ? fmtPct(deviationPct(interval.total, interval.baseline)) : "—"}
                 caption={`${fmtSigned(interval.total - interval.baseline)} пасс к базе`}
                 tone={toneForPct(deviationPct(interval.total, interval.baseline))}
               />
@@ -78,8 +78,13 @@ export function DetailsPanel() {
           )}
           {series.points.length > 1 && (
             <div>
-              <div className="mt-eyebrow mb-2">Динамика</div>
-              <Sparkline data={series.points.map((p) => p.forecast)} color="var(--brand-accent)" />
+              <div className="mt-eyebrow mb-2">Прогноз и базовый уровень за выбранное окно</div>
+              <LineLegend series={[{ label: "прогноз", color: "var(--brand-accent)" }, { label: "база", color: "var(--cyan-500)", dashed: true }]} />
+              <LineChart ariaLabel="Прогноз и базовый уровень по периодам" height={150}
+                labels={series.points.map((p) => pointLabel(scale, p.periodStart))}
+                series={[{ label: "прогноз", color: "var(--brand-accent)", values: series.points.map((p) => p.forecast) },
+                  { label: "база", color: "var(--cyan-500)", dashed: true, values: series.points.map((p) => p.baseline) }]} />
+              <div className="text-caption text-text-muted">Для «7 дней» показаны семь суточных сумм, начиная с выбранной даты. Нулевая линия означает 0, а не отсутствие данных.</div>
             </div>
           )}
           {factors.length > 0 && <FactorsCard factors={factors} />}
