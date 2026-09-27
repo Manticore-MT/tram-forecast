@@ -31,9 +31,11 @@ interface DispatcherState {
   today: string | null;
   /** Furthest date the API accepts (one year ahead). */
   latestDate: string | null;
+  /** Earliest date the API accepts; null when the model has no fixed lower bound. */
+  forecastFrom: string | null;
 
   /** Seeds the clock from /api/meta once; later calls are no-ops. */
-  init(today: string, latestDate: string): void;
+  init(today: string, latestDate: string, forecastFrom: string | null): void;
 
   setView(view: View): void;
   goTo(place: Place): void;
@@ -65,10 +67,11 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
   corrections: DEFAULT_CORRECTIONS,
   today: null,
   latestDate: null,
+  forecastFrom: null,
 
-  init(today, latestDate) {
+  init(today, latestDate, forecastFrom) {
     if (get().cursor !== null) return;
-    set({ today, latestDate, cursor: today });
+    set({ today, latestDate, forecastFrom, cursor: today });
   },
 
   setView(view) {
@@ -100,10 +103,11 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
   },
 
   shift(dir) {
-    const { scale, cursor, latestDate } = get();
+    const { scale, cursor, latestDate, forecastFrom } = get();
     if (!cursor) return;
     const next = shiftCursor(scale, cursor, dir);
     if (latestDate && next > latestDate) return;
+    if (forecastFrom && next < forecastFrom) return;
     set({ cursor: next, focus: null, range: null });
   },
 

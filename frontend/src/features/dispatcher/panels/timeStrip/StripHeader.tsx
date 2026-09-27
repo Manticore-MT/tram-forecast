@@ -17,6 +17,7 @@ export function StripHeader({ rangeLabel }: StripHeaderProps) {
   const cursor = useDispatcher((s) => s.cursor);
   const today = useDispatcher((s) => s.today);
   const latestDate = useDispatcher((s) => s.latestDate);
+  const forecastFrom = useDispatcher((s) => s.forecastFrom);
   const setScale = useDispatcher((s) => s.setScale);
   const shift = useDispatcher((s) => s.shift);
   const setCursor = useDispatcher((s) => s.setCursor);
@@ -24,6 +25,7 @@ export function StripHeader({ rangeLabel }: StripHeaderProps) {
   if (!cursor) return null;
 
   const canForward = !latestDate || shiftCursor(scale, cursor, 1) <= latestDate;
+  const canBackward = !forecastFrom || shiftCursor(scale, cursor, -1) >= forecastFrom;
 
   return (
     <div className="flex items-center gap-4">
@@ -34,6 +36,7 @@ export function StripHeader({ rangeLabel }: StripHeaderProps) {
           size="sm"
           label="Предыдущий период"
           icon={<Icon name="chevron-left" size={16} />}
+          disabled={!canBackward}
           onClick={() => shift(-1)}
         />
         <span className="min-w-44 text-center text-ui text-text-primary">{windowLabel(scale, cursor)}</span>
@@ -66,9 +69,11 @@ export function StripHeader({ rangeLabel }: StripHeaderProps) {
           aria-label="Перейти к дате"
           value={cursor}
           max={latestDate ?? undefined}
+          min={forecastFrom ?? undefined}
           onChange={(e) => {
             const date = e.target.value;
-            if (date && (!latestDate || date <= latestDate)) setCursor(date);
+            if (date && (!latestDate || date <= latestDate) && (!forecastFrom || date >= forecastFrom))
+              setCursor(date);
           }}
           className="h-9 rounded-md bg-bg-surface-2 px-3 text-ui-s text-text-primary shadow-(--inset-hairline) outline-none [color-scheme:dark] focus-visible:shadow-[inset_0_0_0_2px_var(--focus-ring)]"
         />

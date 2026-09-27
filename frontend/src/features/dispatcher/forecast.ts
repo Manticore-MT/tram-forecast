@@ -52,9 +52,10 @@ export function useInitClock(): boolean {
   const ready = useDispatcher((s) => s.cursor !== null);
   const today = meta.data?.today;
   const latestDate = meta.data?.latestDate;
+  const forecastFrom = meta.data?.forecastFrom ?? null;
   React.useEffect(() => {
-    if (today && latestDate) init(today, latestDate);
-  }, [today, latestDate, init]);
+    if (today && latestDate) init(today, latestDate, forecastFrom);
+  }, [today, latestDate, forecastFrom, init]);
   return ready;
 }
 
