@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Badge } from "../../../components";
+import { Badge, Tooltip } from "../../../components";
 import type { useModelStats } from "../../../api/hooks";
 import { Panel } from "../../../shared/Panel";
 import { Empty, QueryGate } from "./QueryGate";
@@ -35,12 +35,16 @@ export function QualityHistory({ stats }: { stats: ReturnType<typeof useModelSta
                 {history.map((h, i) => {
                   const pct = wapePct[i];
                   return (
-                    <div
+                    <Tooltip
                       key={h.date ?? i}
-                      title={`${dayLabel(h.date)} · WAPE ${pct?.toFixed(1) ?? "—"} % · оценка ${h.wapeScore?.toFixed(2) ?? "—"}`}
-                      className={cn("rounded-t-xs", pct === null ? "bg-text-muted/20" : "bg-cyan-500/70 hover:bg-cyan-500")}
-                      style={{ height: pct === null ? "4%" : `${(pct / max) * 100}%`, minHeight: pct ? 2 : 0 }}
-                    />
+                      style={{ display: "flex", alignItems: "flex-end", height: "100%" }}
+                      content={`${dayLabel(h.date)} · WAPE ${pct?.toFixed(1) ?? "—"} % · оценка ${h.wapeScore?.toFixed(2) ?? "—"}`}
+                    >
+                      <div
+                        className={cn("w-full rounded-t-xs", pct === null ? "bg-text-muted/20" : "bg-cyan-500/70 hover:bg-cyan-500")}
+                        style={{ height: pct === null ? "4%" : `${(pct / max) * 100}%`, minHeight: pct ? 2 : 0 }}
+                      />
+                    </Tooltip>
                   );
                 })}
               </div>
