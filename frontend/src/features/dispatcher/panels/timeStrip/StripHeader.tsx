@@ -1,4 +1,4 @@
-import { Button, Icon, IconButton, Input, Tabs } from "../../../../components";
+import { Button, DatePicker, Icon, IconButton, Tabs } from "../../../../components";
 import { useDispatcher } from "../../store";
 import { SCALES, SCALE_LABELS, shiftCursor, windowLabel, type Scale } from "../../time";
 
@@ -64,15 +64,12 @@ export function StripHeader({ rangeLabel }: StripHeaderProps) {
             </button>
           </span>
         )}
-        <Input
-          size="sm"
-          type="date"
+        <DatePicker
           aria-label="Перейти к дате"
           value={cursor}
           max={latestDate ?? undefined}
           min={forecastFrom ?? undefined}
-          onChange={(e) => {
-            const date = e.target.value;
+          onChange={(date) => {
             if (date && (!latestDate || date <= latestDate) && (!forecastFrom || date >= forecastFrom))
               setCursor(date);
           }}
