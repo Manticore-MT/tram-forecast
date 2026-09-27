@@ -185,7 +185,8 @@ public class ApiMapper {
 
     private List<Responses.SlimPoint> slim(List<ForecastPoint> points) {
         return points.stream()
-                .map(p -> new Responses.SlimPoint(time(p.periodStart()), round(p.baseline()), round(p.forecast())))
+                .map(p -> new Responses.SlimPoint(
+                        time(p.periodStart()), round(p.baseline()), round(p.forecast()), round(p.actual())))
                 .toList();
     }
 

@@ -47,7 +47,7 @@ export function IconButton({
       style={style}
       className={cn(
         sizeClasses,
-        variant === "secondary" && "border border-border bg-background hover:bg-muted hover:text-foreground"
+        variant === "secondary" && "border border-border-default bg-bg-page hover:bg-bg-surface-2 hover:text-text-primary"
       )}
       {...rest}
     >

@@ -155,11 +155,14 @@ export function nowPosition(periodStarts: string[], now: string | undefined): nu
   return 0;
 }
 
-/** The focused point: the user's pick if valid, else "now" when it's in the window, else the first. */
+/** The focused point: the user's pick if valid, else "now" when it's in the window, else the
+ *  window's middle — not the first point, which for a day is midnight and makes every non-today
+ *  day look artificially quiet (and green) on the map. */
 export function resolveFocus(focus: number | null, periodStarts: string[], now: string | undefined): number {
   if (periodStarts.length === 0) return -1;
   if (focus !== null && focus >= 0 && focus < periodStarts.length) return focus;
-  return Math.max(0, nowIndex(periodStarts, now));
+  const inWindow = nowIndex(periodStarts, now);
+  return inWindow >= 0 ? inWindow : Math.floor((periodStarts.length - 1) / 2);
 }
 
 /** First day after the window (exclusive end), "YYYY-MM-DD". */

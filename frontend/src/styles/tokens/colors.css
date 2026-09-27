@@ -7,9 +7,8 @@
 /* Signal red — the single hero accent: CTAs, live state, peak load. */
 --red-700:#A8190F;--red-600:#C82417;--red-500:#F0392B;--red-400:#FF6152;--red-100:#FFE0DC;
 
-/* Data hues — charts, forecast bands, map series. No purple/violet. */
---cyan-500:#22D3EE;--cyan-600:#0FA5BD;--blue-500:#3B82F6;--teal-500:#14B8A6;
---amber-500:#FFB020;--lime-500:#A3E635;--green-500:#2ED47A;--orange-500:#FB7B3C;
+/* Data hue — the one real non-load-scale color, used for факт/comparison series on charts. */
+--cyan-500:#22D3EE;--cyan-600:#0FA5BD;
 
 /* Passenger-load scale — low → critical. Used on maps, meters, heat cells. */
 --load-1:#2ED47A;--load-2:#A3E635;--load-3:#FFB020;--load-4:#FB7B3C;--load-5:#F0392B;
@@ -41,8 +40,8 @@
 --on-accent:var(--white);
 
 --focus-ring:var(--cyan-500);
---status-ok:var(--green-500);
---status-warn:var(--amber-500);
+--status-ok:var(--load-1);
+--status-warn:var(--load-3);
 --status-danger:var(--red-500);
 --status-info:var(--cyan-500);
 

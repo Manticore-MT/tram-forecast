@@ -34,7 +34,7 @@ export interface DeviationListProps {
   items: DeviationItem[];
   layout?: "list" | "table";
   style?: React.CSSProperties;
-  /** Called with the item's drillTo when it's clickable — powers the вся-сеть/маршрут/остановка hierarchy. */
+  /** Called with the item's drillTo when it's clickable — powers the вся-сеть/маршрут hierarchy. */
   onSelect?: (place: Place) => void;
   /** Called with the item's focusIndex when it's clickable — moves the time focus within the
    *  current window instead of navigating (route-level time-point zones). */

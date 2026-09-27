@@ -25,12 +25,6 @@
 
   --color-cyan-500: var(--cyan-500);
   --color-cyan-600: var(--cyan-600);
-  --color-blue-500: var(--blue-500);
-  --color-teal-500: var(--teal-500);
-  --color-amber-500: var(--amber-500);
-  --color-lime-500: var(--lime-500);
-  --color-green-500: var(--green-500);
-  --color-orange-500: var(--orange-500);
 
   --color-load-1: var(--load-1);
   --color-load-2: var(--load-2);
@@ -105,9 +99,7 @@
   --radius-md: var(--src-radius-md);
   --radius-lg: var(--src-radius-lg);
   --radius-xl: var(--src-radius-xl);
-  --radius-2xl: var(--src-radius-2xl);
   --radius-pill: var(--src-radius-pill);
-  --radius-pin: var(--src-radius-pin);
 
   /* ── Elevation ───────────────────────────────────────────── */
   --shadow-sm: var(--src-shadow-sm);

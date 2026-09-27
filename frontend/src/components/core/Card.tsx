@@ -4,8 +4,6 @@ import { cn } from "@/lib/utils";
 export interface CardProps {
   children?: React.ReactNode;
   tone?: "surface" | "raised" | "glass" | "accent" | "outline";
-  /** use the pin silhouette: three 40px corners + one 6px corner */
-  pin?: boolean;
   /** escape hatch: raw CSS value (e.g. "var(--space-4)", "8px 16px") — Tailwind's padding scale can't express asymmetric or token-driven padding in one prop */
   padding?: string;
   /** lift 2px on hover */
@@ -19,7 +17,6 @@ export interface CardProps {
 export function Card({
   children,
   tone = "surface",
-  pin = false,
   padding = "var(--space-6)",
   interactive = false,
   className,
@@ -40,15 +37,12 @@ export function Card({
               ? "bg-transparent ring-1 ring-inset ring-border-default"
               : "bg-bg-surface ring-1 ring-inset ring-border-default";
 
-  const radiusClass = pin ? "rounded-pin" : "rounded-xl";
-
   return (
     <div
       onClick={onClick}
       style={{ padding, ...style }}
       className={cn(
-        radiusClass,
-        "transition-ui",
+        "rounded-xl transition-ui",
         toneClasses,
         interactive && "hover:shadow-lg hover:ring-border-strong hover:-translate-y-0.5",
         className

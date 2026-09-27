@@ -47,9 +47,9 @@ export function Button({
     size === "lg" ? "h-14" :
     "h-11";
 
-  // For inverse variant, override with bg-background text-foreground
+  // For inverse variant, override with bg-bg-page text-text-primary
   const variantClasses =
-    variant === "inverse" ? "bg-background text-foreground hover:bg-background/90" : "";
+    variant === "inverse" ? "bg-bg-page text-text-primary hover:bg-bg-page/90" : "";
 
   const blockClasses = block ? "w-full" : "";
 
@@ -60,11 +60,11 @@ export function Button({
         onClick={onClick}
         style={style}
         className={cn(
-          "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 gap-2",
+          "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-focus-ring focus-visible:ring-3 focus-visible:ring-focus-ring/50 [&_svg]:pointer-events-none [&_svg]:shrink-0 gap-2",
           sizeClasses,
-          shadcnVariant === "default" && "bg-primary text-primary-foreground hover:bg-primary/80",
-          shadcnVariant === "outline" && "border-border bg-background hover:bg-muted hover:text-foreground",
-          shadcnVariant === "ghost" && "hover:bg-muted hover:text-foreground dark:hover:bg-muted/50",
+          shadcnVariant === "default" && "bg-brand text-on-accent hover:bg-brand/80",
+          shadcnVariant === "outline" && "border-border-default bg-bg-page hover:bg-bg-surface-2 hover:text-text-primary",
+          shadcnVariant === "ghost" && "hover:bg-bg-surface-2 hover:text-text-primary",
           variantClasses,
           blockClasses,
           "disabled:pointer-events-none disabled:opacity-50"

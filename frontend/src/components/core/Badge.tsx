@@ -25,9 +25,9 @@ export function Badge({
       : tone === "accent"
         ? "bg-brand-quiet text-text-accent ring-1 ring-brand/35"
         : tone === "ok"
-          ? "bg-green-500/15 text-status-ok ring-1 ring-green-500/35"
+          ? "bg-status-ok/15 text-status-ok ring-1 ring-status-ok/35"
           : tone === "warn"
-            ? "bg-amber-500/15 text-status-warn ring-1 ring-amber-500/35"
+            ? "bg-status-warn/15 text-status-warn ring-1 ring-status-warn/35"
             : tone === "danger"
               ? "bg-red-500/15 text-status-danger ring-1 ring-red-500/35"
               : tone === "info"
@@ -38,7 +38,7 @@ export function Badge({
     <ShadcnBadge
       variant="outline"
       className={cn(
-        "inline-flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium",
+        "inline-flex items-center gap-2 px-2.5 py-1 text-ui-s leading-none",
         toneClasses
       )}
       style={style}

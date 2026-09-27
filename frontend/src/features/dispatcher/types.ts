@@ -9,7 +9,7 @@ export interface DeviationItem {
   peakTime?: string;
   tone: "danger" | "warn" | "ok";
   selected?: boolean;
-  /** Where a click on the item leads in the сеть/маршрут/остановка drill-down. */
+  /** Where a click on the item leads in the сеть/маршрут drill-down. */
   drillTo?: Place;
   /** Index of the point this item refers to within the current window's series — moves the time
    *  focus there on click, instead of navigating (used by route-level time-point zones). */

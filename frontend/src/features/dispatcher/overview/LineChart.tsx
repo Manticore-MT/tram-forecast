@@ -102,7 +102,9 @@ export function LineChart({ series, labels, height = 220, marker, ariaLabel }: L
       <div className="relative h-4">
         {labels.map((label, i) => {
           if (i % step !== 0 && i !== n - 1) return null;
-          if (i === n - 1 && i % step !== 0 && (n - 1) % step < step / 2) return null;
+          // The last point only gets its own label if it already lands on the step grid — any
+          // closer and it collides with the regular tick before it (e.g. 21:00/23:00 on a day).
+          if (i === n - 1 && (n - 1) % step !== 0) return null;
           const shift = i === 0 ? "" : i === n - 1 ? "-translate-x-full" : "-translate-x-1/2";
           return (
             <span key={i} className={cn("absolute whitespace-nowrap text-caption text-text-muted", shift)} style={{ left: `${pct(i)}%` }}>
