@@ -6,8 +6,12 @@ export function fmtSigned(n: number): string {
   return `${n > 0 ? "+" : n < 0 ? "−" : ""}${fmtInt(Math.abs(n))}`;
 }
 
+// Deviation is colored by severity (magnitude), not direction — a route stalled at -100% is just
+// as critical as one overloaded at +100%. The arrow carries the sign explicitly so it doesn't
+// depend on noticing a "+"/"−" glyph inside a color that's telling a different story.
 export function fmtPct(n: number): string {
-  return `${n > 0 ? "+" : n < 0 ? "−" : ""}${Math.abs(n).toFixed(1)} %`;
+  const arrow = n > 0 ? "▲ " : n < 0 ? "▼ " : "";
+  return `${arrow}${Math.abs(n).toFixed(1)} %`;
 }
 
 /** Relative deviation in %, 0 when there's no baseline to compare with. */
