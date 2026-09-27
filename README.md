@@ -4,6 +4,26 @@
 
 **Стенд:** <https://24manticore.ru>
 
+![Java](https://img.shields.io/badge/Java-21-ED8B00?logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.1-6DB33F?logo=springboot&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-ML--сервис-009688?logo=fastapi&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+
+## Оглавление
+
+- [Быстрый старт](#быстрый-старт)
+- [1. ML-модель](#1-ml-модель)
+- [2. Внешние данные](#2-внешние-данные)
+- [3. Запускаемый веб-сервис](#3-запускаемый-веб-сервис)
+- [4. Архитектура и модули](#4-архитектура-и-модули)
+- [5. Производительность](#5-производительность)
+- [6. Ограничения и план развития](#6-ограничения-и-план-развития)
+- [Лицензия](#лицензия)
+
 ## Быстрый старт
 
 Нужен Docker.
@@ -21,6 +41,11 @@ curl "http://localhost:8080/api/routes?horizon=day"
 ```
 
 ## 1. ML-модель
+
+- Обучение: [`ml/train.py`](ml/train.py), [`ml/build_artifact.py`](ml/build_artifact.py)
+- Инференс (HTTP-сервис): [`ml/app/`](ml/app)
+- Артефакт модели: [`ml/artifacts/route_model.json`](ml/artifacts/route_model.json)
+- Инструкция запуска: [`ml_readme.md`](ml_readme.md)
 
 ## 2. Внешние данные
 
