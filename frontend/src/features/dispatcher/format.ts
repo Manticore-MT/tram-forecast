@@ -38,3 +38,9 @@ export const TONE_TEXT: Record<"danger" | "warn" | "ok", string> = {
   warn: "text-status-warn",
   ok: "text-status-ok",
 };
+
+export const TONE_BG: Record<"danger" | "warn" | "ok", string> = {
+  danger: "bg-status-danger",
+  warn: "bg-status-warn",
+  ok: "bg-status-ok",
+};

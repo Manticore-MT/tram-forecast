@@ -19,7 +19,7 @@ export function TimeStrip() {
   return (
     <Card tone="glass" padding="var(--space-3) var(--space-4)" className="flex flex-col gap-1.5">
       <StripHeader rangeLabel={interval?.label ?? null} />
-      <div className="h-20">
+      <div className="h-24">
         {series.error ? (
           <div className="flex h-full items-center"><ErrorNotice error={series.error} onRetry={series.refetch} /></div>
         ) : series.isLoading ? (
