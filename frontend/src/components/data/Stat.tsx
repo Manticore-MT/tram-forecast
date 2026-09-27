@@ -11,6 +11,9 @@ export interface StatProps {
   /** colors the value itself with a status token — same vocabulary as Badge's tone */
   tone?: "ok" | "warn" | "danger";
   align?: "left" | "center";
+  /** "column" (label above value, default) or "row" (label left, value right — for a narrow
+   *  list of paired metrics, where two side-by-side columns would squeeze the value). */
+  orientation?: "column" | "row";
   size?: "md" | "lg";
   className?: string;
   style?: React.CSSProperties;
@@ -19,15 +22,36 @@ export interface StatProps {
 const TONE_COLOR: Record<string, string> = { ok: "var(--status-ok)", warn: "var(--status-warn)", danger: "var(--status-danger)" };
 
 /** Metric block — big tabular number with an uppercase eyebrow label. */
-export function Stat({ label, value, unit, caption, trend, tone, align = "left", size = "md", className, style, ...rest }: StatProps) {
+export function Stat({ label, value, unit, caption, trend, tone, align = "left", orientation = "column", size = "md", className, style, ...rest }: StatProps) {
   const trendColor = trend && trend.dir === "down" ? "var(--status-ok)" : trend && trend.dir === "up" ? "var(--status-warn)" : "var(--text-muted)";
+  const valueSpan = (
+    <span className={cn("flex items-baseline gap-1.5 tabular-nums", size === "lg" ? "text-metric-xl" : "text-metric", tone ? "" : "text-text-primary")} style={{ color: tone ? TONE_COLOR[tone] : undefined }}>
+      {value}
+      {unit && <span className="whitespace-nowrap text-h4 text-text-secondary">{unit}</span>}
+    </span>
+  );
+
+  if (orientation === "row") {
+    return (
+      <div className={cn("flex flex-col gap-1", className)} style={style} {...rest}>
+        <div className="flex items-baseline justify-between gap-3">
+          {label && <span className="text-eyebrow text-text-muted">{label}</span>}
+          {valueSpan}
+        </div>
+        {(caption || trend) && (
+          <span className="flex items-center gap-2 text-caption text-text-muted tabular-nums">
+            {trend && <span className="font-mono" style={{ color: trendColor }}>{trend.dir === "down" ? "▼" : "▲"} {trend.value}</span>}
+            {caption}
+          </span>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className={cn("flex flex-col gap-2", align === "center" ? "items-center text-center" : "items-start text-left", className)} style={style} {...rest}>
       {label && <span className="text-eyebrow text-text-muted">{label}</span>}
-      <span className={cn("flex items-baseline gap-1.5 tabular-nums", size === "lg" ? "text-metric-xl" : "text-metric", tone ? "" : "text-text-primary")} style={{ color: tone ? TONE_COLOR[tone] : undefined }}>
-        {value}
-        {unit && <span className="whitespace-nowrap text-h4 text-text-secondary">{unit}</span>}
-      </span>
+      {valueSpan}
       {(caption || trend) && (
         <span className="flex items-center gap-2 text-caption text-text-muted tabular-nums">
           {trend && <span className="font-mono" style={{ color: trendColor }}>{trend.dir === "down" ? "▼" : "▲"} {trend.value}</span>}

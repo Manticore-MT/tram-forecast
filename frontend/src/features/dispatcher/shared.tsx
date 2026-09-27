@@ -1,8 +1,8 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Badge, Stat } from "../../components";
+import { Stat } from "../../components";
 import { Sparkline } from "../../shared/charts";
-import { TONE_BORDER, TONE_TEXT } from "./format";
+import { TONE_TEXT } from "./format";
 import type { DeviationItem, FactorItem } from "./types";
 import type { Place } from "./store";
 
@@ -68,26 +68,29 @@ export function DeviationList({ title, items, layout = "list", style, onSelect, 
             onClick={onClick}
             onDoubleClick={onDoubleClick}
             className={cn(
-              "flex items-center justify-between gap-3 py-3 pr-3 pl-3 border-l-[3px]",
+              "flex items-start justify-between gap-4 py-3",
               layout === "table" ? "flex-[1_1_260px]" : "flex-none",
-              z.selected ? "bg-glass-fill" : z.tone === "danger" ? "bg-status-danger/5" : undefined,
-              TONE_BORDER[z.tone],
+              z.selected && "bg-glass-fill",
               layout !== "table" && i !== items.length - 1 && "border-b border-b-border-subtle",
               clickable && "cursor-pointer"
             )}
           >
             <div className="flex min-w-0 flex-col gap-0.5">
-              <span className={cn("text-ui-s", z.selected ? "text-brand" : "text-text-primary")}>{z.title}</span>
+              <span className={cn("text-ui-s truncate", z.selected ? "text-brand" : "text-text-primary")}>
+                {z.title}
+              </span>
               {z.peakTime && <span className="text-caption text-text-muted">пик {z.peakTime}</span>}
             </div>
-            <div className="flex flex-none flex-col items-end gap-0.5">
-              <div className="flex items-baseline gap-2">
-                {z.action && <Badge tone="neutral">{z.action.label}</Badge>}
-                <span className={cn("text-ui-s font-mono font-semibold tabular-nums", TONE_TEXT[z.tone])}>
-                  {z.relDeviation}
+            <div className="flex flex-none flex-col items-end gap-1">
+              <span className={cn("text-ui-s font-mono font-semibold whitespace-nowrap tabular-nums", TONE_TEXT[z.tone])}>
+                {z.relDeviation}
+              </span>
+              {z.action && (
+                <span className="inline-flex items-center whitespace-nowrap rounded-pill bg-glass-fill px-2.5 py-1 text-ui-s leading-none text-text-secondary">
+                  {z.action.label}
                 </span>
-              </div>
-              <span className="text-mono-s text-text-secondary">{z.absDeviation}</span>
+              )}
+              <span className="text-mono-s text-text-secondary tabular-nums">{z.absDeviation}</span>
             </div>
           </div>
           );

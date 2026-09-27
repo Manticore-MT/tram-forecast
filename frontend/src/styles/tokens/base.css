@@ -12,7 +12,7 @@ a:hover{color:var(--brand-accent-hover);text-decoration:underline;text-underline
    accent-color can't shape — every time-scrubber in the app used this
    unstyled, so give it a real pill track + thumb. */
 input[type="range"]{-webkit-appearance:none;appearance:none;background:transparent;height:18px}
-input[type="range"]::-webkit-slider-runnable-track{height:4px;border-radius:var(--radius-pill);background:var(--border-default)}
-input[type="range"]::-moz-range-track{height:4px;border-radius:var(--radius-pill);background:var(--border-default)}
-input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;margin-top:-6px;width:16px;height:16px;border-radius:var(--radius-pill);background:var(--brand-accent);border:2px solid var(--bg-page)}
-input[type="range"]::-moz-range-thumb{width:16px;height:16px;border-radius:var(--radius-pill);background:var(--brand-accent);border:2px solid var(--bg-page)}
+input[type="range"]::-webkit-slider-runnable-track{height:4px;border-radius:var(--radius-pill);background:var(--bg-surface-2)}
+input[type="range"]::-moz-range-track{height:4px;border-radius:var(--radius-pill);background:var(--bg-surface-2)}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;margin-top:-6px;width:16px;height:16px;border-radius:var(--radius-pill);background:var(--brand-accent);border:2px solid var(--bg-elevated);box-shadow:0 0 0 1px var(--border-default)}
+input[type="range"]::-moz-range-thumb{width:16px;height:16px;border-radius:var(--radius-pill);background:var(--brand-accent);border:2px solid var(--bg-elevated);box-shadow:0 0 0 1px var(--border-default)}

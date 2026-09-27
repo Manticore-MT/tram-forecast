@@ -55,9 +55,12 @@ export interface CompareCardProps {
   mode: CompareMode;
   onMode: (mode: CompareMode) => void;
   comparisonLabel: string;
+  /** The comparison period falls outside the model's covered range (e.g. near its start) —
+   *  don't fire the request at all, just say so. */
+  outOfRange?: boolean;
 }
 
-export function CompareCard({ network, comparison, scale, mode, onMode, comparisonLabel }: CompareCardProps) {
+export function CompareCard({ network, comparison, scale, mode, onMode, comparisonLabel, outOfRange }: CompareCardProps) {
   const options = compareOptions(scale);
   return (
     <KpiCard title="Сравнение с периодом">
@@ -68,7 +71,7 @@ export function CompareCard({ network, comparison, scale, mode, onMode, comparis
         onChange={(e) => onMode(e.target.value as CompareMode)}
       />
       <QueryGate q={network}>
-        {() => (
+        {() => outOfRange ? <Empty>{comparisonLabel} — вне периода прогноза</Empty> : (
           <QueryGate q={comparison}>
             {() => {
               const now = sumForecast(networkPoints(network.data?.routes ?? []));

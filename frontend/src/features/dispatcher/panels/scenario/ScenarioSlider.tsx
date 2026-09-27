@@ -80,7 +80,6 @@ export function ScenarioSlider({ label, value, onCommit }: ScenarioSliderProps) 
           aria-label={label}
         />
       </div>
-      <span aria-hidden="true" className="shrink-0 select-none text-ui-s text-text-muted">×</span>
       <Input
         size="sm"
         align="right"
