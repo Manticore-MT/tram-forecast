@@ -15,18 +15,31 @@ export interface InputProps {
   suffix?: React.ReactNode;
   disabled?: boolean;
   id?: string;
+  /** md (48px, default) for standalone forms; sm (36px) for inline use next to h-9 controls
+   *  (nav buttons, date jump, scenario multipliers) — same surface/shadow/radius, just shorter. */
+  size?: "sm" | "md";
+  /** text alignment inside the field — right for numeric/tabular entry (e.g. scenario multipliers) */
+  align?: "left" | "right";
+  /** bounds for type="date"/"number" */
+  min?: string;
+  max?: string;
+  inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  "aria-label"?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   style?: React.CSSProperties;
 }
 
-/** Single-line text field, 48px tall, dark inset surface with a hairline that turns cyan on focus and red on error. */
-export function Input({ label, hint, error, value, defaultValue, placeholder, type = "text", prefix, suffix, disabled = false, onChange, id, style, ...rest }: InputProps) {
+/** Single-line text field, dark inset surface with a hairline that turns cyan on focus and red on error. */
+export function Input({ label, hint, error, value, defaultValue, placeholder, type = "text", prefix, suffix, disabled = false, size = "md", align = "left", onChange, id, style, ...rest }: InputProps) {
   return (
     <label htmlFor={id} className="flex flex-col gap-2" style={style}>
       {label && <span className="text-ui-s text-text-secondary">{label}</span>}
       <div
         className={cn(
-          "flex h-12 items-center gap-2 rounded-md bg-bg-surface-2 px-4 shadow-(--inset-hairline-strong) transition-ui",
+          "flex items-center gap-2 rounded-md bg-(--control-surface,var(--bg-surface-2)) shadow-(--inset-hairline-strong) transition-ui",
+          size === "sm" ? "h-9 px-3" : "h-12 px-4",
           "focus-within:shadow-[inset_0_0_0_2px_var(--focus-ring)]",
           error && "shadow-[inset_0_0_0_2px_var(--status-danger)]",
           disabled && "opacity-45"
@@ -41,7 +54,11 @@ export function Input({ label, hint, error, value, defaultValue, placeholder, ty
           placeholder={placeholder}
           disabled={disabled}
           onChange={onChange}
-          className="h-full min-w-0 flex-1 border-none bg-transparent p-0 text-body-s text-text-primary shadow-none focus-visible:ring-0 placeholder:text-text-muted"
+          className={cn(
+            "h-full min-w-0 flex-1 border-none bg-transparent p-0 text-text-primary shadow-none scheme-dark focus-visible:ring-0 placeholder:text-text-muted",
+            size === "sm" ? "text-ui-s" : "text-body-s",
+            align === "right" && "text-right"
+          )}
           {...rest}
         />
         {suffix && <span className="flex text-text-muted">{suffix}</span>}

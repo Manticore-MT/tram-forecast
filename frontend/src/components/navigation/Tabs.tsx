@@ -20,9 +20,9 @@ export function Tabs({ items = [], value, onChange, variant = "pill", style, ...
         style={style}
         {...rest}
         className={cn(
-          "h-auto w-fit p-1",
+          "h-auto w-fit p-1 group-data-horizontal/tabs:h-auto group-data-vertical/tabs:h-auto",
           variant === "pill"
-            ? "gap-1 rounded-pill bg-bg-surface-2 shadow-(--inset-hairline)"
+            ? "gap-1 rounded-pill bg-(--control-surface,var(--bg-surface-2)) shadow-(--inset-hairline)"
             : "gap-6 rounded-none bg-transparent p-0 shadow-[inset_0_-1px_0_var(--border-subtle)]"
         )}
       >

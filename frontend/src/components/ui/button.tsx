@@ -4,17 +4,17 @@ import { cn } from "cn"
 import { Slot } from "radix-ui"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-focus-ring focus-visible:ring-3 focus-visible:ring-focus-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-status-danger aria-invalid:ring-3 aria-invalid:ring-status-danger/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-md border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-focus-ring focus-visible:ring-3 focus-visible:ring-focus-ring/50 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-status-danger aria-invalid:ring-3 aria-invalid:ring-status-danger/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
         default: "bg-brand text-on-accent hover:bg-brand/80",
         outline:
-          "border-border-default bg-bg-page hover:bg-bg-surface-2 hover:text-text-primary aria-expanded:bg-bg-surface-2 aria-expanded:text-text-primary",
+          "border-border-default bg-transparent hover:bg-glass-fill hover:text-text-primary aria-expanded:bg-glass-fill aria-expanded:text-text-primary",
         secondary:
           "bg-bg-surface-2 text-text-primary hover:bg-[color-mix(in_oklch,var(--bg-surface-2),var(--text-primary)_5%)] aria-expanded:bg-bg-surface-2 aria-expanded:text-text-primary",
         ghost:
-          "hover:bg-bg-surface-2 hover:text-text-primary aria-expanded:bg-bg-surface-2 aria-expanded:text-text-primary",
+          "hover:bg-glass-fill hover:text-text-primary aria-expanded:bg-glass-fill aria-expanded:text-text-primary",
         destructive:
           "bg-status-danger/10 text-status-danger hover:bg-status-danger/20 focus-visible:border-status-danger/40 focus-visible:ring-status-danger/20",
         link: "text-brand underline-offset-4 hover:underline",
