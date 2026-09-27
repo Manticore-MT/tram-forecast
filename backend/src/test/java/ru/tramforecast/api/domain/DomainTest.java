@@ -17,11 +17,8 @@ import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.RecommendationAction;
 import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopForecast;
-import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.domain.service.AttentionPolicy;
 import ru.tramforecast.api.domain.service.AttentionZoneCalculator;
-import ru.tramforecast.api.domain.service.ForecastAggregator;
 import ru.tramforecast.api.domain.service.ForecastPeriod;
 import ru.tramforecast.api.domain.service.RecommendationPolicy;
 import ru.tramforecast.api.domain.service.SeriesAnalytics;
@@ -88,20 +85,19 @@ class DomainTest {
     }
 
     /**
-     * Stop series are summed per period into route series, and freshness is the oldest snapshot.
+     * A route forecast can swap its points and keeps everything else.
      */
     @Test
-    void routeForecastSumsStopsPerPeriod() {
-        StopForecast a = stop("R1", "S1", new ForecastPoint(T0, 100, 120, 110.0));
-        StopForecast b = stop("R1", "S2", new ForecastPoint(T0, 50, 60, null));
+    void routeForecastKeepsItsIdentityWhenPointsAreReplaced() {
+        RouteForecast original = route("R1", new ForecastPoint(T0, 100, 120, null));
 
-        List<RouteForecast> routes = ForecastAggregator.byRoute(List.of(a, b));
+        RouteForecast changed = original.withPoints(List.of(new ForecastPoint(T0, 100, 150, null)));
 
-        assertThat(routes).hasSize(1);
-        ForecastPoint total = routes.get(0).points().get(0);
-        assertThat(total.baseline()).isEqualTo(150);
-        assertThat(total.forecast()).isEqualTo(180);
-        assertThat(total.actual()).isEqualTo(110.0);
+        assertThat(changed.routeId()).isEqualTo(original.routeId());
+        assertThat(changed.modelVersion()).isEqualTo("test");
+        assertThat(changed.factors()).containsExactly("factor");
+        assertThat(changed.points().get(0).forecast()).isEqualTo(150);
+        assertThat(original.points().get(0).forecast()).isEqualTo(120);
     }
 
     /**
@@ -163,12 +159,8 @@ class DomainTest {
     }
 
     private static RouteForecast route(String route, ForecastPoint point) {
-        return new RouteForecast(new RouteId(route), Horizon.DAY, LocalDate.of(2026, 9, 25), T0, List.of(point));
-    }
-
-    private static StopForecast stop(String route, String stop, ForecastPoint point) {
-        return new StopForecast(
-                new RouteId(route), new StopId(stop), Horizon.DAY, LocalDate.of(2026, 9, 25),
-                T0, "test", List.of(point), List.of());
+        return new RouteForecast(
+                new RouteId(route), Horizon.DAY, LocalDate.of(2026, 9, 25), T0, "test", List.of(point),
+                List.of("factor"));
     }
 }

@@ -34,11 +34,11 @@ public class OpenApiConfig {
 
     /** Handlers that read forecasts and can therefore be answered with 503 when nothing is stored. */
     private static final Set<String> READS_FORECASTS =
-            Set.of("routes", "routeForecast", "stopForecast", "attention", "export");
+            Set.of("routes", "routeForecast", "attention", "export");
 
     /** Handlers addressing a specific route or stop, which can be unknown. */
     private static final Set<String> ADDRESSES_ROUTE =
-            Set.of("routeForecast", "stopForecast", "loadMatrix", "export");
+            Set.of("routeForecast", "loadMatrix", "export");
 
     /**
      * The document header: title, conventions every client needs, and a fixed server entry so the
@@ -53,7 +53,7 @@ public class OpenApiConfig {
                         .title("Tram forecast API")
                         .version("0.1.0")
                         .description("""
-                                Forecast of tram ridership by route and stop for the horizons day, week, month and year.
+                                Forecast of tram ridership by route (route x hour) for the horizons day, week, month and year.
 
                                 **Conventions**
                                 - Timestamps are ISO 8601 with an explicit offset, for example
@@ -62,7 +62,7 @@ public class OpenApiConfig {
                                   reads points locally and needs no further requests.
                                 - Steps follow the horizon: day = hourly, week = daily, month = daily, year = monthly. A week is
                                   seven days starting at the requested `date` (not a calendar week).
-                                - Routes and stops are identified by opaque string IDs; geometry is not served.
+                                - Routes are identified by opaque string IDs; geometry is not served. There are no stop-level values.
                                 - `modelVersion = "stub"` and `dataSource = "stub"` mean synthetic demo data.
                                 - Errors are RFC 9457 problem documents (`application/problem+json`).
                                 - When access control is on, every `/api/**` request needs the header
@@ -135,7 +135,7 @@ public class OpenApiConfig {
                 addProblem(operation.getResponses(), "400", "Invalid parameter or request");
             }
             if (ADDRESSES_ROUTE.contains(handler)) {
-                addProblem(operation.getResponses(), "404", "Unknown route or stop, or nothing to return for them");
+                addProblem(operation.getResponses(), "404", "Unknown route, or nothing to return for it");
             }
             if (READS_FORECASTS.contains(handler)) {
                 addProblem(operation.getResponses(), "503",

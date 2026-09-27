@@ -15,7 +15,6 @@ public enum ErrorCode {
     /** There is no such route. */
     ROUTE_NOT_FOUND,
     /** The route exists but has no such stop. */
-    STOP_NOT_FOUND,
     /** The route and stop exist but there is no data to answer with (no history, nothing to export). */
     NO_DATA,
     /** The URL is not an endpoint of this API. */

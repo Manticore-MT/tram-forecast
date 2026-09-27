@@ -16,7 +16,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.tramforecast.api.domain.model.Horizon;
-import ru.tramforecast.api.domain.model.StopForecast;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.port.MlForecastClient;
 import ru.tramforecast.api.domain.port.MlRequestRejectedException;
 import ru.tramforecast.api.domain.port.MlUnavailableException;
@@ -37,14 +37,13 @@ class HttpMlForecastClientTest {
               "forecasts": [
                 {
                   "routeId": "5",
-                  "stopId": "1023",
                   "points": [
                     {"periodStart": "2026-09-25T09:00:00+03:00", "baseline": 900.0, "forecast": 1240.0},
                     {"periodStart": "2026-09-25T10:00:00+03:00", "baseline": 800.0, "forecast": 810.5}
                   ],
                   "factors": ["weekend", "rain"]
                 },
-                {"routeId": "5", "stopId": "1024", "points": []}
+                {"routeId": "7", "points": []}
               ]
             }
             """;
@@ -94,14 +93,13 @@ class HttpMlForecastClientTest {
      */
     @Test
     void sendsTheDocumentedRequestAndMapsTheDocumentedResponse() {
-        List<StopForecast> result = client(Duration.ofSeconds(2)).predict(Horizon.DAY, LocalDate.of(2026, 9, 25));
+        List<RouteForecast> result = client(Duration.ofSeconds(2)).predict(Horizon.DAY, LocalDate.of(2026, 9, 25));
 
-        assertThat(receivedPath.get()).isEqualTo("POST /predict");
+        assertThat(receivedPath.get()).isEqualTo("POST /predict/routes");
         assertThat(receivedBody.get()).contains("\"horizon\":\"day\"").contains("\"date\":\"2026-09-25\"");
         assertThat(result).hasSize(2);
-        StopForecast first = result.get(0);
+        RouteForecast first = result.get(0);
         assertThat(first.routeId().value()).isEqualTo("5");
-        assertThat(first.stopId().value()).isEqualTo("1023");
         assertThat(first.modelVersion()).isEqualTo("v0.3");
         assertThat(first.generatedAt()).isEqualTo(Instant.parse("2026-09-25T09:00:00Z"));
         assertThat(first.points()).hasSize(2);
@@ -109,6 +107,7 @@ class HttpMlForecastClientTest {
         assertThat(first.points().get(0).baseline()).isEqualTo(900.0);
         assertThat(first.points().get(0).forecast()).isEqualTo(1240.0);
         assertThat(first.factors()).containsExactly("weekend", "rain");
+        assertThat(result.get(1).routeId().value()).isEqualTo("7");
         assertThat(result.get(1).factors()).isEmpty();
     }
 
@@ -210,7 +209,7 @@ class HttpMlForecastClientTest {
                 new TramProperties.Clock(""),
                 new TramProperties.Ml(
                         "http", "http://127.0.0.1:" + port, Duration.ofSeconds(1), readTimeout,
-                        new TramProperties.Stub(1, 1)),
+                        new TramProperties.Stub(1)),
                 new TramProperties.Attention(10, 25),
                 new TramProperties.Forecast(1, null, null),
                 new TramProperties.Refresh(false, "0 0 * * * *"),

@@ -7,7 +7,7 @@ import java.util.Map;
 import ru.tramforecast.api.domain.model.ActualValue;
 import ru.tramforecast.api.domain.model.CorrectionCoefficients;
 import ru.tramforecast.api.domain.model.ForecastPoint;
-import ru.tramforecast.api.domain.model.StopForecast;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.port.ActualRepository;
 
 /**
@@ -42,12 +42,12 @@ public class ForecastPreparer {
     public PreparedForecast prepare(ForecastQuery query) {
         LocalDate date = dates.resolve(query.date());
         dates.ensureSupported(query.horizon(), date);
-        List<StopForecast> loaded = loader.load(query.horizon(), date, query.snapshot());
+        List<RouteForecast> loaded = loader.load(query.horizon(), date, query.snapshot());
         Map<String, Double> facts = factsByKey(actuals.find(query.horizon(), date));
         double factor = query.coefficients().factor();
-        List<StopForecast> prepared = loaded.stream()
-                .map(stop -> stop.withPoints(stop.points().stream()
-                        .map(point -> adjust(stop, point, facts, query.coefficients(), factor))
+        List<RouteForecast> prepared = loaded.stream()
+                .map(route -> route.withPoints(route.points().stream()
+                        .map(point -> adjust(route, point, facts, query.coefficients(), factor))
                         .filter(point -> inInterval(point, query))
                         .toList()))
                 .toList();
@@ -55,12 +55,12 @@ public class ForecastPreparer {
     }
 
     private static ForecastPoint adjust(
-            StopForecast stop,
+            RouteForecast route,
             ForecastPoint point,
             Map<String, Double> facts,
             CorrectionCoefficients coefficients,
             double factor) {
-        ForecastPoint withFact = point.withActual(facts.get(key(stop, point)));
+        ForecastPoint withFact = point.withActual(facts.get(key(route, point)));
         return coefficients.isIdentity() ? withFact : withFact.withForecast(withFact.forecast() * factor);
     }
 
@@ -73,12 +73,12 @@ public class ForecastPreparer {
     private static Map<String, Double> factsByKey(List<ActualValue> values) {
         Map<String, Double> map = new HashMap<>();
         for (ActualValue value : values) {
-            map.put(value.routeId().value() + "|" + value.stopId().value() + "|" + value.periodStart(), value.value());
+            map.put(value.routeId().value() + "|" + value.periodStart(), value.value());
         }
         return map;
     }
 
-    private static String key(StopForecast stop, ForecastPoint point) {
-        return stop.routeId().value() + "|" + stop.stopId().value() + "|" + point.periodStart();
+    private static String key(RouteForecast route, ForecastPoint point) {
+        return route.routeId().value() + "|" + point.periodStart();
     }
 }

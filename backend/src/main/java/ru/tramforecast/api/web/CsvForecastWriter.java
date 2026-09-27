@@ -4,15 +4,15 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import ru.tramforecast.api.domain.model.ForecastPoint;
-import ru.tramforecast.api.domain.model.StopForecast;
+import ru.tramforecast.api.domain.model.RouteForecast;
 
 /**
- * Renders stop forecasts as CSV, one row per stop and period. Timestamps use the API zone with an
+ * Renders route forecasts as CSV, one row per route and period. Timestamps use the API zone with an
  * explicit offset, numbers use a dot as the decimal separator.
  */
 public class CsvForecastWriter {
 
-    private static final String HEADER = "route_id,stop_id,horizon,date,period_start,baseline,forecast,actual,"
+    private static final String HEADER = "route_id,horizon,date,period_start,baseline,forecast,actual,"
             + "deviation_abs,deviation_pct,generated_at,model_version";
 
     private final ZoneId zone;
@@ -32,12 +32,11 @@ public class CsvForecastWriter {
      * @param forecasts forecasts to export
      * @return the CSV document, lines separated by {@code \n}
      */
-    public String write(List<StopForecast> forecasts) {
+    public String write(List<RouteForecast> forecasts) {
         StringBuilder csv = new StringBuilder(HEADER).append('\n');
-        for (StopForecast forecast : forecasts) {
+        for (RouteForecast forecast : forecasts) {
             for (ForecastPoint point : forecast.points()) {
                 csv.append(escape(forecast.routeId().value())).append(',')
-                        .append(escape(forecast.stopId().value())).append(',')
                         .append(ApiMapper.horizon(forecast.horizon())).append(',')
                         .append(forecast.date()).append(',')
                         .append(iso(point.periodStart().atZone(zone))).append(',')

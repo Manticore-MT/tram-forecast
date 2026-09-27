@@ -16,9 +16,10 @@ to the ML side. The backend never touches raw telemetry.
 - The contract is pinned by `HttpMlForecastClientTest` (request, response, refusals, error status,
   malformed body, timeout).
 
-## `POST /predict` (what the backend calls)
+## `POST /predict/routes` (what the backend calls)
 
-The backend asks for the forecast of the **whole network** for one horizon and anchor date.
+The backend asks for the forecast of the **whole network** for one horizon and anchor date: one entry per
+route (route x hour is the only level the model measures; the dataset has no stops).
 
 ```json
 { "horizon": "day", "date": "2025-11-05" }
@@ -36,25 +37,22 @@ Response:
 ```json
 {
   "generatedAt": "2026-09-26T20:18:44+03:00",
-  "modelVersion": "<model>-uniform-stops-demo-<hash>",
+  "modelVersion": "<model>",
   "forecasts": [
     {
       "routeId": "17",
-      "stopId": "2594",
       "points": [{ "periodStart": "2025-11-05T08:00:00+03:00", "baseline": 1750.4, "forecast": 1980.2 }],
-      "factors": ["Календарь: дни недели, праздники, сокращённые дни", "ДЕМО ОСТАНОВОК: ..."]
+      "factors": ["Календарь: дни недели, праздники, сокращённые дни", "Летняя сезонность"]
     }
   ]
 }
 ```
 
 - The unit is **boardings per period** (the target is successful validations per route and hour).
-- `routeId` is the route number as a string (`1, 7, 11, 12, 17, 25, 26, 28, 50`); `stopId` is the
-  `stopCode` from `shared/tram-stops.json`.
-- **Stop values are a demonstration, not a measurement.** The dataset has no stops, the model forecasts
-  a route per hour, and `POST /predict` splits the route total **equally** among its stops (the
-  backend sums the stops back into the route total). The service marks this in `factors` ("ДЕМО
-  ОСТАНОВОК") and in `modelVersion` (`-uniform-stops-demo-<hash>`). Forecasts after 2025-12-31 are a
+- `routeId` is the route number as a string (`1, 7, 11, 12, 17, 25, 26, 28, 50`).
+- **There is no stop level.** The dataset has no link between validations and stops, so the backend stores
+  and serves route x period rows only. The service's `POST /predict` (an equal split of the route total
+  among stops, marked "ДЕМО ОСТАНОВОК") is no longer called. Forecasts after 2025-12-31 are a
   **scenario** (`-scenario` in `modelVersion`, a "СЦЕНАРИЙ" factor): their quality is not measured.
 - `baseline` is the "usual level": the median of the 56 days before 2025-11-01 for the route, the
   effective weekday and the hour (holidays count as Sunday). The backend takes it as is and computes
@@ -86,7 +84,7 @@ calendar year inside that range, so only 2026. The backend knows the range from 
 
 | Endpoint | What it gives | Used by the backend |
 |---|---|---|
-| `POST /predict/routes` | the route totals with baseline, without the stop split (the real values) | no |
+| `POST /predict` | the demonstration stop split of the route totals | no (dropped: there is no stop level) |
 | `GET /metadata` | model version, baseline method, corrections note, limitations, sources, supported routes | no |
 | `GET /metrics?origin=2025-07-01\|2025-09-01` | WAPE and score overall, by route and by day on the two historical 61-day backtest blocks | **yes**: `GET /api/model/stats` (default block 2025-09-01; per day `absoluteError` and `actualSum` are combined into an exact WAPE; `platform.score` is passed on as a separate `platformScore`) |
 | `GET /health` | liveness and the model version (the container health check) | Deploy checks it |

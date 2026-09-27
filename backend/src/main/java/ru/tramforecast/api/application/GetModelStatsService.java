@@ -16,7 +16,7 @@ import ru.tramforecast.api.domain.model.DailyAccuracy;
 import ru.tramforecast.api.domain.model.ForecastPoint;
 import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.ModelStats;
-import ru.tramforecast.api.domain.model.StopForecast;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.port.ActualRepository;
 import ru.tramforecast.api.domain.port.ForecastRepository;
 import ru.tramforecast.api.domain.port.MlMetricsClient;
@@ -45,8 +45,7 @@ public class GetModelStatsService implements GetModelStatsUseCase {
      * values are a demonstration. The wording is the ML side's.
      */
     private static final String PLATFORM_NOTE = "Результат на скрытой проверке платформы для отправленного "
-            + "конкурсного файла (сообщён командой). Это не бэктест, и переносить его на остановки нельзя: "
-            + "прогноз по остановкам демонстрационный.";
+            + "конкурсного файла (сообщён командой). Это не бэктест.";
 
     private final ForecastRepository forecasts;
     private final ActualRepository actuals;
@@ -137,9 +136,9 @@ public class GetModelStatsService implements GetModelStatsUseCase {
             Map<String, Double> facts = factsByKey(actuals.find(Horizon.DAY, date));
             List<Double> actual = new ArrayList<>();
             List<Double> predicted = new ArrayList<>();
-            for (StopForecast stop : forecasts.findInitial(Horizon.DAY, date)) {
-                for (ForecastPoint point : stop.points()) {
-                    Double fact = facts.get(key(stop, point));
+            for (RouteForecast route : forecasts.findInitial(Horizon.DAY, date)) {
+                for (ForecastPoint point : route.points()) {
+                    Double fact = facts.get(key(route, point));
                     if (fact != null) {
                         actual.add(fact);
                         predicted.add(point.forecast());
@@ -164,12 +163,12 @@ public class GetModelStatsService implements GetModelStatsUseCase {
     private static Map<String, Double> factsByKey(List<ActualValue> values) {
         Map<String, Double> map = new HashMap<>();
         for (ActualValue value : values) {
-            map.put(value.routeId().value() + "|" + value.stopId().value() + "|" + value.periodStart(), value.value());
+            map.put(value.routeId().value() + "|" + value.periodStart(), value.value());
         }
         return map;
     }
 
-    private static String key(StopForecast stop, ForecastPoint point) {
-        return stop.routeId().value() + "|" + stop.stopId().value() + "|" + point.periodStart();
+    private static String key(RouteForecast route, ForecastPoint point) {
+        return route.routeId().value() + "|" + point.periodStart();
     }
 }

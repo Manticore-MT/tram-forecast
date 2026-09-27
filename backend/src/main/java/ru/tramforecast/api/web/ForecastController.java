@@ -11,13 +11,11 @@ import ru.tramforecast.api.application.GetAttentionZonesUseCase;
 import ru.tramforecast.api.application.GetLoadMatrixUseCase;
 import ru.tramforecast.api.application.GetNetworkOverviewUseCase;
 import ru.tramforecast.api.application.GetRouteForecastUseCase;
-import ru.tramforecast.api.application.GetStopForecastUseCase;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.web.dto.Responses;
 
 /**
- * Read endpoints of the dashboard: network overview, route, stop, attention zones, load matrix.
+ * Read endpoints of the dashboard: network overview, route, attention zones, load matrix.
  * Every request is answered from stored aggregates; the ML service is involved only on a storage
  * miss, and that is hidden behind the use cases.
  */
@@ -27,7 +25,6 @@ public class ForecastController {
 
     private final GetNetworkOverviewUseCase overview;
     private final GetRouteForecastUseCase route;
-    private final GetStopForecastUseCase stop;
     private final GetAttentionZonesUseCase attention;
     private final GetLoadMatrixUseCase matrix;
     private final ApiMapper mapper;
@@ -37,7 +34,6 @@ public class ForecastController {
      *
      * @param overview network overview use case
      * @param route    route forecast use case
-     * @param stop     stop forecast use case
      * @param attention attention zones use case
      * @param matrix   load matrix use case
      * @param mapper   response mapper
@@ -45,13 +41,11 @@ public class ForecastController {
     public ForecastController(
             GetNetworkOverviewUseCase overview,
             GetRouteForecastUseCase route,
-            GetStopForecastUseCase stop,
             GetAttentionZonesUseCase attention,
             GetLoadMatrixUseCase matrix,
             ApiMapper mapper) {
         this.overview = overview;
         this.route = route;
-        this.stop = stop;
         this.attention = attention;
         this.matrix = matrix;
         this.mapper = mapper;
@@ -70,31 +64,17 @@ public class ForecastController {
     }
 
     /**
-     * Forecast of one route with all of its stops.
+     * Forecast of one route: baseline, deviation, status, peak, recommendation, facts a year earlier
+     * and the factors behind it.
      *
      * @param routeId route identifier
      * @param params  common query parameters
-     * @return route total and per-stop series
+     * @return the route forecast
      */
-    @Operation(summary = "Forecast of one route with all of its stops")
+    @Operation(summary = "Route forecast: baseline, deviation, status, peak, facts a year earlier, factors")
     @GetMapping("/routes/{routeId}/forecast")
     public Responses.RouteForecast routeForecast(@PathVariable String routeId, @ParameterObject ForecastParams params) {
         return mapper.toResponse(route.get(new RouteId(routeId), params.toQuery()));
-    }
-
-    /**
-     * Details of one stop: baseline, deviation, verdict, peak, facts a year earlier.
-     *
-     * @param routeId route identifier
-     * @param stopId  stop identifier
-     * @param params  common query parameters
-     * @return the stop details
-     */
-    @Operation(summary = "Stop details: baseline, deviation, status, peak, facts a year earlier, factors")
-    @GetMapping("/routes/{routeId}/stops/{stopId}/forecast")
-    public Responses.StopForecast stopForecast(
-            @PathVariable String routeId, @PathVariable String stopId, @ParameterObject ForecastParams params) {
-        return mapper.toResponse(stop.get(new RouteId(routeId), new StopId(stopId), params.toQuery()));
     }
 
     /**

@@ -22,8 +22,6 @@ import ru.tramforecast.api.application.GetNetworkOverviewService;
 import ru.tramforecast.api.application.GetNetworkOverviewUseCase;
 import ru.tramforecast.api.application.GetRouteForecastService;
 import ru.tramforecast.api.application.GetRouteForecastUseCase;
-import ru.tramforecast.api.application.GetStopForecastService;
-import ru.tramforecast.api.application.GetStopForecastUseCase;
 import ru.tramforecast.api.application.HistoryAligner;
 import ru.tramforecast.api.application.RefreshForecastService;
 import ru.tramforecast.api.application.RefreshForecastUseCase;
@@ -143,18 +141,6 @@ public class UseCaseConfig {
     /**
      * Route forecast use case.
      *
-     * @param preparer forecast preparer
-     * @param history  year-ago facts
-     * @return the use case
-     */
-    @Bean
-    public GetRouteForecastUseCase getRouteForecastUseCase(ForecastPreparer preparer, HistoryAligner history) {
-        return new GetRouteForecastService(preparer, history);
-    }
-
-    /**
-     * Stop forecast use case.
-     *
      * @param preparer       forecast preparer
      * @param history        year-ago facts
      * @param attention      attention policy
@@ -162,12 +148,12 @@ public class UseCaseConfig {
      * @return the use case
      */
     @Bean
-    public GetStopForecastUseCase getStopForecastUseCase(
+    public GetRouteForecastUseCase getRouteForecastUseCase(
             ForecastPreparer preparer,
             HistoryAligner history,
             AttentionPolicy attention,
             RecommendationPolicy recommendation) {
-        return new GetStopForecastService(preparer, history, attention, recommendation);
+        return new GetRouteForecastService(preparer, history, attention, recommendation);
     }
 
     /**

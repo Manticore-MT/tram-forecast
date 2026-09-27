@@ -10,7 +10,6 @@ import java.util.TreeMap;
 import ru.tramforecast.api.domain.model.ActualValue;
 import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.domain.port.ActualRepository;
 
 /**
@@ -34,22 +33,7 @@ public class HistoryAligner {
     }
 
     /**
-     * Facts of one stop a year earlier.
-     *
-     * @param horizon planning horizon
-     * @param date    current anchor date
-     * @param routeId the route
-     * @param stopId  the stop
-     * @return aligned facts, ordered by period
-     */
-    public List<HistoryPoint> forStop(Horizon horizon, LocalDate date, RouteId routeId, StopId stopId) {
-        return align(actuals.find(horizon, date.minusYears(1)).stream()
-                .filter(a -> a.routeId().equals(routeId) && a.stopId().equals(stopId))
-                .toList());
-    }
-
-    /**
-     * Facts of a whole route (all stops summed) a year earlier.
+     * Facts of a route a year earlier.
      *
      * @param horizon planning horizon
      * @param date    current anchor date

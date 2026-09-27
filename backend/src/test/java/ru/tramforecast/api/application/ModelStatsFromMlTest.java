@@ -76,15 +76,14 @@ class ModelStatsFromMlTest {
 
     /**
      * The platform's score is reported on its own, next to the backtest but never merged into it: the
-     * backtest numbers stay what the days give, and the note says the score is not a backtest and does not
-     * apply to stops.
+     * backtest numbers stay what the days give, and the note says the score is not a backtest.
      */
     @Test
     void thePlatformScoreIsASeparateMeasurement() {
         ModelStats stats = service(() -> block(), "2025-11-01").get(30);
 
         assertThat(stats.platformScore()).isEqualTo(0.88226);
-        assertThat(stats.platformNote()).contains("скрытой проверке платформы").contains("не бэктест").contains("остановки");
+        assertThat(stats.platformNote()).contains("скрытой проверке платформы").contains("не бэктест");
         assertThat(stats.wapeScore()).isNotEqualTo(0.88226);
 
         BacktestMetrics without = new BacktestMetrics("2025-09-01", "note", block().days());

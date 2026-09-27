@@ -18,7 +18,7 @@ public interface ActualRepository {
      *
      * @param horizon planning horizon
      * @param date    anchor date
-     * @return observed values per stop and period, empty when none are known
+     * @return observed values per route and period, empty when none are known
      */
     List<ActualValue> find(Horizon horizon, LocalDate date);
 

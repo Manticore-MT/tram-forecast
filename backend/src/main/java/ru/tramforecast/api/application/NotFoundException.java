@@ -4,11 +4,10 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopId;
 
 /**
  * The request names something that cannot be served. The {@link Reason} says what exactly is
- * missing, so the client can tell an unknown route from an unknown stop from a lack of data.
+ * missing, so the client can tell an unknown route from a lack of data.
  */
 public class NotFoundException extends RuntimeException {
 
@@ -18,9 +17,7 @@ public class NotFoundException extends RuntimeException {
     public enum Reason {
         /** There is no such route. */
         ROUTE,
-        /** The route exists but has no such stop. */
-        STOP,
-        /** The route and stop exist but there is no data to answer with. */
+        /** The route exists but there is no data to answer with. */
         NO_DATA
     }
 
@@ -48,19 +45,7 @@ public class NotFoundException extends RuntimeException {
     }
 
     /**
-     * A stop that is not on an existing route.
-     *
-     * @param routeId the route
-     * @param stopId  the stop that was asked for
-     * @return the exception
-     */
-    public static NotFoundException stop(RouteId routeId, StopId stopId) {
-        return new NotFoundException(
-                Reason.STOP, "Route '" + routeId.value() + "' has no stop '" + stopId.value() + "'");
-    }
-
-    /**
-     * Nothing to answer with, although the route and stop exist.
+     * Nothing to answer with, although the route exists.
      *
      * @param message user-facing explanation
      * @return the exception

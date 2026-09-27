@@ -42,10 +42,9 @@ public record TramProperties(
     /**
      * Shape of the synthetic network served in stub mode.
      *
-     * @param routes        number of routes
-     * @param stopsPerRoute stops on each route
+     * @param routes number of routes
      */
-    public record Stub(int routes, int stopsPerRoute) {
+    public record Stub(int routes) {
     }
 
     /**
