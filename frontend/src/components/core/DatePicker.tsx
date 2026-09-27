@@ -4,7 +4,7 @@ import { ru } from "date-fns/locale"
 import { Calendar as CalendarIcon } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/core/Button"
 import { Calendar } from "@/components/ui/calendar"
 import {
   Popover,
@@ -50,15 +50,15 @@ export function DatePicker({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="outline"
+          variant="secondary"
           size="sm"
           className={cn(
             "w-[150px] justify-start text-left font-normal",
             !selectedDate && "text-text-muted"
           )}
           aria-label={ariaLabel}
+          iconLeft={<CalendarIcon className="h-4 w-4" />}
         >
-          <CalendarIcon className="mr-2 h-4 w-4" />
           {displayDate}
         </Button>
       </PopoverTrigger>
