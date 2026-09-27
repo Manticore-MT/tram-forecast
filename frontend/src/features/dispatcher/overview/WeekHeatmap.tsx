@@ -1,4 +1,5 @@
 import type { components } from "../../../api/schema.d.ts";
+import { Tooltip } from "../../../components";
 import { LOAD_VARS, loadStep } from "../../../shared/load";
 import { fmtInt } from "../format";
 
@@ -25,14 +26,18 @@ export function WeekHeatmap({ cells }: { cells: MatrixCell[] }) {
               const v = value.get(`${d + 1}:${h}`);
               const ratio = v === undefined ? 0 : v / max;
               return (
-                <span
+                <Tooltip
                   key={h}
-                  title={`${day}, ${String(h).padStart(2, "0")}:00 · ${v === undefined ? "нет данных" : fmtInt(v)}`}
-                  className="h-4.5 rounded-xs"
-                  style={v === undefined
-                    ? { background: "var(--bg-surface-2)" }
-                    : { background: LOAD_VARS[loadStep(ratio)], opacity: 0.35 + ratio * 0.65 }}
-                />
+                  style={{ height: "1.125rem" }}
+                  content={`${day}, ${String(h).padStart(2, "0")}:00 · ${v === undefined ? "нет данных" : fmtInt(v)}`}
+                >
+                  <span
+                    className="size-full rounded-xs"
+                    style={v === undefined
+                      ? { background: "var(--bg-surface-2)" }
+                      : { background: LOAD_VARS[loadStep(ratio)], opacity: 0.35 + ratio * 0.65 }}
+                  />
+                </Tooltip>
               );
             })}
           </div>

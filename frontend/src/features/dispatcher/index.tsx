@@ -39,7 +39,7 @@ export default function DispatcherApp() {
           </Tooltip>
         </div>
       </div>
-      <div className={cn("min-h-0 flex-1", full ? "overflow-hidden" : "overflow-y-auto")}>
+      <div className={cn("min-h-0 flex-1", full ? "overflow-hidden" : "overflow-y-auto [scrollbar-color:var(--ink-600)_transparent] [scrollbar-width:thin]")}>
         {screen === "dispatcher" ? <DispatcherScreen /> : <OverviewScreen />}
       </div>
     </div>
