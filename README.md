@@ -26,19 +26,15 @@
 
 ## Быстрый старт
 
-Нужен Docker.
+Нужен Docker. Весь стек — backend, frontend, ML-сервис, Postgres — одной командой:
 
 ```bash
-docker compose up --build
+docker compose -f docker-compose.local.yml up --build
 ```
 
-Бэкенд отвечает на <http://localhost:8080>:
-
-```bash
-curl http://localhost:8080/actuator/health
-curl "http://localhost:8080/api/meta"
-curl "http://localhost:8080/api/routes?horizon=day"
-```
+Открыть <http://localhost:8080>, войти: `jury` / `jury-local-demo`. Первая сборка — несколько минут
+(Maven, npm, pip), дальше — секунды. Часы внутри зафиксированы на 01.11.2025, начало периода прогноза,
+так что «сегодня» сразу попадает в данные.
 
 ## 1. ML-модель
 
@@ -52,6 +48,10 @@ curl "http://localhost:8080/api/routes?horizon=day"
 [Яндекс.Диск](https://disk.yandex.ru/d/_6a1pMQOQNdr9A)
 
 ## 3. Запускаемый веб-сервис
+
+Команда — см. «[Быстрый старт](#быстрый-старт)» выше: [`docker-compose.local.yml`](docker-compose.local.yml)
+поднимает backend + frontend + ML + Postgres одной командой, без внешних зависимостей. Тот же стек
+круглосуточно работает на <https://24manticore.ru>.
 
 ## 4. Архитектура и модули
 
