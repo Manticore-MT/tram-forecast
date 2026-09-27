@@ -356,6 +356,71 @@
         "tags" : [ "export-controller" ]
       }
     },
+    "/api/history/comparison" : {
+      "get" : {
+        "operationId" : "comparison",
+        "parameters" : [ {
+          "in" : "query",
+          "name" : "date",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "format" : "date"
+          }
+        }, {
+          "in" : "query",
+          "name" : "routeId",
+          "required" : false,
+          "schema" : {
+            "type" : "string",
+            "default" : "all"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "*/*" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/HistoryComparison"
+                }
+              }
+            },
+            "description" : "OK"
+          },
+          "400" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Invalid parameter or request"
+          },
+          "401" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
+          },
+          "429" : {
+            "content" : {
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            },
+            "description" : "Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then"
+          }
+        },
+        "tags" : [ "history-controller" ]
+      }
+    },
     "/api/meta" : {
       "get" : {
         "operationId" : "meta",
@@ -924,6 +989,35 @@
           }
         }
       },
+      "HistoryComparison" : {
+        "type" : "object",
+        "properties" : {
+          "date" : {
+            "type" : "string"
+          },
+          "historyThrough" : {
+            "type" : "string"
+          },
+          "lastMonth" : {
+            "$ref" : "#/components/schemas/ObservedDay"
+          },
+          "lastWeek" : {
+            "$ref" : "#/components/schemas/ObservedDay"
+          },
+          "note" : {
+            "type" : "string"
+          },
+          "routeIds" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "typicalWeek" : {
+            "$ref" : "#/components/schemas/TypicalWeek"
+          }
+        }
+      },
       "HorizonInfo" : {
         "type" : "object",
         "properties" : {
@@ -932,6 +1026,19 @@
           },
           "step" : {
             "type" : "string"
+          }
+        }
+      },
+      "Hour" : {
+        "type" : "object",
+        "properties" : {
+          "hour" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "value" : {
+            "type" : "number",
+            "format" : "double"
           }
         }
       },
@@ -1066,6 +1173,23 @@
             "type" : "array",
             "items" : {
               "$ref" : "#/components/schemas/RouteSeries"
+            }
+          }
+        }
+      },
+      "ObservedDay" : {
+        "type" : "object",
+        "properties" : {
+          "available" : {
+            "type" : "boolean"
+          },
+          "date" : {
+            "type" : "string"
+          },
+          "points" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Hour"
             }
           }
         }
@@ -1236,6 +1360,42 @@
           "periodStart" : {
             "type" : "string",
             "format" : "date-time"
+          }
+        }
+      },
+      "TypicalDay" : {
+        "type" : "object",
+        "properties" : {
+          "observations" : {
+            "type" : "integer",
+            "format" : "int32"
+          },
+          "points" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/Hour"
+            }
+          },
+          "weekday" : {
+            "type" : "integer",
+            "format" : "int32"
+          }
+        }
+      },
+      "TypicalWeek" : {
+        "type" : "object",
+        "properties" : {
+          "days" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/TypicalDay"
+            }
+          },
+          "end" : {
+            "type" : "string"
+          },
+          "start" : {
+            "type" : "string"
           }
         }
       }

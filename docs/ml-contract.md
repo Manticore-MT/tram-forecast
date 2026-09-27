@@ -4,7 +4,27 @@ What the backend expects from the ML service and what the real service (`ml/`, b
 engineer) actually does. This document pins the interface; the model, its code and its numbers belong
 to the ML side. The backend never touches raw telemetry.
 
-## How it is wired
+## Historical comparison (added 27.09.2026)
+
+`GET /history/comparison?date=2025-11-01&routeId=50` on ML is exposed by backend
+as `GET /api/history/comparison` with the same query. `routeId=all` selects the
+nine supported routes. This is observed history, not `/predict/routes`; scenario
+multipliers do not apply. Dates 2025-01-01 through 2026-12-31 are accepted.
+
+Response: `date`, `routeIds`, `historyThrough`, `lastWeek`, `lastMonth`,
+`typicalWeek`, `note`. Observed days contain their original `date`, `available`
+and 24 `points: [{hour, value}]`. Values are null when the date is unavailable,
+including dates after 2025-10-31. A whole absent route-day is unavailable, not zero;
+an absent hour within an observed day is zero (sparse count convention).
+The previous month uses the same day number clipped to the month's last day.
+`typicalWeek` contains `start`, `end`, and seven `days` with `weekday` (Monday=0),
+`observations`, and 24 median hourly points. The window is up to 56 days before
+the requested date, capped at 2025-10-31; holidays and disruptions remain included.
+The frontend displays the comparison for the focused date, not an entire month/year.
+The source is `labels_day_filtered_all.csv`, successful validations from 05:30.
+In stub mode or on ML failure the endpoint returns 503, never invented history.
+
+## Forecast wiring
 
 - The ML service is a separate container (FastAPI, `ml/Dockerfile`), image `.../tram-forecast/ml`,
   reachable only from the backend at `http://ml:8000` (no published port). The production compose file

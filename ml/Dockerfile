@@ -6,6 +6,7 @@ RUN pip install --no-cache-dir -r requirements.txt && useradd --uid 10001 --crea
 COPY app ./app
 COPY artifacts ./artifacts
 COPY network ./network
+COPY data/labels_day_filtered_all.csv ./data/
 COPY reference/submission_calendar_service_candidate.csv ./reference/
 COPY reference/final_backtest_2025-07-01.csv reference/final_backtest_2025-09-01.csv reference/filtered_backtest_2025-07-01.csv reference/filtered_backtest_2025-09-01.csv ./reference/
 USER ml

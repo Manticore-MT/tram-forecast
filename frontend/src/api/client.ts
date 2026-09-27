@@ -7,6 +7,21 @@ import { getAuthHeader, isAuthenticated, logout } from "./auth";
 // (not committed), e.g. VITE_API_BASE_URL=http://localhost:8080.
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 
+export interface HistoryHour { hour: number; value: number | null }
+export interface HistoryComparison {
+  date: string;
+  routeIds: string[];
+  historyThrough: string;
+  lastWeek: { date: string; available: boolean; points: HistoryHour[] };
+  lastMonth: { date: string; available: boolean; points: HistoryHour[] };
+  typicalWeek: { start: string; end: string; days: { weekday: number; observations: number; points: HistoryHour[] }[] };
+  note: string;
+}
+
+export function getHistoryComparison(date: string, routeId: string) {
+  return apiFetch<HistoryComparison>("/api/history/comparison", { date, routeId });
+}
+
 export type ApiErrorCode = NonNullable<components["schemas"]["Problem"]["code"]>;
 
 export class ApiError extends Error {

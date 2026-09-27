@@ -122,6 +122,47 @@ def test_calendar_exceptions():
     assert calendar_fields(date(2025, 11, 1))["shortday"] == 1
     assert calendar_fields(date(2025, 11, 3))["holiday"] == 1
     assert calendar_fields(date(2025, 12, 31))["workday"] == 0
+    assert calendar_fields(date(2025, 11, 1))["effective_dow"] == 4
+
+
+def test_history_has_observations_not_future_forecasts(client):
+    response = client.get("/history/comparison?date=2025-11-01&routeId=17")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["lastWeek"]["date"] == "2025-10-25"
+    assert data["lastMonth"]["date"] == "2025-10-01"
+    with (ROOT / "data/labels_day_filtered_all.csv").open(encoding="utf-8", newline="") as stream:
+        rows = list(csv.DictReader(stream, delimiter=";"))
+    facts = {int(r["hour"]): float(r["boardings"]) for r in rows if r["route"] == "17" and r["date"] == "2025-10-25"}
+    assert data["lastWeek"]["available"]
+    assert [p["value"] for p in data["lastWeek"]["points"]] == [facts.get(h, 0) for h in range(24)]
+    assert len(data["typicalWeek"]["days"]) == 7
+    assert data["typicalWeek"]["end"] == "2025-10-31"
+    future = client.get("/history/comparison?date=2025-12-01&routeId=17").json()
+    assert not future["lastWeek"]["available"] and not future["lastMonth"]["available"]
+    assert all(p["value"] is None for p in future["lastWeek"]["points"])
+    clipped = client.get("/history/comparison?date=2025-03-31&routeId=17").json()
+    assert clipped["lastMonth"]["date"] == "2025-02-28"
+    assert client.get("/history/comparison?date=2025-11-01&routeId=5").status_code == 422
+
+
+def test_route50_explains_calendar_restriction_ambiguity(client):
+    body = client.post("/predict/routes", json={"horizon": "day", "date": "2025-11-01", "routeIds": ["50"]}).json()
+    assert any("отдельно не подтверждена" in f for f in body["forecasts"][0]["factors"])
+
+
+def test_typical_week_excludes_selected_day_and_future(tmp_path):
+    from app.history import History
+    path = tmp_path / "history.csv"
+    path.write_text("route;date;hour;boardings\n17;2025-10-03;8;10\n17;2025-10-10;8;20\n"
+                    "17;2025-10-17;8;900\n17;2025-10-24;8;1000\n", encoding="utf-8")
+    history = History(path)
+    data = history.compare(("17",), date(2025, 10, 17))
+    friday = data["typicalWeek"]["days"][4]
+    assert friday["observations"] == 2
+    assert friday["points"][8]["value"] == 15
+    assert data["typicalWeek"]["days"][0]["points"][8]["value"] is None
+    assert history.values(("17", "50"), date(2025, 10, 3)) is None
 
 
 def test_http_matches_champion_for_every_competition_hour(client):
