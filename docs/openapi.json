@@ -1,7 +1,7 @@
 {
   "openapi" : "3.1.0",
   "info" : {
-    "description" : "Forecast of tram ridership by route and stop for the horizons day, week, month and year.\n\n**Conventions**\n- Timestamps are ISO 8601 with an explicit offset, for example\n  `2026-09-25T09:00:00+03:00`. Dates are `YYYY-MM-DD`. There are no unix timestamps.\n- Every forecast response carries the whole horizon, so a time slider on the client\n  reads points locally and needs no further requests.\n- Steps follow the horizon: day = hourly, week = daily, month = daily, year = monthly. A week is\n  seven days starting at the requested `date` (not a calendar week).\n- Routes and stops are identified by opaque string IDs; geometry is not served.\n- `modelVersion = \"stub\"` and `dataSource = \"stub\"` mean synthetic demo data.\n- Errors are RFC 9457 problem documents (`application/problem+json`).\n- When access control is on, every `/api/**` request needs the header\n  `Authorization: Basic base64(user:password)`; there is no login endpoint.\n  A missing or wrong credential gives 401 (no `WWW-Authenticate` header). After 3 failed\n  attempts in a row a client is refused for 10 seconds with 429 and a\n  `Retry-After` header.\n",
+    "description" : "Forecast of tram ridership by route (route x hour) for the horizons day, week, month and year.\n\n**Conventions**\n- Timestamps are ISO 8601 with an explicit offset, for example\n  `2026-09-25T09:00:00+03:00`. Dates are `YYYY-MM-DD`. There are no unix timestamps.\n- Every forecast response carries the whole horizon, so a time slider on the client\n  reads points locally and needs no further requests.\n- Steps follow the horizon: day = hourly, week = daily, month = daily, year = monthly. A week is\n  seven days starting at the requested `date` (not a calendar week).\n- Routes are identified by opaque string IDs; geometry is not served. There are no stop-level values.\n- `modelVersion = \"stub\"` and `dataSource = \"stub\"` mean synthetic demo data.\n- Errors are RFC 9457 problem documents (`application/problem+json`).\n- When access control is on, every `/api/**` request needs the header\n  `Authorization: Basic base64(user:password)`; there is no login endpoint.\n  A missing or wrong credential gives 401 (no `WWW-Authenticate` header). After 3 failed\n  attempts in a row a client is refused for 10 seconds with 429 and a\n  `Retry-After` header.\n",
     "license" : {
       "name" : "MIT",
       "url" : "https://opensource.org/licenses/MIT"
@@ -193,13 +193,6 @@
             "type" : "string"
           }
         }, {
-          "in" : "query",
-          "name" : "stopId",
-          "required" : false,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
           "description" : "Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly.",
           "in" : "query",
           "name" : "horizon",
@@ -336,7 +329,7 @@
                 }
               }
             },
-            "description" : "Unknown route or stop, or nothing to return for them"
+            "description" : "Unknown route, or nothing to return for it"
           },
           "429" : {
             "content" : {
@@ -359,7 +352,7 @@
             "description" : "No forecast is stored for the request and the ML service is unavailable"
           }
         },
-        "summary" : "Export the forecast as CSV (one row per stop and period)",
+        "summary" : "Export the forecast as CSV (one row per route and period)",
         "tags" : [ "export-controller" ]
       }
     },
@@ -765,7 +758,7 @@
                 }
               }
             },
-            "description" : "Unknown route or stop, or nothing to return for them"
+            "description" : "Unknown route, or nothing to return for it"
           },
           "429" : {
             "content" : {
@@ -788,7 +781,7 @@
             "description" : "No forecast is stored for the request and the ML service is unavailable"
           }
         },
-        "summary" : "Forecast of one route with all of its stops",
+        "summary" : "Route forecast: baseline, deviation, status, peak, facts a year earlier, factors",
         "tags" : [ "forecast-controller" ]
       }
     },
@@ -842,7 +835,7 @@
                 }
               }
             },
-            "description" : "Unknown route or stop, or nothing to return for them"
+            "description" : "Unknown route, or nothing to return for it"
           },
           "429" : {
             "content" : {
@@ -856,187 +849,6 @@
           }
         },
         "summary" : "Typical week of a route: load by day of week and hour",
-        "tags" : [ "forecast-controller" ]
-      }
-    },
-    "/api/routes/{routeId}/stops/{stopId}/forecast" : {
-      "get" : {
-        "operationId" : "stopForecast",
-        "parameters" : [ {
-          "in" : "path",
-          "name" : "routeId",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "in" : "path",
-          "name" : "stopId",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        }, {
-          "description" : "Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly.",
-          "in" : "query",
-          "name" : "horizon",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "default" : "day",
-            "description" : "Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly.",
-            "enum" : [ "day", "week", "month", "year" ]
-          }
-        }, {
-          "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
-          "example" : "2026-09-25",
-          "in" : "query",
-          "name" : "date",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "format" : "date",
-            "description" : "Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).",
-            "example" : "2026-09-25"
-          }
-        }, {
-          "description" : "Which stored snapshot to read: the latest one, or the initial one (the forecast as it was first made for that date).",
-          "in" : "query",
-          "name" : "snapshot",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "default" : "latest",
-            "description" : "Which stored snapshot to read: the latest one, or the initial one (the forecast as it was first made for that date).",
-            "enum" : [ "latest", "initial" ]
-          }
-        }, {
-          "description" : "Weather correction multiplier applied to the forecast.",
-          "in" : "query",
-          "name" : "weather",
-          "required" : false,
-          "schema" : {
-            "type" : "number",
-            "format" : "double",
-            "default" : 1.0,
-            "description" : "Weather correction multiplier applied to the forecast.",
-            "maximum" : 3.0,
-            "minimum" : 0.1
-          }
-        }, {
-          "description" : "Event correction multiplier applied to the forecast.",
-          "in" : "query",
-          "name" : "event",
-          "required" : false,
-          "schema" : {
-            "type" : "number",
-            "format" : "double",
-            "default" : 1.0,
-            "description" : "Event correction multiplier applied to the forecast.",
-            "maximum" : 3.0,
-            "minimum" : 0.1
-          }
-        }, {
-          "description" : "Season correction multiplier applied to the forecast.",
-          "in" : "query",
-          "name" : "season",
-          "required" : false,
-          "schema" : {
-            "type" : "number",
-            "format" : "double",
-            "default" : 1.0,
-            "description" : "Season correction multiplier applied to the forecast.",
-            "maximum" : 3.0,
-            "minimum" : 0.1
-          }
-        }, {
-          "description" : "Inclusive lower bound of the returned periods, ISO 8601 with offset.",
-          "example" : "2026-09-25T06:00:00+03:00",
-          "in" : "query",
-          "name" : "from",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "format" : "date-time",
-            "description" : "Inclusive lower bound of the returned periods, ISO 8601 with offset.",
-            "example" : "2026-09-25T06:00:00+03:00"
-          }
-        }, {
-          "description" : "Exclusive upper bound of the returned periods, ISO 8601 with offset.",
-          "example" : "2026-09-25T12:00:00+03:00",
-          "in" : "query",
-          "name" : "to",
-          "required" : false,
-          "schema" : {
-            "type" : "string",
-            "format" : "date-time",
-            "description" : "Exclusive upper bound of the returned periods, ISO 8601 with offset.",
-            "example" : "2026-09-25T12:00:00+03:00"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/StopForecast"
-                }
-              }
-            },
-            "description" : "OK"
-          },
-          "400" : {
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            },
-            "description" : "Invalid parameter or request"
-          },
-          "401" : {
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            },
-            "description" : "Missing or invalid Authorization: Basic header (only when access control is on)"
-          },
-          "404" : {
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            },
-            "description" : "Unknown route or stop, or nothing to return for them"
-          },
-          "429" : {
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            },
-            "description" : "Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then"
-          },
-          "503" : {
-            "content" : {
-              "application/problem+json" : {
-                "schema" : {
-                  "$ref" : "#/components/schemas/Problem"
-                }
-              }
-            },
-            "description" : "No forecast is stored for the request and the ML service is unavailable"
-          }
-        },
-        "summary" : "Stop details: baseline, deviation, status, peak, facts a year earlier, factors",
         "tags" : [ "forecast-controller" ]
       }
     }
@@ -1294,7 +1106,7 @@
           "code" : {
             "type" : "string",
             "description" : "Machine-readable error code, stable across releases (codes are added, never renamed)",
-            "enum" : [ "INVALID_REQUEST", "INVALID_PARAMETER", "PERIOD_NOT_SUPPORTED", "ROUTE_NOT_FOUND", "STOP_NOT_FOUND", "NO_DATA", "ENDPOINT_NOT_FOUND", "METHOD_NOT_ALLOWED", "FORECAST_NOT_READY", "UNAUTHORIZED", "TOO_MANY_ATTEMPTS", "INTERNAL_ERROR" ],
+            "enum" : [ "INVALID_REQUEST", "INVALID_PARAMETER", "PERIOD_NOT_SUPPORTED", "ROUTE_NOT_FOUND", "NO_DATA", "ENDPOINT_NOT_FOUND", "METHOD_NOT_ALLOWED", "FORECAST_NOT_READY", "UNAUTHORIZED", "TOO_MANY_ATTEMPTS", "INTERNAL_ERROR" ],
             "example" : "ROUTE_NOT_FOUND"
           },
           "detail" : {
@@ -1345,74 +1157,6 @@
             "type" : "string",
             "format" : "date"
           },
-          "horizon" : {
-            "type" : "string"
-          },
-          "lastUpdated" : {
-            "type" : "string",
-            "format" : "date-time"
-          },
-          "lastYear" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/LastYearPoint"
-            }
-          },
-          "points" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/Point"
-            }
-          },
-          "routeId" : {
-            "type" : "string"
-          },
-          "stops" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/StopSeries"
-            }
-          }
-        }
-      },
-      "RouteSeries" : {
-        "type" : "object",
-        "properties" : {
-          "points" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/SlimPoint"
-            }
-          },
-          "routeId" : {
-            "type" : "string"
-          }
-        }
-      },
-      "SlimPoint" : {
-        "type" : "object",
-        "properties" : {
-          "baseline" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "forecast" : {
-            "type" : "number",
-            "format" : "double"
-          },
-          "periodStart" : {
-            "type" : "string",
-            "format" : "date-time"
-          }
-        }
-      },
-      "StopForecast" : {
-        "type" : "object",
-        "properties" : {
-          "date" : {
-            "type" : "string",
-            "format" : "date"
-          },
           "factors" : {
             "type" : "array",
             "items" : {
@@ -1457,13 +1201,10 @@
           },
           "status" : {
             "type" : "string"
-          },
-          "stopId" : {
-            "type" : "string"
           }
         }
       },
-      "StopSeries" : {
+      "RouteSeries" : {
         "type" : "object",
         "properties" : {
           "points" : {
@@ -1472,8 +1213,25 @@
               "$ref" : "#/components/schemas/SlimPoint"
             }
           },
-          "stopId" : {
+          "routeId" : {
             "type" : "string"
+          }
+        }
+      },
+      "SlimPoint" : {
+        "type" : "object",
+        "properties" : {
+          "baseline" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "forecast" : {
+            "type" : "number",
+            "format" : "double"
+          },
+          "periodStart" : {
+            "type" : "string",
+            "format" : "date-time"
           }
         }
       }

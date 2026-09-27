@@ -27,12 +27,6 @@ const BY_CODE: Record<ApiErrorCode, ErrorDescription> = {
     tone: "error",
     retryable: false,
   },
-  STOP_NOT_FOUND: {
-    title: "Нет прогноза по остановке",
-    hint: "Этой остановки нет в данных модели.",
-    tone: "error",
-    retryable: false,
-  },
   PERIOD_NOT_SUPPORTED: {
     title: "Период недоступен",
     hint: "Выберите дату в пределах диапазона, который поддерживает модель.",

@@ -82,13 +82,6 @@ export function getRouteForecast(routeId: string, params?: ForecastParams) {
   );
 }
 
-export function getStopForecast(routeId: string, stopId: string, params?: ForecastParams) {
-  return apiFetch<operations["stopForecast"]["responses"]["200"]["content"]["application/json"]>(
-    `/api/routes/${encodeURIComponent(routeId)}/stops/${encodeURIComponent(stopId)}/forecast`,
-    params,
-  );
-}
-
 export function getAttention(params?: ForecastParams) {
   return apiFetch<operations["attention"]["responses"]["200"]["content"]["application/json"]>(
     "/api/attention",
