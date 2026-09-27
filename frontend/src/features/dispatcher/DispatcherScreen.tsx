@@ -33,7 +33,7 @@ export function DispatcherScreen() {
         <PlaceBreadcrumbs />
         <MapZoomControls map={map} />
       </Floating>
-      <Floating anchor="left" className="w-75">
+      <Floating anchor="left" className="w-84">
         <AttentionPanel />
         <ScenarioPanel />
       </Floating>

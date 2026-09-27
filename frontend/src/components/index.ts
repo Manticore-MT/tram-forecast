@@ -1,6 +1,7 @@
 export * from "./core/Badge";
 export * from "./core/Button";
 export * from "./core/Card";
+export * from "./core/DatePicker";
 export * from "./core/Icon";
 export * from "./core/IconButton";
 export * from "./core/Tag";

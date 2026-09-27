@@ -16,10 +16,11 @@ export interface ButtonProps {
   href?: string;
   onClick?: (e: React.MouseEvent) => void;
   style?: React.CSSProperties;
+  className?: string;
 }
 
 /** Primary call-to-action pill. "Принять участие" on marketing, "Построить прогноз" in product. */
-export function Button({
+export const Button = React.forwardRef<HTMLButtonElement | HTMLAnchorElement, ButtonProps>(function Button({
   children,
   variant = "primary",
   size = "md",
@@ -31,8 +32,9 @@ export function Button({
   href,
   onClick,
   style,
+  className,
   ...rest
-}: ButtonProps) {
+}, ref) {
   // Map old variant names to shadcn variants
   const shadcnVariant =
     variant === "primary" ? "default" :
@@ -56,6 +58,7 @@ export function Button({
   if (as === "a" && href) {
     return (
       <a
+        ref={ref as React.Ref<HTMLAnchorElement>}
         href={href}
         onClick={onClick}
         style={style}
@@ -67,7 +70,8 @@ export function Button({
           shadcnVariant === "ghost" && "hover:bg-bg-surface-2 hover:text-text-primary",
           variantClasses,
           blockClasses,
-          "disabled:pointer-events-none disabled:opacity-50"
+          "disabled:pointer-events-none disabled:opacity-50",
+          className
         )}
         {...rest}
       >
@@ -80,12 +84,13 @@ export function Button({
 
   return (
     <ShadcnButton
+      ref={ref as React.Ref<HTMLButtonElement>}
       variant={shadcnVariant}
       size="default"
       disabled={disabled}
       onClick={onClick}
       style={style}
-      className={cn(sizeClasses, variantClasses, blockClasses)}
+      className={cn(sizeClasses, variantClasses, blockClasses, className)}
       {...rest}
     >
       {iconLeft}
@@ -93,4 +98,4 @@ export function Button({
       {iconRight}
     </ShadcnButton>
   );
-}
+});

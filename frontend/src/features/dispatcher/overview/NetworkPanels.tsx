@@ -1,6 +1,6 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Badge, Checkbox, Icon, Input } from "../../../components";
+import { Checkbox, Icon, Input } from "../../../components";
 import { useRoutes, type CommonParams } from "../../../api/hooks";
 import type { useAttention } from "../../../api/hooks";
 import { ErrorNotice } from "../../../shared/notices";
@@ -13,7 +13,7 @@ import { useDispatcher } from "../store";
 import { SCALE_UNITS, addDays, addMonths, pointLabel, windowLabel, type Scale } from "../time";
 import { deviationPct, fmtInt, fmtPct, fmtSigned, toneForPct } from "../format";
 import { LineChart, LineLegend, type LineSeries } from "./LineChart";
-import { comparisonCursor, networkPoints, openRoute, peakIndex, routeTotals } from "./network";
+import { comparisonCursor, networkPoints, openRoute, peakIndex, routeTotals, withinForecastRange } from "./network";
 import { Empty, QueryGate, TONE_TEXT } from "./QueryGate";
 
 type RoutesQuery = ReturnType<typeof useRoutes>;
@@ -49,8 +49,10 @@ export function DynamicsPanel({ network, scale, cursor, params }: DynamicsPanelP
   // is just a starting point distinct from the two fixed presets above, not a meaningful default.
   const [customDate, setCustomDate] = React.useState(() => addMonths(cursor, -2));
 
-  const weekAgo = useRoutes(showWeekAgo && params ? { ...params, date: weekAgoDate } : undefined);
-  const monthAgo = useRoutes(showMonthAgo && params ? { ...params, date: monthAgoDate } : undefined);
+  const weekAgoInRange = withinForecastRange(weekAgoDate, forecastFrom, latestDate);
+  const monthAgoInRange = withinForecastRange(monthAgoDate, forecastFrom, latestDate);
+  const weekAgo = useRoutes(showWeekAgo && weekAgoInRange && params ? { ...params, date: weekAgoDate } : undefined);
+  const monthAgo = useRoutes(showMonthAgo && monthAgoInRange && params ? { ...params, date: monthAgoDate } : undefined);
   const custom = useRoutes(showCustom && params ? { ...params, date: customDate } : undefined);
 
   const points = networkPoints(network.data?.routes ?? []);
@@ -154,7 +156,7 @@ const TOP_ROUTES = 8;
 
 export function TopRoutesPanel({ network }: { network: RoutesQuery }) {
   return (
-    <Panel title="Топ маршрутов по отклонению" action={<Badge tone="neutral">к базовому уровню</Badge>}>
+    <Panel title="Топ маршрутов по отклонению" action={<span className="inline-flex items-center rounded-pill bg-glass-fill px-2.5 py-1 text-ui-s leading-none text-text-secondary">к базовому уровню</span>}>
       <QueryGate q={network}>
         {() => {
           const rows = routeTotals(network.data?.routes ?? [])

@@ -56,10 +56,10 @@ export const MapCanvas = React.forwardRef<MapHandle, MapCanvasProps>(function Ma
     mapRef.current = map;
     // The container can still be 0×0 at mount; Leaflet would cache that size and draw nothing.
     const sync = () => map.invalidateSize(false);
-    requestAnimationFrame(sync);
+    const raf = requestAnimationFrame(sync);
     const ro = new ResizeObserver(sync);
     ro.observe(el);
-    return () => { ro.disconnect(); map.remove(); mapRef.current = null; };
+    return () => { cancelAnimationFrame(raf); ro.disconnect(); map.remove(); mapRef.current = null; };
   }, []);
 
   const routeId = place.level === "network" ? undefined : place.routeId;
@@ -129,7 +129,7 @@ export const MapCanvas = React.forwardRef<MapHandle, MapCanvasProps>(function Ma
     <div className={cn("relative isolate z-0 overflow-hidden", className)}>
       <div ref={ref} style={{ position: "absolute", inset: 0, background: "var(--ink-800)" }} />
       {caption && (
-        <div style={{ position: "absolute", left: 12, bottom: 12, zIndex: 500 }}>
+        <div style={{ position: "absolute", left: 12, bottom: 240, zIndex: 500 }}>
           <Card tone="glass" padding="6px var(--space-3)">
             <span style={{ font: "var(--type-caption)", color: "var(--text-secondary)" }}>{caption}</span>
           </Card>

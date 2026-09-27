@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Dialog, Icon } from "../../components";
+import { Button, Dialog, Icon, Tabs } from "../../components";
 import { downloadExport, type ExportParams } from "../../api/client";
 import { isDefaultCorrections } from "../../api/hooks";
 import { notifyError } from "../../shared/errors";
@@ -23,9 +23,15 @@ function saveFile(blob: Blob, filename: string) {
 
 /** «Выгрузить» in the app header: downloads exactly what the dispatcher screen shows — object,
  *  window, interval and scenario — after a summary of what goes into the file. */
+const FORMAT_ITEMS = [
+  { value: "csv" as const, label: "CSV" },
+  { value: "xlsx" as const, label: "XLSX" },
+];
+
 export function ExportButton() {
   const [open, setOpen] = React.useState(false);
   const [pending, setPending] = React.useState(false);
+  const [format, setFormat] = React.useState<"csv" | "xlsx">("csv");
   const place = useDispatcher((s) => s.place);
   const scale = useDispatcher((s) => s.scale);
   const cursor = useDispatcher((s) => s.cursor);
@@ -40,7 +46,7 @@ export function ExportButton() {
   async function download() {
     if (!cursor) return;
     const params: ExportParams = {
-      format: "csv",
+      format,
       horizon: scale,
       date: cursor,
       ...(place.level !== "network" && { routeId: place.routeId }),
@@ -64,7 +70,6 @@ export function ExportButton() {
     ["Период", `${SCALE_LABELS[scale]} · ${windowLabel(scale, cursor)}`],
     ["Интервал", range && range[0] !== range[1] ? rangeLabel(scale, starts, range) : "весь период"],
     ["Сценарий", scenario ? `погода ×${corrections.weather} · событие ×${corrections.event} · сезон ×${corrections.season}` : "без поправок"],
-    ["Формат", "CSV, строка на маршрут и период"],
   ] : [];
 
   return (
@@ -81,19 +86,25 @@ export function ExportButton() {
           <>
             <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>Отмена</Button>
             <Button size="sm" disabled={!ready || pending} onClick={download}>
-              {pending ? "Готовим файл…" : "Скачать CSV"}
+              {pending ? "Готовим файл…" : `Скачать ${format.toUpperCase()}`}
             </Button>
           </>
         }
       >
-        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-body-s">
-          {rows.map(([k, v]) => (
-            <React.Fragment key={k}>
-              <dt className="text-text-muted">{k}</dt>
-              <dd className="text-text-primary">{v}</dd>
-            </React.Fragment>
-          ))}
-        </dl>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-4">
+            <span className="text-body-s text-text-muted">Формат</span>
+            <Tabs items={FORMAT_ITEMS} value={format} onChange={(v) => setFormat(v as "csv" | "xlsx")} />
+          </div>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-body-s">
+            {rows.map(([k, v]) => (
+              <React.Fragment key={k}>
+                <dt className="text-text-muted">{k}</dt>
+                <dd className="text-text-primary">{v}</dd>
+              </React.Fragment>
+            ))}
+          </dl>
+        </div>
       </Dialog>
     </>
   );

@@ -19,7 +19,6 @@ export const DispatcherMap = React.forwardRef<MapHandle>(function DispatcherMap(
     <MapCanvas
       ref={handle}
       place={place}
-      caption="Остановки и их порядок — реальные (data.mos.ru). Линия между ними — прямая, не путь по рельсам."
       routeColors={routeColors}
       routeValues={routeValues}
       onRouteClick={onRouteClick}

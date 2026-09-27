@@ -82,6 +82,15 @@ export function comparisonLabel(scale: Scale, cursor: string, mode: CompareMode)
   return windowLabel(scale, comparisonCursor(scale, cursor, mode));
 }
 
+/** Whether a date falls inside the model's covered range — comparison periods (a week/month/year
+ *  back) can easily land before forecastFrom near the start of the range, which the API rejects
+ *  with 400 rather than an empty result. */
+export function withinForecastRange(date: string, forecastFrom: string | null, latestDate: string | null): boolean {
+  if (forecastFrom && date < forecastFrom) return false;
+  if (latestDate && date > latestDate) return false;
+  return true;
+}
+
 const MOSCOW_TIME = new Intl.DateTimeFormat("ru-RU", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Moscow" });
 
 export function updatedAt(iso: string | undefined): string | null {
