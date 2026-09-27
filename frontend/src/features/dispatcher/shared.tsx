@@ -68,7 +68,7 @@ export function DeviationList({ title, items, layout = "list", style, onSelect, 
             onClick={onClick}
             onDoubleClick={onDoubleClick}
             className={cn(
-              "flex items-center justify-between gap-4 py-3 pr-4 pl-4",
+              "flex items-start justify-between gap-4 py-3",
               layout === "table" ? "flex-[1_1_260px]" : "flex-none",
               z.selected && "bg-glass-fill",
               layout !== "table" && i !== items.length - 1 && "border-b border-b-border-subtle",
@@ -76,22 +76,20 @@ export function DeviationList({ title, items, layout = "list", style, onSelect, 
             )}
           >
             <div className="flex min-w-0 flex-col gap-0.5">
-              <span className={cn("text-ui-s whitespace-nowrap", z.selected ? "text-brand" : "text-text-primary")}>
+              <span className={cn("text-ui-s truncate", z.selected ? "text-brand" : "text-text-primary")}>
                 {z.title}
               </span>
               {z.peakTime && <span className="text-caption text-text-muted">пик {z.peakTime}</span>}
             </div>
             <div className="flex flex-none flex-col items-end gap-1">
-              <div className="flex items-center gap-2">
-                {z.action && (
-                  <span className="inline-flex items-center whitespace-nowrap rounded-pill bg-glass-fill px-2.5 py-1 text-ui-s leading-none text-text-secondary">
-                    {z.action.label}
-                  </span>
-                )}
-                <span className={cn("text-ui-s font-mono font-semibold whitespace-nowrap tabular-nums", TONE_TEXT[z.tone])}>
-                  {z.relDeviation}
+              <span className={cn("text-ui-s font-mono font-semibold whitespace-nowrap tabular-nums", TONE_TEXT[z.tone])}>
+                {z.relDeviation}
+              </span>
+              {z.action && (
+                <span className="inline-flex items-center whitespace-nowrap rounded-pill bg-glass-fill px-2.5 py-1 text-ui-s leading-none text-text-secondary">
+                  {z.action.label}
                 </span>
-              </div>
+              )}
               <span className="text-mono-s text-text-secondary tabular-nums">{z.absDeviation}</span>
             </div>
           </div>

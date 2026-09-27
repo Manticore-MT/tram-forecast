@@ -86,7 +86,8 @@ class ApiTest {
                                 new GetAttentionZonesService(preparer, new AttentionZoneCalculator(attention, recommendation)),
                                 new GetLoadMatrixService(actuals),
                                 mapper),
-                        new ExportController(new ExportForecastService(preparer), new CsvForecastWriter(MOSCOW)),
+                        new ExportController(
+                                new ExportForecastService(preparer), new CsvForecastWriter(MOSCOW), new XlsxForecastWriter(MOSCOW)),
                         new ModelController(new GetModelStatsService(forecasts, actuals), mapper),
                         new MetaController(
                                 new ru.tramforecast.api.application.GetMetaService(CLOCK, dates, MOSCOW, "stub"),
@@ -185,9 +186,27 @@ class ApiTest {
                 .andExpect(content().contentTypeCompatibleWith("text/csv"))
                 .andExpect(content().string(startsWith("route_id,horizon,date,period_start,baseline")))
                 .andExpect(content().string(containsString("R1,day,2026-09-25,2026-09-25T00:00:00+03:00")));
-        mvc.perform(get("/api/export").param("format", "xlsx"))
+        mvc.perform(get("/api/export").param("format", "bogus"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.detail").value(containsString("only csv")));
+                .andExpect(jsonPath("$.detail").value(containsString("csv or xlsx")));
+    }
+
+    /**
+     * XLSX export is an attachment carrying the same rows as CSV, in spreadsheet form.
+     */
+    @Test
+    void xlsxExportIsAnAttachmentWithOneRowPerPeriod() throws Exception {
+        byte[] body = mvc.perform(get("/api/export").param("format", "xlsx").param("horizon", "day").param("routeId", "R1"))
+                .andExpect(status().isOk())
+                .andExpect(header().string("Content-Disposition", containsString("forecast-day-2026-09-25.xlsx")))
+                .andExpect(content().contentTypeCompatibleWith(
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .andReturn().getResponse().getContentAsByteArray();
+        try (var workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook(new java.io.ByteArrayInputStream(body))) {
+            var sheet = workbook.getSheetAt(0);
+            assertThat(sheet.getRow(0).getCell(0).getStringCellValue()).isEqualTo("route_id");
+            assertThat(sheet.getRow(1).getCell(0).getStringCellValue()).isEqualTo("R1");
+        }
     }
 
     /**

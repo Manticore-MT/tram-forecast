@@ -9,7 +9,7 @@ import { AttentionCard, CompareCard, QualityCard, TotalCard } from "./overview/K
 import { AttentionRatingPanel, DemandMapPanel, DynamicsPanel, TopRoutesPanel } from "./overview/NetworkPanels";
 import { QualityHistory } from "./overview/QualityHistory";
 import { RouteSection } from "./overview/RouteSection";
-import { comparisonCursor, comparisonLabel, updatedAt, type CompareMode } from "./overview/network";
+import { comparisonCursor, comparisonLabel, updatedAt, withinForecastRange, type CompareMode } from "./overview/network";
 
 /** Экран «Обзор» для руководителя: сколько → как меняется → где → можно ли доверять.
  *  Время и сценарий общие с диспетчером (store.ts). */
@@ -18,11 +18,15 @@ export function OverviewScreen() {
   const meta = useMeta();
   const scale = useDispatcher((s) => s.scale);
   const cursor = useDispatcher((s) => s.cursor);
+  const forecastFrom = useDispatcher((s) => s.forecastFrom);
+  const latestDate = useDispatcher((s) => s.latestDate);
   const scenario = useScenarioActive();
   const params = useForecastParams();
   const [mode, setMode] = React.useState<CompareMode>("period");
 
-  const compareParams = params && cursor ? { ...params, date: comparisonCursor(scale, cursor, mode) } : undefined;
+  const compareDate = cursor ? comparisonCursor(scale, cursor, mode) : undefined;
+  const compareInRange = !compareDate || withinForecastRange(compareDate, forecastFrom, latestDate);
+  const compareParams = params && compareDate && compareInRange ? { ...params, date: compareDate } : undefined;
   const network = useRoutes(params);
   const comparison = useRoutes(compareParams);
   const attention = useAttention(params);
@@ -52,7 +56,7 @@ export function OverviewScreen() {
 
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-4">
         <TotalCard network={network} scale={scale} />
-        <CompareCard network={network} comparison={comparison} scale={scale} mode={mode} onMode={setMode} comparisonLabel={compareLabel} />
+        <CompareCard network={network} comparison={comparison} scale={scale} mode={mode} onMode={setMode} comparisonLabel={compareLabel} outOfRange={!compareInRange} />
         <AttentionCard attention={attention} />
         <QualityCard stats={stats} />
 

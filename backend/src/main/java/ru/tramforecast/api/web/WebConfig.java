@@ -62,6 +62,17 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     /**
+     * XLSX renderer.
+     *
+     * @param zone API zone
+     * @return the writer
+     */
+    @Bean
+    public XlsxForecastWriter xlsxForecastWriter(ZoneId zone) {
+        return new XlsxForecastWriter(zone);
+    }
+
+    /**
      * Converter for the {@code horizon} parameter.
      *
      * @return a case-insensitive converter

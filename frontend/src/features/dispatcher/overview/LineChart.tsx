@@ -1,3 +1,4 @@
+import React from "react";
 import { cn } from "@/lib/utils";
 import { fmtInt } from "../format";
 
@@ -58,10 +59,24 @@ export function LineChart({ series, labels, height = 220, marker, ariaLabel }: L
   const max = Math.max(1, ...all) * 1.12;
   const step = Math.max(1, Math.ceil(n / MAX_TICKS));
   const pct = (i: number) => (x(i, n) / W) * 100;
+  const areaRef = React.useRef<HTMLDivElement>(null);
+  const [hover, setHover] = React.useState<number | null>(null);
+
+  function indexAt(clientX: number): number {
+    const rect = areaRef.current!.getBoundingClientRect();
+    const frac = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    return n > 1 ? Math.round(frac * (n - 1)) : 0;
+  }
 
   return (
     <div className="flex flex-col gap-2" role="img" aria-label={ariaLabel}>
-      <div className="relative" style={{ height }}>
+      <div
+        ref={areaRef}
+        className="relative"
+        style={{ height }}
+        onMouseMove={(e) => n > 0 && setHover(indexAt(e.clientX))}
+        onMouseLeave={() => setHover(null)}
+      >
         {[0.25, 0.5, 0.75].map((g) => (
           <div key={g} className="absolute inset-x-0 border-t border-border-subtle" style={{ top: `${(1 - g) * 100}%` }}>
             <span className="absolute left-0 -translate-y-full pb-0.5 text-mono-s text-text-muted">{fmtInt(max * g)}</span>
@@ -82,6 +97,45 @@ export function LineChart({ series, labels, height = 220, marker, ariaLabel }: L
             />
           ))}
         </svg>
+        {hover !== null && (
+          <>
+            <div
+              className="pointer-events-none absolute inset-y-0 w-px bg-border-default"
+              style={{ left: `${pct(hover)}%` }}
+            />
+            {series.map((s) => {
+              const v = s.values[hover];
+              if (v === null || v === undefined) return null;
+              return (
+                <span
+                  key={s.label}
+                  className="pointer-events-none absolute size-2 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-bg-surface"
+                  style={{ left: `${pct(hover)}%`, top: `${(1 - v / max) * 100}%`, background: s.color }}
+                />
+              );
+            })}
+            <div
+              className="pointer-events-none absolute flex flex-col gap-1 whitespace-nowrap rounded-md bg-bg-elevated px-2.5 py-2 text-caption shadow-md ring-1 ring-border-default/10"
+              style={{
+                left: `${pct(hover)}%`,
+                top: `${(1 - (series.find((s) => s.values[hover] != null)?.values[hover] ?? 0) / max) * 100}%`,
+                transform: pct(hover) > 65 ? "translate(calc(-100% - 10px), -50%)" : "translate(10px, -50%)",
+              }}
+            >
+              <span className="text-text-muted">{labels[hover]}</span>
+              {series.map((s) => {
+                const v = s.values[hover];
+                if (v === null || v === undefined) return null;
+                return (
+                  <span key={s.label} className="flex items-center gap-1.5 tabular-nums text-text-primary">
+                    <span className="size-2 shrink-0 rounded-full" style={{ background: s.color }} />
+                    {s.label}: {fmtInt(v)}
+                  </span>
+                );
+              })}
+            </div>
+          </>
+        )}
         {marker && marker.index >= 0 && marker.index < n && (
           <div
             className="pointer-events-none absolute"

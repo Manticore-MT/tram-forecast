@@ -47,9 +47,9 @@ export function DetailsPanel() {
       <div className="text-h4">{placeTitle(place)}</div>
       {series.error ? <ErrorNotice error={series.error} onRetry={series.refetch} /> : series.isLoading || !point ? <LoadingNotice /> : (
         <>
-          <div className="flex gap-6">
-            <Stat label="Базовый уровень" value={fmtInt(point.baseline)} unit={unit} />
-            <Stat label="Прогноз" value={fmtInt(point.forecast)} unit={unit} />
+          <div className="flex flex-col gap-2">
+            <Stat orientation="row" label="Базовый уровень" value={fmtInt(point.baseline)} unit={unit} />
+            <Stat orientation="row" label="Прогноз" value={fmtInt(point.forecast)} unit={unit} />
           </div>
           <Stat
             label="Отклонение"
@@ -64,9 +64,9 @@ export function DetailsPanel() {
           {interval && (
             <div className="flex flex-col gap-4 border-t border-border-subtle pt-4">
               <div className="mt-eyebrow">За интервал {interval.label}</div>
-              <div className="flex gap-6">
-                <Stat label="Всего" value={fmtInt(interval.total)} unit="пасс" />
-                <Stat label="В среднем" value={fmtInt(interval.average)} unit={unit} />
+              <div className="flex flex-col gap-2">
+                <Stat orientation="row" label="Всего" value={fmtInt(interval.total)} unit="пасс" />
+                <Stat orientation="row" label="В среднем" value={fmtInt(interval.average)} unit={unit} />
               </div>
               <Stat
                 label="Отклонение"
