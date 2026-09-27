@@ -1,0 +1,1527 @@
+{
+  "sourceUrl": "https://t.me/DtOperativno/23565",
+  "closureSourceUrl": "https://t.me/DtOperativno/22627",
+  "reopeningDate": "2025-11-15",
+  "scenario": "retrospective external events allowed by team",
+  "template": "submission_hybrid_candidate.csv",
+  "output": "submission_service_dates_candidate.csv",
+  "platformScore": 0.89174,
+  "scoreProvenance": "reported_by_team_2026-09-27",
+  "changedPoints": 252,
+  "additionalBoardings": 152103,
+  "limits": "Only route 50 weekend hours 06-23 corrected; route 7 and night handling unchanged. No claim of verified score gain.",
+  "changes": [
+    {
+      "date": "2025-11-15",
+      "hour": 6,
+      "before": 0,
+      "after": 192
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 7,
+      "before": 0,
+      "after": 426
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 8,
+      "before": 0,
+      "after": 650
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 9,
+      "before": 2,
+      "after": 700
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 10,
+      "before": 4,
+      "after": 679
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 11,
+      "before": 5,
+      "after": 885
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 12,
+      "before": 10,
+      "after": 909
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 13,
+      "before": 8,
+      "after": 931
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 14,
+      "before": 6,
+      "after": 938
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 15,
+      "before": 4,
+      "after": 893
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 16,
+      "before": 6,
+      "after": 875
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 17,
+      "before": 9,
+      "after": 870
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 18,
+      "before": 8,
+      "after": 755
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 19,
+      "before": 0,
+      "after": 687
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 20,
+      "before": 2,
+      "after": 516
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 21,
+      "before": 0,
+      "after": 441
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 22,
+      "before": 1,
+      "after": 256
+    },
+    {
+      "date": "2025-11-15",
+      "hour": 23,
+      "before": 0,
+      "after": 153
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 6,
+      "before": 0,
+      "after": 148
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 7,
+      "before": 0,
+      "after": 279
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 8,
+      "before": 0,
+      "after": 402
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 9,
+      "before": 2,
+      "after": 505
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 10,
+      "before": 4,
+      "after": 546
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 11,
+      "before": 5,
+      "after": 688
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 12,
+      "before": 10,
+      "after": 794
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 13,
+      "before": 8,
+      "after": 837
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 14,
+      "before": 6,
+      "after": 857
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 15,
+      "before": 4,
+      "after": 807
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 16,
+      "before": 6,
+      "after": 807
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 17,
+      "before": 9,
+      "after": 794
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 18,
+      "before": 8,
+      "after": 731
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 19,
+      "before": 0,
+      "after": 618
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 20,
+      "before": 2,
+      "after": 508
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 21,
+      "before": 0,
+      "after": 404
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 22,
+      "before": 1,
+      "after": 247
+    },
+    {
+      "date": "2025-11-16",
+      "hour": 23,
+      "before": 0,
+      "after": 131
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 6,
+      "before": 0,
+      "after": 192
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 7,
+      "before": 0,
+      "after": 426
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 8,
+      "before": 0,
+      "after": 650
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 9,
+      "before": 2,
+      "after": 700
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 10,
+      "before": 4,
+      "after": 679
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 11,
+      "before": 5,
+      "after": 885
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 12,
+      "before": 10,
+      "after": 909
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 13,
+      "before": 8,
+      "after": 931
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 14,
+      "before": 6,
+      "after": 938
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 15,
+      "before": 4,
+      "after": 893
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 16,
+      "before": 6,
+      "after": 875
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 17,
+      "before": 9,
+      "after": 870
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 18,
+      "before": 8,
+      "after": 755
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 19,
+      "before": 0,
+      "after": 687
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 20,
+      "before": 2,
+      "after": 516
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 21,
+      "before": 0,
+      "after": 441
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 22,
+      "before": 1,
+      "after": 256
+    },
+    {
+      "date": "2025-11-22",
+      "hour": 23,
+      "before": 0,
+      "after": 153
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 6,
+      "before": 0,
+      "after": 148
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 7,
+      "before": 0,
+      "after": 279
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 8,
+      "before": 0,
+      "after": 402
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 9,
+      "before": 2,
+      "after": 505
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 10,
+      "before": 4,
+      "after": 546
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 11,
+      "before": 5,
+      "after": 688
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 12,
+      "before": 10,
+      "after": 794
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 13,
+      "before": 8,
+      "after": 837
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 14,
+      "before": 6,
+      "after": 857
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 15,
+      "before": 4,
+      "after": 807
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 16,
+      "before": 6,
+      "after": 807
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 17,
+      "before": 9,
+      "after": 794
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 18,
+      "before": 8,
+      "after": 731
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 19,
+      "before": 0,
+      "after": 618
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 20,
+      "before": 2,
+      "after": 508
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 21,
+      "before": 0,
+      "after": 404
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 22,
+      "before": 1,
+      "after": 247
+    },
+    {
+      "date": "2025-11-23",
+      "hour": 23,
+      "before": 0,
+      "after": 131
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 6,
+      "before": 0,
+      "after": 192
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 7,
+      "before": 0,
+      "after": 426
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 8,
+      "before": 0,
+      "after": 650
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 9,
+      "before": 2,
+      "after": 700
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 10,
+      "before": 4,
+      "after": 679
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 11,
+      "before": 5,
+      "after": 885
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 12,
+      "before": 10,
+      "after": 909
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 13,
+      "before": 8,
+      "after": 931
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 14,
+      "before": 6,
+      "after": 938
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 15,
+      "before": 4,
+      "after": 893
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 16,
+      "before": 6,
+      "after": 875
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 17,
+      "before": 9,
+      "after": 870
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 18,
+      "before": 8,
+      "after": 755
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 19,
+      "before": 0,
+      "after": 687
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 20,
+      "before": 2,
+      "after": 516
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 21,
+      "before": 0,
+      "after": 441
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 22,
+      "before": 1,
+      "after": 256
+    },
+    {
+      "date": "2025-11-29",
+      "hour": 23,
+      "before": 0,
+      "after": 153
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 6,
+      "before": 0,
+      "after": 148
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 7,
+      "before": 0,
+      "after": 279
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 8,
+      "before": 0,
+      "after": 402
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 9,
+      "before": 2,
+      "after": 505
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 10,
+      "before": 4,
+      "after": 546
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 11,
+      "before": 5,
+      "after": 688
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 12,
+      "before": 10,
+      "after": 794
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 13,
+      "before": 8,
+      "after": 837
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 14,
+      "before": 6,
+      "after": 857
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 15,
+      "before": 4,
+      "after": 807
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 16,
+      "before": 6,
+      "after": 807
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 17,
+      "before": 9,
+      "after": 794
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 18,
+      "before": 8,
+      "after": 731
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 19,
+      "before": 0,
+      "after": 618
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 20,
+      "before": 2,
+      "after": 508
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 21,
+      "before": 0,
+      "after": 404
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 22,
+      "before": 1,
+      "after": 247
+    },
+    {
+      "date": "2025-11-30",
+      "hour": 23,
+      "before": 0,
+      "after": 131
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 6,
+      "before": 0,
+      "after": 192
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 7,
+      "before": 0,
+      "after": 426
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 8,
+      "before": 0,
+      "after": 650
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 9,
+      "before": 2,
+      "after": 700
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 10,
+      "before": 4,
+      "after": 679
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 11,
+      "before": 5,
+      "after": 885
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 12,
+      "before": 10,
+      "after": 909
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 13,
+      "before": 8,
+      "after": 931
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 14,
+      "before": 6,
+      "after": 938
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 15,
+      "before": 4,
+      "after": 893
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 16,
+      "before": 6,
+      "after": 875
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 17,
+      "before": 9,
+      "after": 870
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 18,
+      "before": 8,
+      "after": 755
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 19,
+      "before": 0,
+      "after": 687
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 20,
+      "before": 2,
+      "after": 516
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 21,
+      "before": 0,
+      "after": 441
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 22,
+      "before": 1,
+      "after": 256
+    },
+    {
+      "date": "2025-12-06",
+      "hour": 23,
+      "before": 0,
+      "after": 153
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 6,
+      "before": 0,
+      "after": 148
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 7,
+      "before": 0,
+      "after": 279
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 8,
+      "before": 0,
+      "after": 402
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 9,
+      "before": 2,
+      "after": 505
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 10,
+      "before": 4,
+      "after": 546
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 11,
+      "before": 5,
+      "after": 688
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 12,
+      "before": 10,
+      "after": 794
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 13,
+      "before": 8,
+      "after": 837
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 14,
+      "before": 6,
+      "after": 857
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 15,
+      "before": 4,
+      "after": 807
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 16,
+      "before": 6,
+      "after": 807
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 17,
+      "before": 9,
+      "after": 794
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 18,
+      "before": 8,
+      "after": 731
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 19,
+      "before": 0,
+      "after": 618
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 20,
+      "before": 2,
+      "after": 508
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 21,
+      "before": 0,
+      "after": 404
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 22,
+      "before": 1,
+      "after": 247
+    },
+    {
+      "date": "2025-12-07",
+      "hour": 23,
+      "before": 0,
+      "after": 131
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 6,
+      "before": 0,
+      "after": 192
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 7,
+      "before": 0,
+      "after": 426
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 8,
+      "before": 0,
+      "after": 650
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 9,
+      "before": 2,
+      "after": 700
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 10,
+      "before": 4,
+      "after": 679
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 11,
+      "before": 5,
+      "after": 885
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 12,
+      "before": 10,
+      "after": 909
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 13,
+      "before": 8,
+      "after": 931
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 14,
+      "before": 6,
+      "after": 938
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 15,
+      "before": 4,
+      "after": 893
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 16,
+      "before": 6,
+      "after": 875
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 17,
+      "before": 9,
+      "after": 870
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 18,
+      "before": 8,
+      "after": 755
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 19,
+      "before": 0,
+      "after": 687
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 20,
+      "before": 2,
+      "after": 516
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 21,
+      "before": 0,
+      "after": 441
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 22,
+      "before": 1,
+      "after": 256
+    },
+    {
+      "date": "2025-12-13",
+      "hour": 23,
+      "before": 0,
+      "after": 153
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 6,
+      "before": 0,
+      "after": 148
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 7,
+      "before": 0,
+      "after": 279
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 8,
+      "before": 0,
+      "after": 402
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 9,
+      "before": 2,
+      "after": 505
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 10,
+      "before": 4,
+      "after": 546
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 11,
+      "before": 5,
+      "after": 688
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 12,
+      "before": 10,
+      "after": 794
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 13,
+      "before": 8,
+      "after": 837
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 14,
+      "before": 6,
+      "after": 857
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 15,
+      "before": 4,
+      "after": 807
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 16,
+      "before": 6,
+      "after": 807
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 17,
+      "before": 9,
+      "after": 794
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 18,
+      "before": 8,
+      "after": 731
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 19,
+      "before": 0,
+      "after": 618
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 20,
+      "before": 2,
+      "after": 508
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 21,
+      "before": 0,
+      "after": 404
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 22,
+      "before": 1,
+      "after": 247
+    },
+    {
+      "date": "2025-12-14",
+      "hour": 23,
+      "before": 0,
+      "after": 131
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 6,
+      "before": 0,
+      "after": 192
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 7,
+      "before": 0,
+      "after": 426
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 8,
+      "before": 0,
+      "after": 650
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 9,
+      "before": 2,
+      "after": 700
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 10,
+      "before": 4,
+      "after": 679
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 11,
+      "before": 5,
+      "after": 885
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 12,
+      "before": 10,
+      "after": 909
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 13,
+      "before": 8,
+      "after": 931
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 14,
+      "before": 6,
+      "after": 938
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 15,
+      "before": 4,
+      "after": 893
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 16,
+      "before": 6,
+      "after": 875
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 17,
+      "before": 9,
+      "after": 870
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 18,
+      "before": 8,
+      "after": 755
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 19,
+      "before": 0,
+      "after": 687
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 20,
+      "before": 2,
+      "after": 516
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 21,
+      "before": 0,
+      "after": 441
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 22,
+      "before": 1,
+      "after": 256
+    },
+    {
+      "date": "2025-12-20",
+      "hour": 23,
+      "before": 0,
+      "after": 153
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 6,
+      "before": 0,
+      "after": 148
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 7,
+      "before": 0,
+      "after": 279
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 8,
+      "before": 0,
+      "after": 402
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 9,
+      "before": 2,
+      "after": 505
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 10,
+      "before": 4,
+      "after": 546
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 11,
+      "before": 5,
+      "after": 688
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 12,
+      "before": 10,
+      "after": 794
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 13,
+      "before": 8,
+      "after": 837
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 14,
+      "before": 6,
+      "after": 857
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 15,
+      "before": 4,
+      "after": 807
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 16,
+      "before": 6,
+      "after": 807
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 17,
+      "before": 9,
+      "after": 794
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 18,
+      "before": 8,
+      "after": 731
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 19,
+      "before": 0,
+      "after": 618
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 20,
+      "before": 2,
+      "after": 508
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 21,
+      "before": 0,
+      "after": 404
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 22,
+      "before": 1,
+      "after": 247
+    },
+    {
+      "date": "2025-12-21",
+      "hour": 23,
+      "before": 0,
+      "after": 131
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 6,
+      "before": 0,
+      "after": 192
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 7,
+      "before": 0,
+      "after": 426
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 8,
+      "before": 0,
+      "after": 650
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 9,
+      "before": 2,
+      "after": 700
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 10,
+      "before": 4,
+      "after": 679
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 11,
+      "before": 5,
+      "after": 885
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 12,
+      "before": 10,
+      "after": 909
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 13,
+      "before": 8,
+      "after": 931
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 14,
+      "before": 6,
+      "after": 938
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 15,
+      "before": 4,
+      "after": 893
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 16,
+      "before": 6,
+      "after": 875
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 17,
+      "before": 9,
+      "after": 870
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 18,
+      "before": 8,
+      "after": 755
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 19,
+      "before": 0,
+      "after": 687
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 20,
+      "before": 2,
+      "after": 516
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 21,
+      "before": 0,
+      "after": 441
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 22,
+      "before": 1,
+      "after": 256
+    },
+    {
+      "date": "2025-12-27",
+      "hour": 23,
+      "before": 0,
+      "after": 153
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 6,
+      "before": 0,
+      "after": 148
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 7,
+      "before": 0,
+      "after": 279
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 8,
+      "before": 0,
+      "after": 402
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 9,
+      "before": 2,
+      "after": 505
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 10,
+      "before": 4,
+      "after": 546
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 11,
+      "before": 5,
+      "after": 688
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 12,
+      "before": 10,
+      "after": 794
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 13,
+      "before": 8,
+      "after": 837
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 14,
+      "before": 6,
+      "after": 857
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 15,
+      "before": 4,
+      "after": 807
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 16,
+      "before": 6,
+      "after": 807
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 17,
+      "before": 9,
+      "after": 794
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 18,
+      "before": 8,
+      "after": 731
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 19,
+      "before": 0,
+      "after": 618
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 20,
+      "before": 2,
+      "after": 508
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 21,
+      "before": 0,
+      "after": 404
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 22,
+      "before": 1,
+      "after": 247
+    },
+    {
+      "date": "2025-12-28",
+      "hour": 23,
+      "before": 0,
+      "after": 131
+    }
+  ]
+}

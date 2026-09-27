@@ -1,0 +1,9 @@
+{
+  "raw_rows": 62443497,
+  "invalid_timestamp": 0,
+  "successful_supported": 59667753,
+  "night_successful_00_0559": 553930,
+  "excluded_successful_00_0529": 265030,
+  "kept_hour_05_successful": 288900,
+  "filtered_label_rows": 51765
+}

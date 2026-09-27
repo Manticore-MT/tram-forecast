@@ -152,7 +152,7 @@ export function QualityCard({ stats }: { stats: ReturnType<typeof useModelStats>
               {data?.platformScore != null && (
                 <Stat
                   label="Оценка платформы"
-                  value={data.platformScore.toFixed(2)}
+                  value={data.platformScore.toFixed(5)}
                   caption={data?.platformNote}
                 />
               )}

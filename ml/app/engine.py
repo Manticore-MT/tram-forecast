@@ -79,7 +79,8 @@ class Engine:
         self.coefficients = np.asarray(a["coefficients"], dtype=float)
         if self.coefficients.shape != (len(feature_names()),) or not np.isfinite(self.coefficients).all():
             raise ValueError("Invalid coefficients")
-        self.version = "ridge-v1-" + a["sourceSha256"][:12]
+        self.night_filtered = a["config"].get("exclude_before_local_time") == "05:30:00"
+        self.version = ("ridge-v2-night-" if self.night_filtered else "ridge-v1-") + a["sourceSha256"][:12]
 
     def hourly(self, route: int, days: list[date]) -> tuple[np.ndarray, np.ndarray]:
         if route not in ROUTES or not days or min(days) < self.origin or max(days) > self.last:
@@ -94,8 +95,13 @@ class Engine:
             values = total * np.asarray(self.artifact["hourlyShares"][key])
             # Preserve competition behavior through Dec 2025. Beyond that the
             # scenario assumes normal service; no indefinitely extended closure.
-            if route == 50 and day.weekday() >= 5 and day <= self.validated_last:
+            if route == 50 and self.origin >= date(2025, 9, 6) and day.weekday() >= 5 and day <= self.validated_last:
                 values = np.asarray(self.artifact["route50ClosureProfile"])
-            forecasts.append(np.rint(np.maximum(0, values)))
-            baselines.append(self.artifact["baseline56"][f"{route}:{c['effective_dow']}"])
+            forecast = np.rint(np.maximum(0, values))
+            baseline = np.asarray(self.artifact["baseline56"][f"{route}:{c['effective_dow']}"], dtype=float)
+            if self.night_filtered:
+                forecast[:5] = 0
+                baseline[:5] = 0
+            forecasts.append(forecast)
+            baselines.append(baseline)
         return np.asarray(forecasts), np.asarray(baselines)

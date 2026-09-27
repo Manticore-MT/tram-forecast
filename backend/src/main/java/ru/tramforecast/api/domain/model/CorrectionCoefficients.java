@@ -38,7 +38,7 @@ public record CorrectionCoefficients(double weather, double event, double season
     /**
      * Tells whether the coefficients change the forecast at all.
      *
-     * @return {@code true} when the combined factor differs from 1
+     * @return {@code true} when the combined factor equals 1 within numerical tolerance
      */
     public boolean isIdentity() {
         return Math.abs(factor() - 1.0) < 1e-9;

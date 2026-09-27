@@ -1,0 +1,510 @@
+{
+  "sourceUrls": [
+    "https://t.me/DtOperativno/22627",
+    "https://t.me/DtOperativno/23565"
+  ],
+  "method": "Route 7 restricted weekend hourly medians, separate Saturday/Sunday; only pre-origin labels.",
+  "platformScore": 0.89200,
+  "scoreProvenance": "reported_by_team",
+  "validation": {
+    "2025-09-20": {
+      "days": 11,
+      "before": {
+        "score": 0.8968189058736827,
+        "wape": 0.10318109412631726,
+        "absoluteError": 219392.0,
+        "actualSum": 2126281.0,
+        "biasPct": 2.713470138706975
+      },
+      "after": {
+        "score": 0.9071881844403444,
+        "wape": 0.09281181555965556,
+        "absoluteError": 197344.0,
+        "actualSum": 2126281.0,
+        "biasPct": 1.5407182775936112
+      },
+      "affectedBefore": {
+        "score": 0.20452017097019737,
+        "wape": 0.7954798290298026,
+        "absoluteError": 27172.0,
+        "actualSum": 34158.0,
+        "biasPct": 79.11470226594064
+      },
+      "affectedAfter": {
+        "score": 0.8499912172843843,
+        "wape": 0.15000878271561566,
+        "absoluteError": 5124.0,
+        "actualSum": 34158.0,
+        "biasPct": 6.112770068505191
+      }
+    },
+    "2025-10-01": {
+      "days": 31,
+      "before": {
+        "score": 0.9023894670737833,
+        "wape": 0.09761053292621663,
+        "absoluteError": 644892.0,
+        "actualSum": 6606787.0,
+        "biasPct": -1.8567573012418848
+      },
+      "after": {
+        "score": 0.9073334738958589,
+        "wape": 0.09266652610414108,
+        "absoluteError": 612228.0,
+        "actualSum": 6606787.0,
+        "biasPct": -2.6194275674393586
+      },
+      "affectedBefore": {
+        "score": 0.4254864396397805,
+        "wape": 0.5745135603602195,
+        "absoluteError": 44083.0,
+        "actualSum": 76731.0,
+        "biasPct": 57.44353651066714
+      },
+      "affectedAfter": {
+        "score": 0.8511813999556894,
+        "wape": 0.14881860004431063,
+        "absoluteError": 11419.0,
+        "actualSum": 76731.0,
+        "biasPct": -8.224837419035335
+      }
+    }
+  },
+  "candidate": "submission_service7_candidate.csv",
+  "changes": [
+    {
+      "date": "2025-11-01",
+      "hour": 6,
+      "before": 668,
+      "after": 229
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 7,
+      "before": 1563,
+      "after": 307
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 8,
+      "before": 2335,
+      "after": 681
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 9,
+      "before": 1780,
+      "after": 582
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 10,
+      "before": 1560,
+      "after": 534
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 11,
+      "before": 1490,
+      "after": 618
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 12,
+      "before": 1581,
+      "after": 836
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 13,
+      "before": 1665,
+      "after": 768
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 14,
+      "before": 1726,
+      "after": 791
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 15,
+      "before": 1849,
+      "after": 774
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 16,
+      "before": 2050,
+      "after": 745
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 17,
+      "before": 2242,
+      "after": 710
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 18,
+      "before": 2118,
+      "after": 722
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 19,
+      "before": 1506,
+      "after": 617
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 20,
+      "before": 1043,
+      "after": 440
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 21,
+      "before": 619,
+      "after": 333
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 22,
+      "before": 360,
+      "after": 186
+    },
+    {
+      "date": "2025-11-01",
+      "hour": 23,
+      "before": 231,
+      "after": 138
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 6,
+      "before": 230,
+      "after": 136
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 7,
+      "before": 353,
+      "after": 187
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 8,
+      "before": 555,
+      "after": 381
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 9,
+      "before": 689,
+      "after": 510
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 10,
+      "before": 793,
+      "after": 392
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 11,
+      "before": 974,
+      "after": 528
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 12,
+      "before": 1132,
+      "after": 664
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 13,
+      "before": 1188,
+      "after": 624
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 14,
+      "before": 1252,
+      "after": 686
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 15,
+      "before": 1180,
+      "after": 626
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 16,
+      "before": 1131,
+      "after": 584
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 17,
+      "before": 1085,
+      "after": 625
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 18,
+      "before": 991,
+      "after": 653
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 19,
+      "before": 908,
+      "after": 495
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 20,
+      "before": 684,
+      "after": 405
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 21,
+      "before": 560,
+      "after": 294
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 22,
+      "before": 338,
+      "after": 166
+    },
+    {
+      "date": "2025-11-02",
+      "hour": 23,
+      "before": 176,
+      "after": 122
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 6,
+      "before": 295,
+      "after": 229
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 7,
+      "before": 463,
+      "after": 307
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 8,
+      "before": 763,
+      "after": 681
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 9,
+      "before": 886,
+      "after": 582
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 10,
+      "before": 997,
+      "after": 534
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 11,
+      "before": 1158,
+      "after": 618
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 12,
+      "before": 1285,
+      "after": 836
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 13,
+      "before": 1292,
+      "after": 768
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 14,
+      "before": 1424,
+      "after": 791
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 15,
+      "before": 1263,
+      "after": 774
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 16,
+      "before": 1210,
+      "after": 745
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 17,
+      "before": 1142,
+      "after": 710
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 18,
+      "before": 1085,
+      "after": 722
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 19,
+      "before": 1088,
+      "after": 617
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 20,
+      "before": 818,
+      "after": 440
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 21,
+      "before": 641,
+      "after": 333
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 22,
+      "before": 357,
+      "after": 186
+    },
+    {
+      "date": "2025-11-08",
+      "hour": 23,
+      "before": 225,
+      "after": 138
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 6,
+      "before": 230,
+      "after": 136
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 7,
+      "before": 353,
+      "after": 187
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 8,
+      "before": 555,
+      "after": 381
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 9,
+      "before": 689,
+      "after": 510
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 10,
+      "before": 793,
+      "after": 392
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 11,
+      "before": 974,
+      "after": 528
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 12,
+      "before": 1132,
+      "after": 664
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 13,
+      "before": 1188,
+      "after": 624
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 14,
+      "before": 1252,
+      "after": 686
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 15,
+      "before": 1180,
+      "after": 626
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 16,
+      "before": 1131,
+      "after": 584
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 17,
+      "before": 1085,
+      "after": 625
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 18,
+      "before": 991,
+      "after": 653
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 19,
+      "before": 908,
+      "after": 495
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 20,
+      "before": 684,
+      "after": 405
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 21,
+      "before": 560,
+      "after": 294
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 22,
+      "before": 338,
+      "after": 166
+    },
+    {
+      "date": "2025-11-09",
+      "hour": 23,
+      "before": 176,
+      "after": 122
+    }
+  ],
+  "changeInTotal": -35038,
+  "limitations": "Only 4 November weekends days, not a promise of 0.92. Holidays Nov2 and working Sat Nov1 treated by physical restriction schedule. No correction after Nov15; nights and route50 preserved."
+}
