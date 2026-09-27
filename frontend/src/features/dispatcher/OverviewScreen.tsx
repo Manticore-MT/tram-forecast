@@ -9,6 +9,7 @@ import { AttentionCard, CompareCard, QualityCard, TotalCard } from "./overview/K
 import { AttentionRatingPanel, DemandMapPanel, DynamicsPanel, TopRoutesPanel } from "./overview/NetworkPanels";
 import { QualityHistory } from "./overview/QualityHistory";
 import { RouteSection } from "./overview/RouteSection";
+import { FactorEvidencePanel } from "./overview/FactorEvidencePanel";
 import { comparisonCursor, comparisonLabel, updatedAt, type CompareMode } from "./overview/network";
 
 /** Экран «Обзор» для руководителя: сколько → как меняется → где → можно ли доверять.
@@ -75,6 +76,9 @@ export function OverviewScreen() {
         </div>
         <div className="grid md:col-span-2 xl:col-span-4">
           <QualityHistory stats={stats} />
+        </div>
+        <div className="grid md:col-span-2 xl:col-span-4">
+          <FactorEvidencePanel />
         </div>
       </div>
     </div>

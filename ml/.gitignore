@@ -2,3 +2,4 @@
 __pycache__/
 .pytest_cache/
 artifacts/retrained_model.json
+artifacts/factors-anomaly/
