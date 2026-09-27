@@ -10,21 +10,19 @@ import {
   useMeta,
   useRouteForecast,
   useRoutes,
-  useStopForecast,
   type CommonParams,
 } from "../../api/hooks";
 import { useDispatcher, type Place } from "./store";
 import { resolveFocus } from "./time";
 
 type RouteForecast = components["schemas"]["RouteForecast"];
-type StopForecast = components["schemas"]["StopForecast"];
 
 export interface SeriesPoint {
   /** ISO timestamp with the Moscow offset. */
   periodStart: string;
   forecast: number;
   baseline: number;
-  /** Present only for past periods of a route or stop. */
+  /** Present only for past periods of a route. */
   actual?: number;
 }
 
@@ -39,10 +37,8 @@ export interface PlaceSeries {
   refetch: () => void;
   /** When the backend last recomputed this forecast (ISO). */
   lastUpdated?: string;
-  /** Route level and below: the raw route answer (per-stop series, lastYear). */
+  /** Route level: the raw route answer (factors, recommendation, peakAt, lastYear). */
   route?: RouteForecast;
-  /** Stop level: the raw stop answer (factors, recommendation, peakAt). */
-  stop?: StopForecast;
 }
 
 /** Seeds the store's clock from /api/meta. Call once at the top of the screen. */
@@ -72,8 +68,6 @@ export function usePlaceSeries(place: Place, params: CommonParams | undefined): 
   const routeId = place.level === "network" ? undefined : place.routeId;
   const network = useRoutes(place.level === "network" ? params : undefined);
   const route = useRouteForecast(routeId, params);
-  const stopId = place.level === "stop" ? route.data?.stops?.[place.stopIndex]?.stopId : undefined;
-  const stop = useStopForecast(place.level === "stop" ? routeId : undefined, stopId, params);
 
   const points = React.useMemo<SeriesPoint[]>(() => {
     if (place.level === "network") {
@@ -85,30 +79,23 @@ export function usePlaceSeries(place: Place, params: CommonParams | undefined): 
         baseline: routes.reduce((sum, r) => sum + (r.points?.[i]?.baseline ?? 0), 0),
       }));
     }
-    const raw = place.level === "route" ? route.data?.points : stop.data?.points;
-    return (raw ?? []).map((p) => ({
+    return (route.data?.points ?? []).map((p) => ({
       periodStart: p.periodStart ?? "",
       forecast: p.forecast ?? 0,
       baseline: p.baseline ?? 0,
       actual: p.actual,
     }));
-  }, [place.level, network.data, route.data, stop.data]);
+  }, [place.level, network.data, route.data]);
 
-  const main = place.level === "network" ? network : place.level === "route" ? route : stop;
-  // A stop can't even be requested until its route answered, so the route's error is the stop's too.
-  const error = main.error ?? (place.level === "stop" ? route.error : null);
+  const main = place.level === "network" ? network : route;
   return {
     points,
-    isLoading: main.data === undefined && !error,
-    isFetching: main.isFetching || (place.level === "stop" && route.isFetching),
-    error,
+    isLoading: main.data === undefined && !main.error,
+    isFetching: main.isFetching,
+    error: main.error,
     lastUpdated: main.data?.lastUpdated,
-    refetch: () => {
-      if (place.level === "stop" && route.error) void route.refetch();
-      else void main.refetch();
-    },
+    refetch: () => void main.refetch(),
     route: place.level === "network" ? undefined : route.data,
-    stop: place.level === "stop" ? stop.data : undefined,
   };
 }
 

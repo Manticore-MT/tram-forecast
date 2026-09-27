@@ -2,7 +2,6 @@ import React from "react";
 import { Button, Dialog, Icon } from "../../components";
 import { downloadExport, type ExportParams } from "../../api/client";
 import { isDefaultCorrections } from "../../api/hooks";
-import { routeStops } from "../../network/tramNetwork";
 import { notifyError } from "../../shared/errors";
 import { useDispatcher, type Place } from "./store";
 import { useCurrentSeries } from "./forecast";
@@ -10,9 +9,7 @@ import { SCALE_LABELS, rangeBounds, rangeLabel, windowLabel } from "./time";
 
 function placeLabel(place: Place): string {
   if (place.level === "network") return "Вся сеть";
-  if (place.level === "route") return `Маршрут № ${place.routeId}`;
-  const stop = routeStops(place.routeId)[place.stopIndex]?.name;
-  return `${stop ?? "Остановка"} · маршрут № ${place.routeId}`;
+  return `Маршрут № ${place.routeId}`;
 }
 
 function saveFile(blob: Blob, filename: string) {
@@ -37,10 +34,8 @@ export function ExportButton() {
   const series = useCurrentSeries();
   const starts = series.points.map((p) => p.periodStart);
   const bounds = cursor && range ? rangeBounds(scale, cursor, starts, range) : null;
-  const stopId = place.level === "stop" ? series.route?.stops?.[place.stopIndex]?.stopId : undefined;
   const scenario = !isDefaultCorrections(corrections);
-  // A stop can't be exported until its backend id is known from the route forecast.
-  const ready = !!cursor && (place.level !== "stop" || !!stopId);
+  const ready = !!cursor;
 
   async function download() {
     if (!cursor) return;
@@ -49,7 +44,6 @@ export function ExportButton() {
       horizon: scale,
       date: cursor,
       ...(place.level !== "network" && { routeId: place.routeId }),
-      ...(stopId && { stopId }),
       ...(scenario && corrections),
       ...(bounds && { from: bounds.from, to: bounds.to }),
     };
@@ -70,7 +64,7 @@ export function ExportButton() {
     ["Период", `${SCALE_LABELS[scale]} · ${windowLabel(scale, cursor)}`],
     ["Интервал", range && range[0] !== range[1] ? rangeLabel(scale, starts, range) : "весь период"],
     ["Сценарий", scenario ? `погода ×${corrections.weather} · событие ×${corrections.event} · сезон ×${corrections.season}` : "без поправок"],
-    ["Формат", "CSV, строка на остановку и период"],
+    ["Формат", "CSV, строка на маршрут и период"],
   ] : [];
 
   return (

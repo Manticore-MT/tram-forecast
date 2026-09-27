@@ -28,7 +28,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Export the forecast as CSV (one row per stop and period) */
+        /** Export the forecast as CSV (one row per route and period) */
         get: operations["export"];
         put?: never;
         post?: never;
@@ -96,7 +96,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Forecast of one route with all of its stops */
+        /** Route forecast: baseline, deviation, status, peak, facts a year earlier, factors */
         get: operations["routeForecast"];
         put?: never;
         post?: never;
@@ -115,23 +115,6 @@ export interface paths {
         };
         /** Typical week of a route: load by day of week and hour */
         get: operations["loadMatrix"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/api/routes/{routeId}/stops/{stopId}/forecast": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Stop details: baseline, deviation, status, peak, facts a year earlier, factors */
-        get: operations["stopForecast"];
         put?: never;
         post?: never;
         delete?: never;
@@ -251,7 +234,7 @@ export interface components {
              * @example ROUTE_NOT_FOUND
              * @enum {string}
              */
-            code?: "INVALID_REQUEST" | "INVALID_PARAMETER" | "PERIOD_NOT_SUPPORTED" | "ROUTE_NOT_FOUND" | "STOP_NOT_FOUND" | "NO_DATA" | "ENDPOINT_NOT_FOUND" | "METHOD_NOT_ALLOWED" | "FORECAST_NOT_READY" | "UNAUTHORIZED" | "TOO_MANY_ATTEMPTS" | "INTERNAL_ERROR";
+            code?: "INVALID_REQUEST" | "INVALID_PARAMETER" | "PERIOD_NOT_SUPPORTED" | "ROUTE_NOT_FOUND" | "NO_DATA" | "ENDPOINT_NOT_FOUND" | "METHOD_NOT_ALLOWED" | "FORECAST_NOT_READY" | "UNAUTHORIZED" | "TOO_MANY_ATTEMPTS" | "INTERNAL_ERROR";
             /**
              * @description A message that can be shown to the user
              * @example One of the request parameters is missing or has the wrong format.
@@ -282,29 +265,6 @@ export interface components {
         RouteForecast: {
             /** Format: date */
             date?: string;
-            horizon?: string;
-            /** Format: date-time */
-            lastUpdated?: string;
-            lastYear?: components["schemas"]["LastYearPoint"][];
-            points?: components["schemas"]["Point"][];
-            routeId?: string;
-            stops?: components["schemas"]["StopSeries"][];
-        };
-        RouteSeries: {
-            points?: components["schemas"]["SlimPoint"][];
-            routeId?: string;
-        };
-        SlimPoint: {
-            /** Format: double */
-            baseline?: number;
-            /** Format: double */
-            forecast?: number;
-            /** Format: date-time */
-            periodStart?: string;
-        };
-        StopForecast: {
-            /** Format: date */
-            date?: string;
             factors?: string[];
             horizon?: string;
             /** Format: date-time */
@@ -319,11 +279,18 @@ export interface components {
             recommendation?: components["schemas"]["Recommendation"];
             routeId?: string;
             status?: string;
-            stopId?: string;
         };
-        StopSeries: {
+        RouteSeries: {
             points?: components["schemas"]["SlimPoint"][];
-            stopId?: string;
+            routeId?: string;
+        };
+        SlimPoint: {
+            /** Format: double */
+            baseline?: number;
+            /** Format: double */
+            forecast?: number;
+            /** Format: date-time */
+            periodStart?: string;
         };
     };
     responses: never;
@@ -421,7 +388,6 @@ export interface operations {
             query?: {
                 format?: string;
                 routeId?: string;
-                stopId?: string;
                 /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
                 horizon?: "day" | "week" | "month" | "year";
                 /**
@@ -481,7 +447,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Unknown route or stop, or nothing to return for them */
+            /** @description Unknown route, or nothing to return for it */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -743,7 +709,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Unknown route or stop, or nothing to return for them */
+            /** @description Unknown route, or nothing to return for it */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -810,7 +776,7 @@ export interface operations {
                     "application/problem+json": components["schemas"]["Problem"];
                 };
             };
-            /** @description Unknown route or stop, or nothing to return for them */
+            /** @description Unknown route, or nothing to return for it */
             404: {
                 headers: {
                     [name: string]: unknown;
@@ -821,100 +787,6 @@ export interface operations {
             };
             /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
             429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["Problem"];
-                };
-            };
-        };
-    };
-    stopForecast: {
-        parameters: {
-            query?: {
-                /** @description Planning horizon. It fixes the step of the returned points: day = hourly, week = daily (seven days starting at the anchor date), month = daily, year = monthly. */
-                horizon?: "day" | "week" | "month" | "year";
-                /**
-                 * @description Anchor date YYYY-MM-DD: the day itself; the first of the seven days of a week; or any day inside the month or year. Defaults to today. The whole period must lie inside the range the model covers (forecastFrom .. forecastTo in /api/meta, otherwise at most one year ahead).
-                 * @example 2026-09-25
-                 */
-                date?: string;
-                /** @description Which stored snapshot to read: the latest one, or the initial one (the forecast as it was first made for that date). */
-                snapshot?: "latest" | "initial";
-                /** @description Weather correction multiplier applied to the forecast. */
-                weather?: number;
-                /** @description Event correction multiplier applied to the forecast. */
-                event?: number;
-                /** @description Season correction multiplier applied to the forecast. */
-                season?: number;
-                /**
-                 * @description Inclusive lower bound of the returned periods, ISO 8601 with offset.
-                 * @example 2026-09-25T06:00:00+03:00
-                 */
-                from?: string;
-                /**
-                 * @description Exclusive upper bound of the returned periods, ISO 8601 with offset.
-                 * @example 2026-09-25T12:00:00+03:00
-                 */
-                to?: string;
-            };
-            header?: never;
-            path: {
-                routeId: string;
-                stopId: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description OK */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StopForecast"];
-                };
-            };
-            /** @description Invalid parameter or request */
-            400: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["Problem"];
-                };
-            };
-            /** @description Missing or invalid Authorization: Basic header (only when access control is on) */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["Problem"];
-                };
-            };
-            /** @description Unknown route or stop, or nothing to return for them */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["Problem"];
-                };
-            };
-            /** @description Too many failed login attempts from this client (only when access control is on); wait for the number of seconds in the Retry-After header, even the right password is refused until then */
-            429: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/problem+json": components["schemas"]["Problem"];
-                };
-            };
-            /** @description No forecast is stored for the request and the ML service is unavailable */
-            503: {
                 headers: {
                     [name: string]: unknown;
                 };

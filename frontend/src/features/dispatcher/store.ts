@@ -4,12 +4,9 @@ import { create } from "zustand";
 import { DEFAULT_CORRECTIONS, type Corrections } from "../../api/hooks";
 import { drillDown, scaleUp, shiftCursor, type Scale } from "./time";
 
-/** Where on the network we are. A stop is addressed by its position on the route, because the
- *  backend's stopId doesn't match the map's stop codes yet (see docs/open-questions.md). */
-export type Place =
-  | { level: "network" }
-  | { level: "route"; routeId: string }
-  | { level: "stop"; routeId: string; stopIndex: number };
+/** Where on the network we are. Stops have no forecast data (route-level only); clicking one
+ *  on the map just shows its name, it doesn't change place. */
+export type Place = { level: "network" } | { level: "route"; routeId: string };
 
 export type CorrectionKey = keyof Corrections;
 
@@ -27,9 +24,6 @@ interface DispatcherState {
   /** Selected interval of the window as inclusive point indices [start, end]; null = none.
    *  Cleared whenever the window changes, since indices only make sense inside one window. */
   range: [number, number] | null;
-  /** Selected contiguous range of stop indices [start, end] along the current route; null = none.
-   *  Only meaningful while `place` is on that route (level "route" or "stop"); cleared on leaving it. */
-  segment: [number, number] | null;
   corrections: Corrections;
   today: string | null;
   /** Furthest date the API accepts (one year ahead). */
@@ -42,7 +36,7 @@ interface DispatcherState {
 
   setView(view: View): void;
   goTo(place: Place): void;
-  /** stop → route → network. */
+  /** route → network. */
   placeUp(): void;
 
   setScale(scale: Scale): void;
@@ -55,7 +49,6 @@ interface DispatcherState {
   goToday(): void;
   setFocus(index: number | null): void;
   setRange(range: [number, number] | null): void;
-  setSegment(segment: [number, number] | null): void;
 
   setCorrection(key: CorrectionKey, value: number): void;
   resetCorrections(): void;
@@ -68,7 +61,6 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
   cursor: null,
   focus: null,
   range: null,
-  segment: null,
   corrections: DEFAULT_CORRECTIONS,
   today: null,
   latestDate: null,
@@ -84,20 +76,12 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
   },
 
   goTo(place) {
-    const { place: prev, segment } = get();
-    // Segment only makes sense while staying on the route that owns it; drop it on network level
-    // or when the target belongs to a different route.
-    const staysOnRoute =
-      place.level !== "network" &&
-      prev.level !== "network" &&
-      place.routeId === prev.routeId;
-    set({ place, segment: staysOnRoute ? segment : null });
+    set({ place });
   },
 
   placeUp() {
-    const { place, segment } = get();
-    if (place.level === "stop") set({ place: { level: "route", routeId: place.routeId }, segment });
-    else if (place.level === "route") set({ place: { level: "network" }, segment: null });
+    const { place } = get();
+    if (place.level === "route") set({ place: { level: "network" } });
   },
 
   setScale(scale) {
@@ -138,10 +122,6 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
 
   setRange(range) {
     set({ range: range && range[0] > range[1] ? [range[1], range[0]] : range });
-  },
-
-  setSegment(segment) {
-    set({ segment: segment && segment[0] > segment[1] ? [segment[1], segment[0]] : segment });
   },
 
   setCorrection(key, value) {
