@@ -1,7 +1,11 @@
 # ML-сервис трамвайного прогноза
 
 FastAPI-сервис прогноза пассажиропотока (маршрут × час) для backend и фронтенда.
-Рабочая модель — Ridge по дневному логарифму валидаций + часовые профили + поправка по недавним остаткам. Контракт: [`docs/ml-contract.md`](../docs/ml-contract.md).
+Контракт: [`docs/ml-contract.md`](../docs/ml-contract.md). Ridge по дневному логарифму валидаций, часовые профили и поправка по остаткам используются при подготовке модели и для сценарных дат. Для ноября–декабря 2025 основной API берёт часы 06:00–23:59 из сохранённого конкурсного CSV; ночь 00:00–04:59 обнуляется, а 05:00 оценивается по очищенной модели.
+
+- Обучение: [`train.py`](train.py), [`build_artifact.py`](build_artifact.py)
+- Инференс (HTTP-сервис): [`app/`](app/)
+- Артефакт модели: [`artifacts/route_model.json`](artifacts/route_model.json)
 
 ## Что работает
 
@@ -16,13 +20,13 @@ FastAPI-сервис прогноза пассажиропотока (маршр
 ## Запуск
 
 ```powershell
-python -3.12 -m venv ml/.venv
+python -m venv ml/.venv
 ml/.venv/Scripts/python -m pip install -r ml/requirements.txt
 Set-Location ml
 .venv/Scripts/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-# API:
+## API
 
 `python -m uvicorn app.main:app --host 127.0.0.1 --port 8000`.
 Интерактивный API: http://localhost:8000/docs.
@@ -32,6 +36,9 @@ Set-Location ml
 исходный маршрутный прогноз. Остановочная загрузка и пассажиры в салоне не измерены.
 
 
-# Загрузка CSV
-Итоговая загруженная версия csv на платформу: submission_calendar_service_candidate.csv
+## Конкурсный файл и внешние факторы
+
+Итоговая загруженная версия: [`reference/submission_calendar_service_candidate.csv`](reference/submission_calendar_service_candidate.csv), score **0.89212**. Это score конкурсного файла, а не всего ответа HTTP после фильтрации ночи и не оценка отдельной CatBoost модели.
+
+Источники внешних данных и их точная роль перечислены в [`FACTORS.md`](FACTORS.md). Область применимости и измеренный эффект четырёх категорий — в [`CRITERION_2.md`](CRITERION_2.md). Экспериментальный профиль доступен через `GET /factors/evidence` и `GET /factors/predict`; он не подставлен в основной `POST /predict`. Ручные коэффициенты погоды, события и сезона в backend умножают исходный прогноз, не переобучая модель и не меняя baseline.
 
