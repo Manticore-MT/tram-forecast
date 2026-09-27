@@ -61,7 +61,26 @@ class DomainTest {
                 new ForecastPoint(T1, 100, 180, null),
                 new ForecastPoint(T2, 500, 500, null));
         assertThat(SeriesAnalytics.peak(points)).get().extracting(ForecastPoint::periodStart).isEqualTo(T0);
-        assertThat(SeriesAnalytics.maxDeviation(points)).get().extracting(ForecastPoint::periodStart).isEqualTo(T1);
+        assertThat(SeriesAnalytics.maxDeviation(points, 0)).get().extracting(ForecastPoint::periodStart).isEqualTo(T1);
+    }
+
+    /**
+     * A near-empty hour whose baseline is a sliver of the route's busiest hour is ignored even when its
+     * percent deviation is technically huge: a stray boarding or two against a baseline of one reads as
+     * "+300 %", but the point that matters is the real, busy hour.
+     */
+    @Test
+    void maxDeviationIgnoresDeviationsOnAnAlmostEmptyBaseline() {
+        List<ForecastPoint> points = List.of(
+                new ForecastPoint(T0, 1, 3, null),     // +200 %, but only 2 more boardings than usual
+                new ForecastPoint(T1, 5000, 5300, null), // +6 %, but 300 more boardings at the real peak
+                new ForecastPoint(T2, 4000, 3600, null));  // -10 %
+
+        assertThat(SeriesAnalytics.maxDeviation(points, 10)).get()
+                .extracting(ForecastPoint::periodStart).isEqualTo(T2);
+        // Without the floor the near-empty hour would win on percent alone.
+        assertThat(SeriesAnalytics.maxDeviation(points, 0)).get()
+                .extracting(ForecastPoint::periodStart).isEqualTo(T0);
     }
 
     /**
@@ -70,7 +89,7 @@ class DomainTest {
     @Test
     void attentionZonesAreThresholdedRankedAndCarryRecommendations() {
         AttentionZoneCalculator calculator = new AttentionZoneCalculator(
-                new AttentionPolicy(10, 25), new RecommendationPolicy(10));
+                new AttentionPolicy(10, 25, 10), new RecommendationPolicy(10));
         RouteForecast calm = route("R1", new ForecastPoint(T0, 100, 105, null));
         RouteForecast busy = route("R2", new ForecastPoint(T0, 100, 130, null));
         RouteForecast quiet = route("R3", new ForecastPoint(T0, 100, 85, null));

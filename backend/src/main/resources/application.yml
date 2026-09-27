@@ -57,6 +57,10 @@ tram:
     # Deviation thresholds in percent of the baseline. Values are provisional (to confirm).
     warning-pct: 10
     critical-pct: 25
+    # A point only competes for "largest deviation" when its baseline is at least this percent of the
+    # route's busiest hour that day, so a near-empty night hour cannot outrank the real peak with a
+    # deviation that is technically huge in percent but a stray boarding or two in absolute terms.
+    min-baseline-share-pct: 10
   forecast:
     # Forecasts further ahead than this are rejected (challenge brief: max 1 year).
     max-years-ahead: 1

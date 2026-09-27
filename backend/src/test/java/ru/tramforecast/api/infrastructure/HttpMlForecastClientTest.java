@@ -210,7 +210,7 @@ class HttpMlForecastClientTest {
                 new TramProperties.Ml(
                         "http", "http://127.0.0.1:" + port, Duration.ofSeconds(1), readTimeout,
                         new TramProperties.Stub(1)),
-                new TramProperties.Attention(10, 25),
+                new TramProperties.Attention(10, 25, 10),
                 new TramProperties.Forecast(1, null, null),
                 new TramProperties.Refresh(false, "0 0 * * * *"),
                 new TramProperties.Cache(Duration.ofSeconds(1), Duration.ofSeconds(1), 8));

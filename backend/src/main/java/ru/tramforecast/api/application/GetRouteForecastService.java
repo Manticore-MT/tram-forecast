@@ -47,7 +47,8 @@ public class GetRouteForecastService implements GetRouteForecastUseCase {
                 .findFirst()
                 .orElseThrow(() -> NotFoundException.route(routeId, prepared.knownRoutes()));
         ForecastPoint peak = SeriesAnalytics.peak(route.points()).orElse(null);
-        ForecastPoint maxDeviation = SeriesAnalytics.maxDeviation(route.points()).orElse(null);
+        ForecastPoint maxDeviation =
+                SeriesAnalytics.maxDeviation(route.points(), attentionPolicy.minBaselineSharePct()).orElse(null);
         Double pct = maxDeviation == null ? null : maxDeviation.deviationPct();
         AttentionLevel level = attentionPolicy.classify(pct);
         Recommendation recommendation = recommendationPolicy.recommend(pct);
