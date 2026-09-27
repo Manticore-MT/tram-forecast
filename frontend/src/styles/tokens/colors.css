@@ -48,6 +48,11 @@
 --overlay-scrim:rgba(5,6,7,.72);
 --glass-fill:rgba(255,255,255,.06);
 --glass-stroke:rgba(255,255,255,.12);
+/* Recessed control surface for anything living inside a glass panel (inputs, the scenario
+   number field) — bg-surface-2 is an opaque ink slab, tuned for opaque cards; against 6%-white
+   glass it reads as a black cutout instead of a control that belongs to the same material.
+   Lighter and still translucent, so blur/map keep showing through. */
+--glass-well:rgba(255,255,255,.12);
 }
 
 /* ── Light scope — docs, print, exported reports ────────────── */
@@ -69,5 +74,6 @@
 --brand-accent-quiet:rgba(240,57,43,.10);
 --glass-fill:rgba(14,17,19,.04);
 --glass-stroke:rgba(14,17,19,.10);
+--glass-well:rgba(14,17,19,.10);
 --overlay-scrim:rgba(14,17,19,.45);
 }

@@ -30,7 +30,7 @@ export function Card({
       : tone === "raised"
         ? "bg-bg-surface-2 ring-1 ring-inset ring-border-default shadow-md"
         : tone === "glass"
-          ? "bg-glass-fill ring-1 ring-inset ring-glass-stroke backdrop-blur-[16px]"
+          ? "bg-glass-fill ring-1 ring-inset ring-glass-stroke backdrop-blur-[16px] [--control-surface:var(--glass-well)]"
           : tone === "accent"
             ? "bg-brand text-on-accent"
             : tone === "outline"

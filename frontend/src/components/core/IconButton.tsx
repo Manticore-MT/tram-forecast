@@ -46,8 +46,9 @@ export function IconButton({
       aria-label={label}
       style={style}
       className={cn(
+        "rounded-full",
         sizeClasses,
-        variant === "secondary" && "border border-border-default bg-bg-page hover:bg-bg-surface-2 hover:text-text-primary"
+        variant === "secondary" && "border border-border-default bg-transparent hover:bg-glass-fill hover:text-text-primary"
       )}
       {...rest}
     >
