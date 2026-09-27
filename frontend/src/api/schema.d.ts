@@ -286,6 +286,8 @@ export interface components {
         };
         SlimPoint: {
             /** Format: double */
+            actual?: number;
+            /** Format: double */
             baseline?: number;
             /** Format: double */
             forecast?: number;
