@@ -1,0 +1,368 @@
+<!doctype html>
+<!--
+  PROTOTYPE — throwaway, do not fold into the app as-is.
+  Question: which encoding for forecast/baseline/actual/deviation reads best on the
+  dispatcher time strip? Three structurally different variants, switchable below.
+  See conversation in the tram-forecast session for the full UX writeup that led here.
+-->
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PROTOTYPE: time strip — 3 варианта</title>
+<style>
+  :root {
+    --bg-page: #0E1113;
+    --bg-surface: #15191C;
+    --bg-surface-2: #1C2226;
+    --bg-elevated: #252D33;
+    --text-primary: #FFFFFF;
+    --text-secondary: #9AA6AE;
+    --text-muted: #697680;
+    --hairline: rgba(255,255,255,.09);
+    --hairline-strong: rgba(255,255,255,.16);
+    --signal-red: #F0392B;
+    --focus-cyan: #22D3EE;
+    --data-actual: #22D3EE;
+    --load-1: #2ED47A;
+    --load-2: #A3E635;
+    --load-3: #FFB020;
+    --load-4: #FB7B3C;
+    --load-5: #F0392B;
+    --status-ok: #2ED47A;
+    --status-warn: #FFB020;
+    --status-danger: #F0392B;
+    --radius-sm: 10px;
+    --radius-md: 14px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: Manrope, "Helvetica Neue", Arial, sans-serif;
+    padding: 24px 24px 96px;
+  }
+  h1 { font-size: 20px; font-weight: 700; margin: 0 0 4px; }
+  .sub { color: var(--text-secondary); font-size: 13px; margin: 0 0 24px; }
+  .card {
+    background: var(--bg-surface);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-md);
+    padding: 20px;
+  }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+    color: var(--text-secondary); margin-bottom: 4px;
+  }
+  .variant-title { font-size: 16px; font-weight: 700; margin: 0 0 2px; }
+  .variant-desc { font-size: 13px; color: var(--text-secondary); margin: 0 0 20px; max-width: 640px; }
+
+  .strip {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(24, minmax(0, 1fr));
+    align-items: end;
+    height: 160px;
+    gap: 2px;
+    padding: 0 4px;
+  }
+  .strip.diverging { align-items: center; }
+
+  .col { position: relative; display: flex; flex-direction: column; align-items: center; height: 100%; min-width: 0; }
+  .bar-zone { position: relative; flex: 1; width: 100%; display: flex; align-items: end; justify-content: center; }
+  .bar {
+    width: 100%;
+    border-radius: 3px 3px 0 0;
+    position: relative;
+    min-height: 2px;
+  }
+  .hatch {
+    background-image: repeating-linear-gradient(135deg, rgba(0,0,0,0.28) 0 3px, transparent 3px 6px);
+  }
+  .ghost-outline {
+    position: absolute;
+    left: 0; right: 0;
+    border: 1px dashed rgba(255,255,255,.45);
+    border-bottom: none;
+    border-radius: 3px 3px 0 0;
+    pointer-events: none;
+  }
+  .now-line {
+    position: absolute; top: 0; bottom: 0; width: 1px;
+    background: var(--text-primary);
+  }
+  .hour-label { font-size: 10px; color: var(--text-muted); margin-top: 6px; font-family: "JetBrains Mono", monospace; }
+
+  /* Variant A: diverging */
+  .zero-line { position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--hairline-strong); }
+  .div-bar { width: 100%; border-radius: 3px; position: absolute; left: 0; }
+
+  /* Variant B: baseline tick */
+  .baseline-tick {
+    position: absolute; left: -2px; right: -2px; height: 2px;
+    background: var(--text-primary); opacity: .8; border-radius: 1px;
+  }
+
+  /* Variant C: severity strip */
+  .severity-row { display: grid; grid-template-columns: repeat(24, minmax(0, 1fr)); gap: 2px; padding: 0 4px; margin-top: 6px; }
+  .severity-cell { height: 4px; border-radius: 2px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin-top: 18px; font-size: 12px; color: var(--text-secondary); }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .swatch.line { width: 16px; height: 2px; border-radius: 1px; background: var(--text-primary); }
+  .swatch.dash { width: 16px; height: 0; border-top: 1px dashed rgba(255,255,255,.6); }
+  .swatch.hatch { background-color: var(--text-muted); background-image: repeating-linear-gradient(135deg, rgba(0,0,0,0.4) 0 3px, transparent 3px 6px); }
+
+  section.variant { display: none; }
+  section.variant.active { display: block; }
+
+  .switcher {
+    position: fixed;
+    bottom: 20px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 12px;
+    background: var(--bg-elevated);
+    border: 1px solid var(--hairline-strong);
+    border-radius: 999px;
+    padding: 8px 10px 8px 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,.5);
+    font-family: Manrope, sans-serif;
+    z-index: 100;
+  }
+  .switcher button {
+    background: var(--bg-surface-2);
+    border: none;
+    color: var(--text-primary);
+    width: 32px; height: 32px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .switcher button:hover { background: var(--bg-surface); }
+  .switcher .label {
+    font-size: 13px; font-weight: 600; min-width: 220px; text-align: center;
+    color: var(--text-primary);
+  }
+  .switcher .label small { color: var(--text-secondary); font-weight: 500; }
+</style>
+</head>
+<body>
+
+<h1>Три варианта полосы времени — как показывать «загрузку» и «отклонение от нормы»</h1>
+<p class="sub">Черновик для обсуждения, не готовый экран. Цифры выдуманные, просто чтобы было на чём сравнивать — 24 часа одного дня, сейчас идёт 14:00 (после этой отметки — ещё не наступившее время, дальше только прогноз).</p>
+
+<div class="card">
+
+<section class="variant active" data-variant="A">
+  <div class="eyebrow">Вариант 1</div>
+  <div class="variant-title">Столбики растут вверх или вниз от обычного уровня</div>
+  <p class="variant-desc">Средняя линия — это «как обычно бывает в этот час». Столбик выше линии — трамваи будут переполнены сильнее обычного. Столбик ниже линии — пассажиров меньше, чем всегда. Цвет столбика показывает, насколько это серьёзно (спокойный зелёный → тревожный красный). Штриховка — это ещё прогноз, час не наступил, факта пока нет. Пунктирный контур — как выглядел бы прогноз, если бы диспетчер не менял его вручную (не крутил поправки на погоду/событие/сезон).</p>
+  <div id="strip-A" class="strip diverging"></div>
+  <div class="legend">
+    <span class="legend-item"><span class="swatch" style="background:var(--status-ok)"></span>обычная загрузка</span>
+    <span class="legend-item"><span class="swatch" style="background:var(--status-warn)"></span>заметно отличается от обычного</span>
+    <span class="legend-item"><span class="swatch" style="background:var(--status-danger)"></span>сильно отличается от обычного</span>
+    <span class="legend-item"><span class="swatch hatch"></span>ещё не наступило — это прогноз</span>
+    <span class="legend-item"><span class="swatch dash"></span>прогноз без ручных поправок диспетчера</span>
+  </div>
+</section>
+
+<section class="variant" data-variant="B">
+  <div class="eyebrow">Вариант 2</div>
+  <div class="variant-title">Как сейчас, плюс чёрточка «обычный уровень»</div>
+  <p class="variant-desc">Столбики не меняются: высота — сколько пассажиров ожидается, цвет — насколько трамвай забит (зелёный — свободно, красный — переполнено). Добавляется только одна деталь: белая чёрточка на столбике показывает, сколько обычно бывает в этот час. Столбик выше чёрточки — людей больше, чем всегда; ниже — меньше.</p>
+  <div id="strip-B" class="strip"></div>
+  <div class="legend">
+    <span class="legend-item"><span class="swatch" style="background:var(--load-1)"></span>Свободно</span>
+    <span class="legend-item"><span class="swatch" style="background:var(--load-3)"></span>Умеренно</span>
+    <span class="legend-item"><span class="swatch" style="background:var(--load-5)"></span>Перегружено</span>
+    <span class="legend-item"><span class="swatch line"></span>чёрточка — сколько обычно бывает в этот час</span>
+    <span class="legend-item"><span class="swatch hatch"></span>ещё не наступило — это прогноз</span>
+    <span class="legend-item"><span class="swatch dash"></span>прогноз без ручных поправок диспетчера</span>
+  </div>
+</section>
+
+<section class="variant" data-variant="C">
+  <div class="eyebrow">Вариант 3</div>
+  <div class="variant-title">Как сейчас, плюс отдельная полоска под столбиками</div>
+  <p class="variant-desc">Столбики вообще не трогаем — выглядят и красятся точно как сейчас. Под ними отдельной строкой — узкая цветная полоска на каждый час: она одна отвечает за вопрос «насколько это отличается от обычного», столбики отдельно отвечают за «сколько людей».</p>
+  <div id="strip-C" class="strip"></div>
+  <div id="severity-C" class="severity-row"></div>
+  <div class="legend">
+    <span class="legend-item"><span class="swatch" style="background:var(--load-1)"></span>Свободно (столбик)</span>
+    <span class="legend-item"><span class="swatch" style="background:var(--load-5)"></span>Перегружено (столбик)</span>
+    <span class="legend-item"><span class="swatch" style="background:var(--status-danger)"></span>сильно отличается от обычного (полоска)</span>
+    <span class="legend-item"><span class="swatch hatch"></span>ещё не наступило — это прогноз</span>
+    <span class="legend-item"><span class="swatch dash"></span>прогноз без ручных поправок диспетчера</span>
+  </div>
+</section>
+
+</div>
+
+<div class="switcher" role="group" aria-label="Переключатель вариантов">
+  <button id="prev" aria-label="Предыдущий вариант">‹</button>
+  <span class="label" id="label"></span>
+  <button id="next" aria-label="Следующий вариант">›</button>
+</div>
+
+<script>
+// ---- synthetic data: 24 hourly points, "now" = end of hour 13 ----
+const NOW_INDEX = 14; // first future index
+const baseline = [120,90,70,60,70,120,300,650,800,500,420,450,470,460,480,520,650,820,700,480,380,300,220,150];
+const forecast = [115,88,72,58,65,125,310,680,820,495,410,445,460,470,560,700,1050,690,470,250,295,215,148,140];
+//                                                    ^h14 corrected  ^h17 spike        ^h20 drop
+const ghost    = [115,88,72,58,65,125,310,680,820,495,410,445,460,480,520,650,820,700,480,380,300,220,150,140];
+// ghost = uncorrected forecast; identical to forecast before "now", diverges after (scenario applied to future only)
+const actual   = [118,85,69,55,60,130,295,910,430,505,400,455,465,460]; // h7 spike, h8 crash — length 14, rest undefined
+
+function hasActual(i) { return i < actual.length; }
+function valueAt(i) { return hasActual(i) ? actual[i] : forecast[i]; }
+function loadStep(ratio) { return Math.max(0, Math.min(4, Math.floor(ratio * 5))); }
+const LOAD = ["var(--load-1)","var(--load-2)","var(--load-3)","var(--load-4)","var(--load-5)"];
+
+function deviationPct(value, base) { return (value - base) / base * 100; }
+function severityColor(pct) {
+  const abs = Math.abs(pct);
+  if (abs < 15) return "var(--status-ok)";
+  if (abs < 35) return "var(--status-warn)";
+  return "var(--status-danger)";
+}
+
+const maxAbs = Math.max(...forecast, ...actual, ...ghost);
+
+function hourLabel(i) { return String(i).padStart(2, "0"); }
+
+// ---------- Variant A: diverging ----------
+function renderA() {
+  const el = document.getElementById("strip-A");
+  const maxDev = Math.max(...baseline.map((b, i) => Math.abs(valueAt(i) - b)), ...baseline.map((b,i)=>Math.abs(ghost[i]-b)));
+  el.innerHTML = "";
+  for (let i = 0; i < 24; i++) {
+    const v = valueAt(i);
+    const dev = v - baseline[i];
+    const pct = deviationPct(v, baseline[i]);
+    const ratio = dev / (maxDev * 1.1); // -1..1 roughly
+    const half = 50; // % of column height per side
+    const h = Math.abs(ratio) * half;
+    const g = ghost[i] - baseline[i];
+    const gRatio = g / (maxDev * 1.1);
+    const gh = Math.abs(gRatio) * half;
+
+    const col = document.createElement("div");
+    col.className = "col";
+    col.innerHTML = `
+      <div class="bar-zone" style="position:relative;">
+        <div class="zero-line"></div>
+        <div class="div-bar ${hasActual(i) ? "" : "hatch"}"
+             style="height:${h}%; background:${severityColor(pct)};
+                    ${dev >= 0 ? `bottom:50%; border-radius:3px 3px 0 0;` : `top:50%; border-radius:0 0 3px 3px;`}">
+        </div>
+        ${!hasActual(i) && Math.abs(g - dev) > 1 ? `
+          <div class="ghost-outline"
+               style="height:${gh}%; ${g >= 0 ? `bottom:50%; border-radius:3px 3px 0 0; border-bottom:1px dashed rgba(255,255,255,.45);` : `top:50%; border-radius:0 0 3px 3px; border-top:1px dashed rgba(255,255,255,.45); border-bottom:none;`}">
+          </div>` : ""}
+        ${i === NOW_INDEX ? '<div class="now-line" style="height:100%;"></div>' : ""}
+      </div>
+      <div class="hour-label">${hourLabel(i)}</div>
+    `;
+    el.appendChild(col);
+  }
+}
+
+// ---------- Variant B: current bars + baseline tick ----------
+function renderB() {
+  const el = document.getElementById("strip-B");
+  el.innerHTML = "";
+  for (let i = 0; i < 24; i++) {
+    const v = valueAt(i);
+    const ratio = v / maxAbs;
+    const hPct = (v / (maxAbs * 1.1)) * 100;
+    const basePct = (baseline[i] / (maxAbs * 1.1)) * 100;
+    const g = ghost[i];
+    const gPct = (g / (maxAbs * 1.1)) * 100;
+
+    const col = document.createElement("div");
+    col.className = "col";
+    col.innerHTML = `
+      <div class="bar-zone" style="position:relative;">
+        <div class="baseline-tick" style="bottom:${basePct}%;"></div>
+        ${!hasActual(i) && Math.abs(g - v) > 1 ? `<div class="ghost-outline" style="height:${gPct}%;"></div>` : ""}
+        <div class="bar ${hasActual(i) ? "" : "hatch"}" style="height:${hPct}%; background:${LOAD[loadStep(ratio)]};"></div>
+        ${i === NOW_INDEX ? '<div class="now-line" style="height:100%;"></div>' : ""}
+      </div>
+      <div class="hour-label">${hourLabel(i)}</div>
+    `;
+    el.appendChild(col);
+  }
+}
+
+// ---------- Variant C: current bars + severity strip below ----------
+function renderC() {
+  const el = document.getElementById("strip-C");
+  const sev = document.getElementById("severity-C");
+  el.innerHTML = "";
+  sev.innerHTML = "";
+  for (let i = 0; i < 24; i++) {
+    const v = valueAt(i);
+    const ratio = v / maxAbs;
+    const hPct = (v / (maxAbs * 1.1)) * 100;
+    const g = ghost[i];
+    const gPct = (g / (maxAbs * 1.1)) * 100;
+
+    const col = document.createElement("div");
+    col.className = "col";
+    col.innerHTML = `
+      <div class="bar-zone" style="position:relative;">
+        ${!hasActual(i) && Math.abs(g - v) > 1 ? `<div class="ghost-outline" style="height:${gPct}%;"></div>` : ""}
+        <div class="bar ${hasActual(i) ? "" : "hatch"}" style="height:${hPct}%; background:${LOAD[loadStep(ratio)]};"></div>
+        ${i === NOW_INDEX ? '<div class="now-line" style="height:100%;"></div>' : ""}
+      </div>
+      <div class="hour-label">${hourLabel(i)}</div>
+    `;
+    el.appendChild(col);
+
+    const pct = deviationPct(v, baseline[i]);
+    const cell = document.createElement("div");
+    cell.className = "severity-cell";
+    cell.style.background = severityColor(pct);
+    sev.appendChild(cell);
+  }
+}
+
+renderA(); renderB(); renderC();
+
+// ---------- switcher ----------
+const VARIANTS = [
+  { key: "A", num: 1, name: "Вверх-вниз от нормы" },
+  { key: "B", num: 2, name: "Чёрточка нормы на столбике" },
+  { key: "C", num: 3, name: "Отдельная полоска под столбиками" },
+];
+function currentIndex() {
+  const q = new URLSearchParams(location.search).get("variant") || "A";
+  const idx = VARIANTS.findIndex((v) => v.key === q);
+  return idx === -1 ? 0 : idx;
+}
+function show(idx) {
+  idx = (idx + VARIANTS.length) % VARIANTS.length;
+  const v = VARIANTS[idx];
+  document.querySelectorAll("section.variant").forEach((s) => s.classList.toggle("active", s.dataset.variant === v.key));
+  document.getElementById("label").innerHTML = `Вариант ${v.num} <small>— ${v.name}</small>`;
+  const params = new URLSearchParams(location.search);
+  params.set("variant", v.key);
+  history.replaceState(null, "", "?" + params.toString());
+}
+let idx = currentIndex();
+show(idx);
+document.getElementById("prev").addEventListener("click", () => show(--idx));
+document.getElementById("next").addEventListener("click", () => show(++idx));
+document.addEventListener("keydown", (e) => {
+  const tag = (e.target.tagName || "").toLowerCase();
+  if (tag === "input" || tag === "textarea" || e.target.isContentEditable) return;
+  if (e.key === "ArrowLeft") show(--idx);
+  if (e.key === "ArrowRight") show(++idx);
+});
+</script>
+</body>
+</html>
