@@ -10,7 +10,7 @@ import { MapCanvas } from "../map/MapCanvas";
 import { zonesFromAttention } from "../panels/AttentionPanel";
 import { DeviationList } from "../shared";
 import { useDispatcher } from "../store";
-import { SCALE_UNITS, addMonths, pointLabel, windowLabel, type Scale } from "../time";
+import { SCALE_UNITS, addDays, addMonths, pointLabel, windowLabel, type Scale } from "../time";
 import { deviationPct, fmtInt, fmtPct, fmtSigned, toneForPct } from "../format";
 import { LineChart, LineLegend, type LineSeries } from "./LineChart";
 import { comparisonCursor, networkPoints, openRoute, peakIndex, routeTotals } from "./network";
@@ -39,10 +39,12 @@ export function DynamicsPanel({ network, scale, cursor, params }: DynamicsPanelP
   const [showCustom, setShowCustom] = React.useState(false);
 
   // "Неделю назад" reuses the same "-1 window" shift already used elsewhere (comparisonCursor's
-  // "period" mode); "месяц назад" is a fixed calendar-month shift, independent of scale — the two
-  // can be shown together, unlike the single either/or comparison on the KPI card above.
+  // "period" mode). "Месяц назад" on the day scale is 4 недели (28 дней), not a calendar month —
+  // that keeps it on the same day of the week, which matters far more for traffic than landing on
+  // the same day-of-month. Week/month/year scales don't have a "day of week" to match, so those
+  // keep the calendar-month shift.
   const weekAgoDate = comparisonCursor(scale, cursor, "period");
-  const monthAgoDate = addMonths(cursor, -1);
+  const monthAgoDate = scale === "day" ? addDays(cursor, -28) : addMonths(cursor, -1);
   // Prefilled so the date field is never blank when the checkbox is switched on — "2 месяца назад"
   // is just a starting point distinct from the two fixed presets above, not a meaningful default.
   const [customDate, setCustomDate] = React.useState(() => addMonths(cursor, -2));
@@ -99,7 +101,7 @@ export function DynamicsPanel({ network, scale, cursor, params }: DynamicsPanelP
       <QueryGate q={network}>
         {() => points.length === 0 ? <Empty>Нет прогноза по маршрутам за этот период</Empty> : (
           <>
-            {series.length > 2 && <LineLegend series={series} />}
+            <LineLegend series={series} />
             <LineChart
               ariaLabel="Прогноз пассажиропотока по сети за период, с выбранными сравнениями"
               series={series}
