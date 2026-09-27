@@ -5,6 +5,11 @@ spring:
     url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/tram_forecast}
     username: ${SPRING_DATASOURCE_USERNAME:tram_forecast}
     password: ${SPRING_DATASOURCE_PASSWORD:tram_forecast}
+    hikari:
+      # Default (10) queues up under concurrent load — every read/write path but /api/history goes
+      # through this pool, and requests were waiting on a free connection, not on CPU. Postgres'
+      # own default max_connections is 100; this leaves headroom for other clients (psql, backups).
+      maximum-pool-size: 30
   flyway:
     enabled: true
 

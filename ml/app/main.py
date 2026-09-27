@@ -17,6 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from .engine import Engine, ROUTES, calendar_fields, period_days
 from .champion import load_champion, SHA256 as CHAMPION_SHA256
 from .history import History
+from .factors import router as factors_router
 
 ROOT = Path(__file__).resolve().parents[1]
 ZONE = ZoneInfo("Europe/Moscow")
@@ -139,6 +140,7 @@ async def lifespan(app):
 
 app = FastAPI(title="Tram ML service", version="1.0.0", lifespan=lifespan,
               description="Ridge-прогноз маршрутных валидаций. /predict — совместимый демонстрационный адаптер остановок; /predict/routes — исходные маршрутные значения. Данные заканчиваются 31.10.2025.")
+app.include_router(factors_router)
 
 
 @app.get("/", include_in_schema=False)
@@ -165,6 +167,9 @@ def metadata():
                 stopAllocation="uniform_demo_not_measured", segmentOccupancyAvailable=False,
                 baselineMethod="Медиана за 56 дней перед 01.11.2025: маршрут × эффективный день недели × час; праздники как воскресенье, рабочая суббота как пятница. Нули и ограничения в истории сохранены.",
                 corrections="Погода, событие и сезон — сценарные множители backend; в ML повторно не применяются.",
+                externalFactorProfile={"endpoint": "/factors/predict", "evidence": "/factors/evidence",
+                    "experimental": True, "start": "2025-11-01", "end": "2025-12-31",
+                    "categories": ["calendar", "weather", "traffic", "events"], "platformScore": None},
                 limitations=["Нет фактов по остановкам, высадок и измерений заполненности салона.",
                              "Московское время — соглашение API; timezone сырого tran_date_time документально не подтверждён.",
                              "В сценарии 2026 предполагается нормальная работа маршрута 50.",

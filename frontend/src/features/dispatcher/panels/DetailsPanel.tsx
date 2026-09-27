@@ -1,5 +1,5 @@
-import { Card, Stat } from "../../../components";
-import { ErrorNotice, LoadingNotice } from "../../../shared/notices";
+import { Card, Stat } from "@/components";
+import { ErrorNotice, LoadingNotice } from "@/shared/notices.tsx";
 import { useDispatcher, type Place } from "../store";
 import { useCurrentSeries, useFocusIndex } from "../forecast";
 import { SCALE_UNITS, pointLabel } from "../time";
@@ -81,6 +81,7 @@ export function DetailsPanel() {
               <div className="mt-eyebrow mb-2">Прогноз и базовый уровень за выбранное окно</div>
               <LineLegend series={[{ label: "прогноз", color: "var(--brand-accent)" }, { label: "база", color: "var(--cyan-500)", dashed: true }]} />
               <LineChart ariaLabel="Прогноз и базовый уровень по периодам" height={150}
+                maxTicks={6}
                 labels={series.points.map((p) => pointLabel(scale, p.periodStart))}
                 series={[{ label: "прогноз", color: "var(--brand-accent)", values: series.points.map((p) => p.forecast) },
                   { label: "база", color: "var(--cyan-500)", dashed: true, values: series.points.map((p) => p.baseline) }]} />

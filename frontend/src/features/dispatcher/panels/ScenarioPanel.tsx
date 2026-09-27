@@ -19,6 +19,7 @@ export function ScenarioPanel() {
   const setCorrection = useDispatcher((s) => s.setCorrection);
   const resetCorrections = useDispatcher((s) => s.resetCorrections);
   const active = useScenarioActive();
+  const combinedFactor = corrections.weather * corrections.event * corrections.season;
 
   const current = useCurrentSeries();
   const baseline = useUncorrectedSeries();
@@ -55,6 +56,10 @@ export function ScenarioPanel() {
             onCommit={(v) => setCorrection(key, v)}
           />
         ))}
+        <p className="text-caption text-text-secondary">
+          Итоговая поправка: ×{combinedFactor.toFixed(3)} ({fmtPct((combinedFactor - 1) * 100)}).
+          Проверка эффекта реальных данных доступна в «Обзоре», в блоке внешних факторов.
+        </p>
       </div>
 
       <div className="border-t border-t-border-subtle pt-3">

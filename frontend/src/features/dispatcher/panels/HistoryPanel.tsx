@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { getHistoryComparison, getRouteForecast, getRoutes, type HistoryHour } from "../../../api/client";
+import { getHistoryComparison, getRouteForecast, getRoutes, type HistoryHour } from "@/api/client.ts";
 import { fmtInt } from "../format";
-import { ErrorNotice, LoadingNotice } from "../../../shared/notices";
+import { ErrorNotice, LoadingNotice } from "@/shared/notices.tsx";
 import { LineChart, LineLegend, type LineSeries } from "../overview/LineChart";
 
 const DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"];
@@ -72,9 +72,10 @@ export function HistoryPanel({ date, routeId }: { date: string; routeId: string 
         <LineLegend series={hourly} />
         <LineChart
           ariaLabel="Почасовое сравнение: неделю назад, месяц назад и типичный день недели"
-          series={hourly}
+                    series={hourly}
           labels={HOURS}
           height={160}
+          maxTicks={6}
         />
       </div>
       <p className="text-caption text-text-muted">
