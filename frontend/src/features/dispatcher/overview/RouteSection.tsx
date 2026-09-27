@@ -60,7 +60,7 @@ export function RouteSection({ routeIds, params, scale, cursor }: RouteSectionPr
           <LastYear forecast={forecast} scale={scale} cursor={cursor} />
           <div className="lg:col-span-2 2xl:col-span-1">
             <Block title="Типичная неделя">
-              <QueryGate q={matrix}>
+              <QueryGate q={matrix} errorHint="История по часам для этого маршрута ещё не накоплена.">
                 {() => {
                   const cells = matrix.data?.cells ?? [];
                   return cells.length === 0 ? <Empty>Нет данных о загрузке по часам</Empty> : <WeekHeatmap cells={cells} />;

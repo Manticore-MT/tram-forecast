@@ -2,14 +2,24 @@ import { Icon } from "../components";
 import { describeError } from "./errors";
 
 /** Per-widget error state: each panel shows its own instead of a global toast. */
-export function ErrorNotice({ error, onRetry }: { error: unknown; onRetry?: () => void }) {
+export function ErrorNotice({
+  error,
+  onRetry,
+  hintOverride,
+}: {
+  error: unknown;
+  onRetry?: () => void;
+  /** Replaces the generic per-code hint when it doesn't fit this query (e.g. a date-picking tip on an endpoint with no date param). */
+  hintOverride?: string;
+}) {
   const { title, hint, tone, retryable } = describeError(error);
+  const shownHint = hintOverride ?? hint;
   return (
     <div className="flex items-start gap-3 rounded-md bg-bg-surface-2 p-4 shadow-(--inset-hairline)">
       <Icon name={tone === "info" ? "info" : "triangle-alert"} size={16} style={{ marginTop: 2 }} />
       <div className="flex-1 min-w-0">
         <div className="text-body-s text-text-secondary">{title}</div>
-        {hint && <div className="mt-1 text-caption text-text-muted">{hint}</div>}
+        {shownHint && <div className="mt-1 text-caption text-text-muted">{shownHint}</div>}
       </div>
       {retryable && onRetry && (
         <button
