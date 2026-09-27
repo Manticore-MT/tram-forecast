@@ -299,7 +299,7 @@
                 }
               }
             },
-            "description" : "A CSV attachment, UTF-8, header row first"
+            "description" : "A CSV or XLSX attachment, header row first"
           },
           "400" : {
             "content" : {
@@ -352,7 +352,7 @@
             "description" : "No forecast is stored for the request and the ML service is unavailable"
           }
         },
-        "summary" : "Export the forecast as CSV (one row per route and period)",
+        "summary" : "Export the forecast as CSV or XLSX (one row per route and period)",
         "tags" : [ "export-controller" ]
       }
     },
