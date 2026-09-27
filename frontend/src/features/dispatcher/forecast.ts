@@ -73,11 +73,18 @@ export function usePlaceSeries(place: Place, params: CommonParams | undefined): 
     if (place.level === "network") {
       const routes = network.data?.routes ?? [];
       const first = routes[0]?.points ?? [];
-      return first.map((p, i) => ({
-        periodStart: p.periodStart ?? "",
-        forecast: routes.reduce((sum, r) => sum + (r.points?.[i]?.forecast ?? 0), 0),
-        baseline: routes.reduce((sum, r) => sum + (r.points?.[i]?.baseline ?? 0), 0),
-      }));
+      return first.map((p, i) => {
+        // The network total is only a real fact once every route has one for this period —
+        // otherwise it would silently understate the network, not report "no fact yet".
+        const actuals = routes.map((r) => r.points?.[i]?.actual);
+        const actual = actuals.every((a) => a != null) ? actuals.reduce((sum, a) => sum + a!, 0) : undefined;
+        return {
+          periodStart: p.periodStart ?? "",
+          forecast: routes.reduce((sum, r) => sum + (r.points?.[i]?.forecast ?? 0), 0),
+          baseline: routes.reduce((sum, r) => sum + (r.points?.[i]?.baseline ?? 0), 0),
+          actual,
+        };
+      });
     }
     return (route.data?.points ?? []).map((p) => ({
       periodStart: p.periodStart ?? "",

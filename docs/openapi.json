@@ -1221,6 +1221,10 @@
       "SlimPoint" : {
         "type" : "object",
         "properties" : {
+          "actual" : {
+            "type" : "number",
+            "format" : "double"
+          },
           "baseline" : {
             "type" : "number",
             "format" : "double"

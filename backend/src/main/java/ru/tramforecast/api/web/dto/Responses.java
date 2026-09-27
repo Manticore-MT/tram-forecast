@@ -33,13 +33,15 @@ public final class Responses {
     }
 
     /**
-     * A compact point, enough to paint a map at the time-slider position.
+     * A compact point, enough to paint a map at the time-slider position and to tell a known past
+     * period from a still-open forecast.
      *
      * @param periodStart start of the period
      * @param baseline    usual level
      * @param forecast    forecast value
+     * @param actual      observed value, {@code null} until the period is known
      */
-    public record SlimPoint(OffsetDateTime periodStart, double baseline, double forecast) {
+    public record SlimPoint(OffsetDateTime periodStart, double baseline, double forecast, Double actual) {
     }
 
     /**
