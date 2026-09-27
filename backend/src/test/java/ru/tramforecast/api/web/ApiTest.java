@@ -71,7 +71,7 @@ class ApiTest {
         InMemoryForecastRepository forecasts = new InMemoryForecastRepository();
         InMemoryActualRepository actuals = new InMemoryActualRepository(MOSCOW);
         ForecastPreparer preparer = new ForecastPreparer(new ForecastLoader(forecasts, ml), actuals, dates);
-        AttentionPolicy attention = new AttentionPolicy(10, 25);
+        AttentionPolicy attention = new AttentionPolicy(10, 25, 10);
         RecommendationPolicy recommendation = new RecommendationPolicy(10);
         HistoryAligner history = new HistoryAligner(actuals, MOSCOW);
         ApiMapper mapper = new ApiMapper(MOSCOW);

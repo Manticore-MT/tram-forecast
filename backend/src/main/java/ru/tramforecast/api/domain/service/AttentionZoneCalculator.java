@@ -38,7 +38,8 @@ public final class AttentionZoneCalculator {
     public List<AttentionZone> calculate(List<RouteForecast> forecasts) {
         List<AttentionZone> zones = new ArrayList<>();
         for (RouteForecast forecast : forecasts) {
-            Optional<ForecastPoint> maxDeviation = SeriesAnalytics.maxDeviation(forecast.points());
+            Optional<ForecastPoint> maxDeviation =
+                    SeriesAnalytics.maxDeviation(forecast.points(), attentionPolicy.minBaselineSharePct());
             Optional<ForecastPoint> peak = SeriesAnalytics.peak(forecast.points());
             if (maxDeviation.isEmpty() || peak.isEmpty()) {
                 continue;

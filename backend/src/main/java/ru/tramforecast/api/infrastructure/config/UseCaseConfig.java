@@ -48,7 +48,10 @@ public class UseCaseConfig {
      */
     @Bean
     public AttentionPolicy attentionPolicy(TramProperties properties) {
-        return new AttentionPolicy(properties.attention().warningPct(), properties.attention().criticalPct());
+        return new AttentionPolicy(
+                properties.attention().warningPct(),
+                properties.attention().criticalPct(),
+                properties.attention().minBaselineSharePct());
     }
 
     /**
