@@ -1,19 +1,17 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Input, Select } from "../../../components";
-import { Panel } from "../../../shared/Panel";
+import { Input, Select } from "@/components";
+import { Panel } from "@/shared/Panel.tsx";
 import { LineChart, LineLegend } from "./LineChart";
 import { QueryGate } from "./QueryGate";
 
-type Metric = { wape: number; score: number; actualSum: number; absoluteError: number; observations: number };
+type Metric = { wape: number };
 type Evidence = {
-  modelVersion: string;
   aggregate: Record<string, Metric>;
-  sources: Record<string, { label: string; urls: string[]; method: string; availability: string }>;
+  sources: Record<string, { label: string }>;
   effects: Record<string, { wapeGain: number; improvedWindows: number; totalWindows: number }>;
-  windows: { start: string; end: string; trafficCoverage: number; metrics: Record<string, Metric> }[];
 };
-type Forecasts = { modelVersion: string; routeIds: string[]; variants: Record<string, Record<string, number[]>> };
+type Forecasts = { variants: Record<string, Record<string, number[]>> };
 async function load<T>(path: string): Promise<T> {
   const response = await fetch(path);
   if (!response.ok) throw new Error("Не удалось загрузить проверку внешних факторов");
@@ -47,22 +45,7 @@ export function FactorEvidencePanel() {
           </tr>)}</tbody>
         </table></div>
         <p className="text-caption text-text-muted">Плюс — источник уменьшил ошибку; минус — увеличил. Каждая версия заново обучена на одинаковых строках и с одинаковыми параметрами, без одной категории признаков. Эффекты могут зависеть друг от друга и не складываются.</p>
-        <details><summary className="cursor-pointer">Периоды проверки и источники</summary>
-          <div className="flex flex-col gap-4 pt-3">
-            {data.windows.map((window) => <div key={window.start} className="text-caption">
-              <strong>{window.start} — {window.end}</strong>: WAPE всех факторов {pct(window.metrics.all.wape)};
-              покрытие трафиком часов 05:00–23:59: {pct(window.trafficCoverage)}.
-              <div>{Object.entries(data.sources).map(([key, source]) => <span key={key} className="mr-4">{source.label}: {gain(window.metrics[`without_${key}`].wape - window.metrics.all.wape)}</span>)}</div>
-            </div>)}
-            {Object.entries(data.sources).map(([key, source]) => <div key={key} className="text-caption">
-              <strong>{source.label}. </strong>{source.method} {source.availability}
-              <div className="flex gap-4">{source.urls.map((url, i) => <a key={url} href={url} target="_blank" rel="noreferrer" className="underline">Источник {i + 1}</a>)}</div>
-            </div>)}
-            <p className="text-caption text-text-muted">Факты обучения заканчиваются до начала каждого окна. Окна проверки не пересекаются. Погода и внешние события целевого периода использованы ретроспективно. Результат не доказывает причинное влияние и не является независимым финальным тестом.</p>
-            <a className="text-caption underline" href="/factors/evidence.json" download>Скачать полный отчёт JSON</a>
-            <a className="text-caption underline" href="/factors/methodology.md" download>Область применимости, адаптация и воспроизведение</a>
-          </div>
-        </details>
+        <a className="text-caption underline" href="/factors/evidence.json" download>Скачать полный отчёт JSON</a>
         <div className="mt-eyebrow">Как меняется прогноз без выбранного фактора</div>
         <div className="flex flex-wrap gap-3">
           <Select value={factor} aria-label="Убираемый фактор" onChange={e => setFactor(e.target.value)} options={Object.entries(data.sources).map(([value, source]) => ({ value, label: source.label }))} />
