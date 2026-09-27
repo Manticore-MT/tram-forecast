@@ -1,17 +1,19 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { Badge, Icon } from "../../../components";
-import type { useAttention, useRoutes } from "../../../api/hooks";
+import { Badge, Checkbox, Icon, Input } from "../../../components";
+import { useRoutes, type CommonParams } from "../../../api/hooks";
+import type { useAttention } from "../../../api/hooks";
 import { ErrorNotice } from "../../../shared/notices";
 import { Panel } from "../../../shared/Panel";
 import { LOAD_HEX, LoadLegend, loadStep } from "../../../shared/load";
 import { MapCanvas } from "../map/MapCanvas";
 import { zonesFromAttention } from "../panels/AttentionPanel";
 import { DeviationList } from "../shared";
-import { SCALE_UNITS, pointLabel, type Scale } from "../time";
+import { useDispatcher } from "../store";
+import { SCALE_UNITS, addDays, addMonths, pointLabel, windowLabel, type Scale } from "../time";
 import { deviationPct, fmtInt, fmtPct, fmtSigned, toneForPct } from "../format";
 import { LineChart, LineLegend, type LineSeries } from "./LineChart";
-import { networkPoints, openRoute, peakIndex, routeTotals } from "./network";
+import { comparisonCursor, networkPoints, openRoute, peakIndex, routeTotals } from "./network";
 import { Empty, QueryGate, TONE_TEXT } from "./QueryGate";
 
 type RoutesQuery = ReturnType<typeof useRoutes>;
@@ -20,30 +22,88 @@ const TONE_BG = { ok: "bg-status-ok", warn: "bg-status-warn", danger: "bg-status
 
 export interface DynamicsPanelProps {
   network: RoutesQuery;
-  comparison: RoutesQuery;
   scale: Scale;
-  comparisonLabel: string;
+  cursor: string;
+  /** Same window params `network` was fetched with (scenario corrections included) — comparison
+   *  lines reuse them, only the date moves. */
+  params: CommonParams | undefined;
 }
 
-export function DynamicsPanel({ network, comparison, scale, comparisonLabel }: DynamicsPanelProps) {
+const COMPARE_COLORS = { weekAgo: "var(--cyan-500)", monthAgo: "var(--text-secondary)", custom: "var(--status-warn)" } as const;
+
+export function DynamicsPanel({ network, scale, cursor, params }: DynamicsPanelProps) {
+  const latestDate = useDispatcher((s) => s.latestDate);
+  const forecastFrom = useDispatcher((s) => s.forecastFrom);
+  const [showWeekAgo, setShowWeekAgo] = React.useState(false);
+  const [showMonthAgo, setShowMonthAgo] = React.useState(false);
+  const [showCustom, setShowCustom] = React.useState(false);
+
+  // "Неделю назад" reuses the same "-1 window" shift already used elsewhere (comparisonCursor's
+  // "period" mode). "Месяц назад" on the day scale is 4 недели (28 дней), not a calendar month —
+  // that keeps it on the same day of the week, which matters far more for traffic than landing on
+  // the same day-of-month. Week/month/year scales don't have a "day of week" to match, so those
+  // keep the calendar-month shift.
+  const weekAgoDate = comparisonCursor(scale, cursor, "period");
+  const monthAgoDate = scale === "day" ? addDays(cursor, -28) : addMonths(cursor, -1);
+  // Prefilled so the date field is never blank when the checkbox is switched on — "2 месяца назад"
+  // is just a starting point distinct from the two fixed presets above, not a meaningful default.
+  const [customDate, setCustomDate] = React.useState(() => addMonths(cursor, -2));
+
+  const weekAgo = useRoutes(showWeekAgo && params ? { ...params, date: weekAgoDate } : undefined);
+  const monthAgo = useRoutes(showMonthAgo && params ? { ...params, date: monthAgoDate } : undefined);
+  const custom = useRoutes(showCustom && params ? { ...params, date: customDate } : undefined);
+
   const points = networkPoints(network.data?.routes ?? []);
-  const before = networkPoints(comparison.data?.routes ?? []);
   const series: LineSeries[] = [
     { label: "прогноз", values: points.map((p) => p.forecast), color: "var(--brand-accent)" },
     { label: "базовый уровень", values: points.map((p) => p.baseline), color: "var(--text-muted)", quiet: true },
   ];
-  if (before.length > 0) {
-    series.push({ label: comparisonLabel, values: before.map((p) => p.forecast), color: "var(--text-secondary)", dashed: true, quiet: true });
+  let anyCompareError = false;
+  if (showWeekAgo) {
+    const before = networkPoints(weekAgo.data?.routes ?? []);
+    if (before.length > 0) series.push({ label: windowLabel(scale, weekAgoDate), values: before.map((p) => p.forecast), color: COMPARE_COLORS.weekAgo, dashed: true, quiet: true });
+    anyCompareError ||= weekAgo.isError;
+  }
+  if (showMonthAgo) {
+    const before = networkPoints(monthAgo.data?.routes ?? []);
+    if (before.length > 0) series.push({ label: windowLabel(scale, monthAgoDate), values: before.map((p) => p.forecast), color: COMPARE_COLORS.monthAgo, dashed: true, quiet: true });
+    anyCompareError ||= monthAgo.isError;
+  }
+  if (showCustom) {
+    const before = networkPoints(custom.data?.routes ?? []);
+    if (before.length > 0) series.push({ label: windowLabel(scale, customDate), values: before.map((p) => p.forecast), color: COMPARE_COLORS.custom, dashed: true, quiet: true });
+    anyCompareError ||= custom.isError;
   }
   const peak = peakIndex(points);
 
   return (
-    <Panel title="Динамика по сети" action={points.length > 0 ? <LineLegend series={series} /> : undefined}>
+    <Panel
+      title="Динамика по сети"
+      action={
+        <div className="flex flex-wrap items-center gap-4">
+          <Checkbox label="Неделю назад" checked={showWeekAgo} onChange={(e) => setShowWeekAgo(e.target.checked)} />
+          <Checkbox label="Месяц назад" checked={showMonthAgo} onChange={(e) => setShowMonthAgo(e.target.checked)} />
+          <Checkbox label="Своя дата" checked={showCustom} onChange={(e) => setShowCustom(e.target.checked)} />
+          {showCustom && (
+            <Input
+              size="sm"
+              type="date"
+              aria-label="Своя дата для сравнения"
+              value={customDate}
+              max={latestDate ?? undefined}
+              min={forecastFrom ?? undefined}
+              onChange={(e) => setCustomDate(e.target.value)}
+            />
+          )}
+        </div>
+      }
+    >
       <QueryGate q={network}>
         {() => points.length === 0 ? <Empty>Нет прогноза по маршрутам за этот период</Empty> : (
           <>
+            <LineLegend series={series} />
             <LineChart
-              ariaLabel="Прогноз пассажиропотока по сети за период"
+              ariaLabel="Прогноз пассажиропотока по сети за период, с выбранными сравнениями"
               series={series}
               labels={points.map((p) => pointLabel(scale, p.periodStart))}
               marker={peak >= 0 ? {
@@ -52,7 +112,7 @@ export function DynamicsPanel({ network, comparison, scale, comparisonLabel }: D
                 label: `пик ${pointLabel(scale, points[peak].periodStart)} · ${fmtInt(points[peak].forecast)} ${SCALE_UNITS[scale]}`,
               } : undefined}
             />
-            {comparison.isError && <Empty>Период сравнения не загрузился — линия сравнения скрыта</Empty>}
+            {anyCompareError && <Empty>Один из периодов сравнения не загрузился — его линия скрыта</Empty>}
           </>
         )}
       </QueryGate>

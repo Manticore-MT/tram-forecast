@@ -30,7 +30,7 @@ export function Switch({ label, checked = false, onChange, disabled = false, sty
         }}
         disabled={disabled}
         className={cn(
-          "w-11 h-6",
+          "w-11! h-6!",
           checked ? "bg-brand" : "bg-ink-600"
         )}
         {...rest}

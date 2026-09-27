@@ -2,6 +2,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Badge, Stat } from "../../components";
 import { Sparkline } from "../../shared/charts";
+import { TONE_BORDER, TONE_TEXT } from "./format";
 import type { DeviationItem, FactorItem } from "./types";
 import type { Place } from "./store";
 
@@ -39,12 +40,15 @@ export interface DeviationListProps {
   /** Called with the item's focusIndex when it's clickable — moves the time focus within the
    *  current window instead of navigating (route-level time-point zones). */
   onSelectIndex?: (index: number) => void;
+  /** Double-click on a route-level time-point zone: drills into that point's day
+   *  (a no-op at day scale — nothing to open, we're already there). */
+  onDrillDay?: (periodStart: string) => void;
 }
 
 /** Reusable "список с отклонениями" — зоны внимания, прогнозируемые пики, рейтинг проблемных мест.
  *  Rows, not cards: a card per row inside a card that's already inside a card reads as noise —
  *  selection and interactivity are carried by a left accent bar and a hairline divider instead. */
-export function DeviationList({ title, items, layout = "list", style, onSelect, onSelectIndex }: DeviationListProps) {
+export function DeviationList({ title, items, layout = "list", style, onSelect, onSelectIndex, onDrillDay }: DeviationListProps) {
   return (
     <div className="flex flex-col gap-3" style={style}>
       <div className="mt-eyebrow">{title}</div>
@@ -56,15 +60,18 @@ export function DeviationList({ title, items, layout = "list", style, onSelect, 
             : z.focusIndex !== undefined
               ? () => onSelectIndex?.(z.focusIndex!)
               : undefined;
+          const onDoubleClick = z.periodStart !== undefined ? () => onDrillDay?.(z.periodStart!) : undefined;
           return (
           <div
             key={`${z.title}-${i}`}
             role={clickable ? "button" : undefined}
             onClick={onClick}
+            onDoubleClick={onDoubleClick}
             className={cn(
-              "flex items-center justify-between gap-3 py-3 pr-2 pl-3",
+              "flex items-center justify-between gap-3 py-3 pr-3 pl-3 border-l-[3px]",
               layout === "table" ? "flex-[1_1_260px]" : "flex-none",
-              z.selected ? "border-l-[3px] border-l-brand" : "border-l-[3px] border-l-transparent",
+              z.selected ? "bg-glass-fill" : z.tone === "danger" ? "bg-status-danger/5" : undefined,
+              TONE_BORDER[z.tone],
               layout !== "table" && i !== items.length - 1 && "border-b border-b-border-subtle",
               clickable && "cursor-pointer"
             )}
@@ -74,13 +81,13 @@ export function DeviationList({ title, items, layout = "list", style, onSelect, 
               {z.peakTime && <span className="text-caption text-text-muted">пик {z.peakTime}</span>}
             </div>
             <div className="flex flex-none flex-col items-end gap-0.5">
-              <div className="flex items-center gap-1">
-                {z.action && (
-                  <Badge tone={z.action.tone}>{z.action.label}</Badge>
-                )}
-                <Badge tone={z.tone}>{z.relDeviation}</Badge>
+              <div className="flex items-baseline gap-2">
+                {z.action && <Badge tone="neutral">{z.action.label}</Badge>}
+                <span className={cn("text-ui-s font-mono font-semibold tabular-nums", TONE_TEXT[z.tone])}>
+                  {z.relDeviation}
+                </span>
               </div>
-              <span className="text-mono-s text-text-muted">{z.absDeviation}</span>
+              <span className="text-mono-s text-text-secondary">{z.absDeviation}</span>
             </div>
           </div>
           );

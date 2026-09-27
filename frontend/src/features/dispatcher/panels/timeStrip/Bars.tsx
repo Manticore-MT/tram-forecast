@@ -5,7 +5,7 @@ import { LOAD_VARS, loadStep } from "../../../../shared/load";
 import { useDispatcher } from "../../store";
 import { useFocusIndex, type SeriesPoint } from "../../forecast";
 import { SCALE_UNITS, nowIndex, nowPosition, pointLabel, type Scale } from "../../time";
-import { fmtInt } from "../../format";
+import { deviationPct, fmtInt, toneForPct, TONE_BG } from "../../format";
 import { FORECAST_HATCH } from "./hatch";
 
 // Rough label widths in px, used to thin the axis so neighbours never overlap.
@@ -209,6 +209,8 @@ export function Bars({ points, ghost, dimmed }: BarsProps) {
                 />
               )}
             </div>
+            {/* Severity strip: how far this bar is from its usual level, kept separate from the bar's own height/color (which is load, not deviation). */}
+            <div className={cn("mt-1 h-1 shrink-0 rounded-full", TONE_BG[toneForPct(deviationPct(value, p.baseline))])} />
             <div
               className={cn(
                 "flex h-4 justify-center whitespace-nowrap text-caption leading-4",

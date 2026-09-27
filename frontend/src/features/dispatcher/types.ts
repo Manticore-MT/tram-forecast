@@ -14,6 +14,9 @@ export interface DeviationItem {
   /** Index of the point this item refers to within the current window's series — moves the time
    *  focus there on click, instead of navigating (used by route-level time-point zones). */
   focusIndex?: number;
+  /** ISO start of the point this item refers to — a double-click drills into that day
+   *  (no-op if the window is already at day scale). Route-level time-point zones only. */
+  periodStart?: string;
   /** Dispatcher action recommendation, network-level zones only. */
   action?: FormattedRecommendation | null;
 }

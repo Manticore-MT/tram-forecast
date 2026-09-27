@@ -58,7 +58,7 @@ export function OverviewScreen() {
         <QualityCard stats={stats} />
 
         <div className="grid md:col-span-2 xl:col-span-3">
-          <DynamicsPanel network={network} comparison={comparison} scale={scale} comparisonLabel={compareLabel} />
+          <DynamicsPanel network={network} scale={scale} cursor={cursor} params={params} />
         </div>
         <div className="grid md:col-span-2 xl:col-span-1">
           <DemandMapPanel network={network} />

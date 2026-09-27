@@ -4,7 +4,6 @@ export type Recommendation = components["schemas"]["Recommendation"];
 
 export interface FormattedRecommendation {
   label: string;
-  tone: "accent" | "info";
 }
 
 function pluralTrams(n: number): string {
@@ -16,15 +15,17 @@ function pluralTrams(n: number): string {
   return "трамваев";
 }
 
-/** «+1 трамвай», «−2 трамвая» — null when there's nothing to act on. */
+/** «+1 трамвай», «−2 трамвая» — null when there's nothing to act on. A prescription, not a status,
+ *  so it never carries a severity color — that vocabulary belongs to the deviation alone (see
+ *  DetailsPanel's plain-text "Рекомендация" Stat, which this now matches). */
 export function formatRecommendation(rec?: Recommendation): FormattedRecommendation | null {
   if (!rec?.action || rec.action === "NONE") return null;
   const n = rec.vehicles ?? 1;
   if (rec.action === "ADD_VEHICLE") {
-    return { label: `+${n} ${pluralTrams(n)}`, tone: "accent" };
+    return { label: `+${n} ${pluralTrams(n)}` };
   }
   if (rec.action === "REMOVE_VEHICLE") {
-    return { label: `−${n} ${pluralTrams(n)}`, tone: "info" };
+    return { label: `−${n} ${pluralTrams(n)}` };
   }
   return null;
 }
