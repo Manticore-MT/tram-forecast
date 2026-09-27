@@ -20,6 +20,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 import ru.tramforecast.api.application.ForecastUnavailableException;
 import ru.tramforecast.api.application.InvalidRequestException;
 import ru.tramforecast.api.application.NotFoundException;
+import ru.tramforecast.api.application.PeriodNotSupportedException;
 
 /**
  * Turns failures into RFC 9457 problem responses with a message a client can show to the user.
@@ -74,7 +75,7 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * The route is unknown, the stop is not on the route, or there is no data to answer with.
+     * The route is unknown, or there is no data to answer with.
      *
      * @param e the failure
      * @return 404
@@ -83,9 +84,19 @@ public class GlobalExceptionHandler {
     public ProblemDetail notFound(NotFoundException e) {
         return switch (e.reason()) {
             case ROUTE -> problem(HttpStatus.NOT_FOUND, ErrorCode.ROUTE_NOT_FOUND, "Route not found", e.getMessage());
-            case STOP -> problem(HttpStatus.NOT_FOUND, ErrorCode.STOP_NOT_FOUND, "Stop not found", e.getMessage());
             case NO_DATA -> problem(HttpStatus.NOT_FOUND, ErrorCode.NO_DATA, "No data", e.getMessage());
         };
+    }
+
+    /**
+     * The period is outside the range the model covers.
+     *
+     * @param e the failure
+     * @return 400
+     */
+    @ExceptionHandler(PeriodNotSupportedException.class)
+    public ProblemDetail periodNotSupported(PeriodNotSupportedException e) {
+        return problem(HttpStatus.BAD_REQUEST, ErrorCode.PERIOD_NOT_SUPPORTED, "Period not supported", e.getMessage());
     }
 
     /**

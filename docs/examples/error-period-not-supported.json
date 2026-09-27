@@ -1,0 +1,9 @@
+{
+  "code": "PERIOD_NOT_SUPPORTED",
+  "detail": "The forecast covers only periods that lie entirely within 2025-11-01 .. 2026-12-31; the requested day covers 2025-10-15 .. 2025-10-15.",
+  "instance": "/api/routes/17/forecast",
+  "status": 400,
+  "timestamp": "2025-11-01T09:00:00.123+03:00",
+  "title": "Period not supported",
+  "type": "about:blank"
+}

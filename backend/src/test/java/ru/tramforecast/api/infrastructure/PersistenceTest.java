@@ -20,9 +20,8 @@ import ru.tramforecast.api.domain.model.ActualValue;
 import ru.tramforecast.api.domain.model.ForecastPoint;
 import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.LoadMatrixCell;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopForecast;
-import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.infrastructure.persistence.JdbcActualRepository;
 import ru.tramforecast.api.infrastructure.persistence.JdbcForecastRepository;
 
@@ -72,11 +71,11 @@ class PersistenceTest {
     void snapshotsAreAppendOnlyWithLatestAndInitial() {
         Instant first = Instant.parse("2026-09-21T06:00:00Z");
         Instant second = first.plusSeconds(900);
-        forecasts.saveAll(List.of(stop("S1", first, 130, List.of("weekend", "rain")), stop("S2", first, 100, List.of())));
-        forecasts.saveAll(List.of(stop("S1", second, 160, List.of()), stop("S2", second, 90, List.of())));
+        forecasts.saveAll(List.of(route("R1", first, 130, List.of("weekend", "rain")), route("R2", first, 100, List.of())));
+        forecasts.saveAll(List.of(route("R1", second, 160, List.of()), route("R2", second, 90, List.of())));
 
-        List<StopForecast> latest = forecasts.findLatest(Horizon.DAY, DATE);
-        List<StopForecast> initial = forecasts.findInitial(Horizon.DAY, DATE);
+        List<RouteForecast> latest = forecasts.findLatest(Horizon.DAY, DATE);
+        List<RouteForecast> initial = forecasts.findInitial(Horizon.DAY, DATE);
 
         assertThat(latest).hasSize(2);
         assertThat(latest.get(0).points().get(0).forecast()).isEqualTo(160);
@@ -92,19 +91,19 @@ class PersistenceTest {
      */
     @Test
     void factsAreAggregatedToTheHorizonGranularity() {
-        insertFact("R1", "S1", "2026-09-21T09:00:00+03:00", 100);
-        insertFact("R1", "S2", "2026-09-21T09:00:00+03:00", 50);
-        insertFact("R1", "S1", "2026-09-21T10:00:00+03:00", 10);
-        insertFact("R1", "S1", "2026-09-14T09:00:00+03:00", 70);
+        insertFact("R1", "2026-09-21T09:00:00+03:00", 100);
+        insertFact("R2", "2026-09-21T09:00:00+03:00", 50);
+        insertFact("R1", "2026-09-21T10:00:00+03:00", 10);
+        insertFact("R1", "2026-09-14T09:00:00+03:00", 70);
         // 00:30 Moscow time on the 22nd is still the 21st in UTC: it must land on the 22nd.
-        insertFact("R1", "S1", "2026-09-22T00:30:00+03:00", 5);
+        insertFact("R1", "2026-09-22T00:30:00+03:00", 5);
 
         List<ActualValue> hourly = actuals.find(Horizon.DAY, DATE);
         assertThat(hourly).hasSize(3);
         assertThat(hourly).extracting(ActualValue::value).containsExactlyInAnyOrder(100.0, 50.0, 10.0);
 
         List<ActualValue> daily = actuals.find(Horizon.MONTH, DATE);
-        assertThat(daily).filteredOn(v -> v.stopId().equals(new StopId("S1"))).extracting(ActualValue::value)
+        assertThat(daily).filteredOn(v -> v.routeId().equals(new RouteId("R1"))).extracting(ActualValue::value)
                 .containsExactly(70.0, 110.0, 5.0);
         assertThat(daily.get(0).periodStart()).isEqualTo(Instant.parse("2026-09-13T21:00:00Z"));
     }
@@ -115,10 +114,10 @@ class PersistenceTest {
      */
     @Test
     void weekReadsSevenDaysStartingAtTheDate() {
-        insertFact("R1", "S1", "2026-09-21T09:00:00+03:00", 100);
-        insertFact("R1", "S1", "2026-09-22T09:00:00+03:00", 5);
-        insertFact("R1", "S1", "2026-09-28T09:00:00+03:00", 7);
-        insertFact("R1", "S1", "2026-09-29T09:00:00+03:00", 9);
+        insertFact("R1", "2026-09-21T09:00:00+03:00", 100);
+        insertFact("R1", "2026-09-22T09:00:00+03:00", 5);
+        insertFact("R1", "2026-09-28T09:00:00+03:00", 7);
+        insertFact("R1", "2026-09-29T09:00:00+03:00", 9);
 
         // window 22 Sep .. 28 Sep: the 21st is before it, the 29th after it
         List<ActualValue> week = actuals.find(Horizon.WEEK, LocalDate.of(2026, 9, 22));
@@ -128,14 +127,12 @@ class PersistenceTest {
     }
 
     /**
-     * The load matrix averages the route total per day of week and hour.
+     * The load matrix averages the route value per day of week and hour.
      */
     @Test
     void loadMatrixAveragesRouteTotalPerDayOfWeekAndHour() {
-        insertFact("R1", "S1", "2026-09-14T09:00:00+03:00", 100);
-        insertFact("R1", "S2", "2026-09-14T09:00:00+03:00", 50);
-        insertFact("R1", "S1", "2026-09-21T09:00:00+03:00", 90);
-        insertFact("R1", "S2", "2026-09-21T09:00:00+03:00", 30);
+        insertFact("R1", "2026-09-14T09:00:00+03:00", 150);
+        insertFact("R1", "2026-09-21T09:00:00+03:00", 120);
 
         List<LoadMatrixCell> cells = actuals.loadMatrix(new RouteId("R1")).cells();
 
@@ -146,15 +143,47 @@ class PersistenceTest {
         assertThat(actuals.loadMatrix(new RouteId("none")).cells()).isEmpty();
     }
 
-    private static void insertFact(String route, String stop, String at, double value) {
-        jdbc.update(
-                "INSERT INTO actual_value (route_id, stop_id, period_start, value) VALUES (?, ?, ?, ?)",
-                route, stop, OffsetDateTime.parse(at), value);
+    /**
+     * The route-level migration drops the demo stop snapshots and sums the stored facts per route, so
+     * a database that already holds stop-level rows moves over without losing the facts.
+     */
+    @Test
+    void routeLevelMigrationSumsFactsAndDropsStopSnapshots() {
+        String url = POSTGRES.getJdbcUrl().replaceFirst("/[^/?]+([?]|$)", "/migration$1");
+        jdbc.execute("DROP DATABASE IF EXISTS migration");
+        jdbc.execute("CREATE DATABASE migration");
+        DriverManagerDataSource dataSource = new DriverManagerDataSource(
+                url, POSTGRES.getUsername(), POSTGRES.getPassword());
+        Flyway.configure().dataSource(dataSource).target("1").load().migrate();
+        JdbcTemplate old = new JdbcTemplate(dataSource);
+        old.update("INSERT INTO forecast_snapshot (route_id, stop_id, horizon, anchor_date, period_start, baseline,"
+                + " forecast, generated_at, model_version) VALUES ('R1', 'S1', 'DAY', '2026-09-21',"
+                + " '2026-09-21T06:00:00Z', 100, 130, '2026-09-21T06:00:00Z', 'demo')");
+        old.update("INSERT INTO actual_value VALUES ('R1', 'S1', '2026-09-21T06:00:00Z', 100),"
+                + " ('R1', 'S2', '2026-09-21T06:00:00Z', 50), ('R2', 'S1', '2026-09-21T06:00:00Z', 7)");
+
+        Flyway.configure().dataSource(dataSource).load().migrate();
+
+        assertThat(old.queryForObject("SELECT count(*) FROM forecast_snapshot", Integer.class)).isZero();
+        assertThat(old.queryForObject(
+                "SELECT count(*) FROM information_schema.columns"
+                        + " WHERE table_name IN ('forecast_snapshot', 'actual_value') AND column_name = 'stop_id'",
+                Integer.class)).isZero();
+        assertThat(old.queryForObject(
+                "SELECT value FROM actual_value WHERE route_id = 'R1'", Double.class)).isEqualTo(150.0);
+        assertThat(old.queryForObject(
+                "SELECT value FROM actual_value WHERE route_id = 'R2'", Double.class)).isEqualTo(7.0);
     }
 
-    private static StopForecast stop(String stop, Instant generatedAt, double forecast, List<String> factors) {
-        return new StopForecast(
-                new RouteId("R1"), new StopId(stop), Horizon.DAY, DATE, generatedAt, "test",
+    private static void insertFact(String route, String at, double value) {
+        jdbc.update(
+                "INSERT INTO actual_value (route_id, period_start, value) VALUES (?, ?, ?)",
+                route, OffsetDateTime.parse(at), value);
+    }
+
+    private static RouteForecast route(String route, Instant generatedAt, double forecast, List<String> factors) {
+        return new RouteForecast(
+                new RouteId(route), Horizon.DAY, DATE, generatedAt, "test",
                 List.of(new ForecastPoint(Instant.parse("2026-09-20T21:00:00Z"), 100, forecast, null)), factors);
     }
 }

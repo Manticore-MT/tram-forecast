@@ -3,6 +3,7 @@ package ru.tramforecast.api.web;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.matchesPattern;
+import static org.hamcrest.Matchers.nullValue;
 import static org.hamcrest.Matchers.startsWith;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -14,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.Clock;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +31,6 @@ import ru.tramforecast.api.application.GetLoadMatrixService;
 import ru.tramforecast.api.application.GetModelStatsService;
 import ru.tramforecast.api.application.GetNetworkOverviewService;
 import ru.tramforecast.api.application.GetRouteForecastService;
-import ru.tramforecast.api.application.GetStopForecastService;
 import ru.tramforecast.api.application.HistoryAligner;
 import ru.tramforecast.api.domain.port.MlForecastClient;
 import ru.tramforecast.api.domain.port.MlUnavailableException;
@@ -58,14 +59,18 @@ class ApiTest {
      */
     @BeforeEach
     void setUp() {
-        buildWith(new StubMlForecastClient(2, 3, CLOCK, MOSCOW));
+        buildWith(new StubMlForecastClient(2, CLOCK, MOSCOW));
     }
 
     private void buildWith(MlForecastClient ml) {
+        buildWith(ml, null, null);
+    }
+
+    private void buildWith(MlForecastClient ml, LocalDate from, LocalDate to) {
+        ForecastDates dates = new ForecastDates(CLOCK, MOSCOW, 1, from, to);
         InMemoryForecastRepository forecasts = new InMemoryForecastRepository();
         InMemoryActualRepository actuals = new InMemoryActualRepository(MOSCOW);
-        ForecastPreparer preparer = new ForecastPreparer(
-                new ForecastLoader(forecasts, ml), actuals, new ForecastDates(CLOCK, MOSCOW, 1));
+        ForecastPreparer preparer = new ForecastPreparer(new ForecastLoader(forecasts, ml), actuals, dates);
         AttentionPolicy attention = new AttentionPolicy(10, 25);
         RecommendationPolicy recommendation = new RecommendationPolicy(10);
         HistoryAligner history = new HistoryAligner(actuals, MOSCOW);
@@ -77,16 +82,14 @@ class ApiTest {
         mvc = MockMvcBuilders.standaloneSetup(
                         new ForecastController(
                                 new GetNetworkOverviewService(preparer),
-                                new GetRouteForecastService(preparer, history),
-                                new GetStopForecastService(preparer, history, attention, recommendation),
+                                new GetRouteForecastService(preparer, history, attention, recommendation),
                                 new GetAttentionZonesService(preparer, new AttentionZoneCalculator(attention, recommendation)),
                                 new GetLoadMatrixService(actuals),
                                 mapper),
                         new ExportController(new ExportForecastService(preparer), new CsvForecastWriter(MOSCOW)),
                         new ModelController(new GetModelStatsService(forecasts, actuals), mapper),
                         new MetaController(
-                                new ru.tramforecast.api.application.GetMetaService(
-                                        CLOCK, new ForecastDates(CLOCK, MOSCOW, 1), MOSCOW, "stub"),
+                                new ru.tramforecast.api.application.GetMetaService(CLOCK, dates, MOSCOW, "stub"),
                                 mapper))
                 .setControllerAdvice(new GlobalExceptionHandler(MOSCOW))
                 .setConversionService(conversion)
@@ -116,7 +119,7 @@ class ApiTest {
         mvc.perform(get("/api/routes/R1/forecast").param("horizon", "month"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.points", hasSize(30)))
-                .andExpect(jsonPath("$.stops", hasSize(3)));
+                .andExpect(jsonPath("$.stops").doesNotExist());
         mvc.perform(get("/api/routes/R1/forecast").param("horizon", "YEAR"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.points", hasSize(12)));
@@ -127,13 +130,15 @@ class ApiTest {
     }
 
     /**
-     * Stop details carry the baseline, deviation, status and factors.
+     * Route details carry the baseline, deviation, status, recommendation and factors, and no stop level.
      */
     @Test
-    void stopDetailsCarryDeviationStatusAndFactors() throws Exception {
-        mvc.perform(get("/api/routes/R1/stops/R1-S1/forecast").param("horizon", "day"))
+    void routeDetailsCarryDeviationStatusAndFactors() throws Exception {
+        mvc.perform(get("/api/routes/R1/forecast").param("horizon", "day"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.stopId").value("R1-S1"))
+                .andExpect(jsonPath("$.routeId").value("R1"))
+                .andExpect(jsonPath("$.stopId").doesNotExist())
+                .andExpect(jsonPath("$.recommendation.action").isString())
                 .andExpect(jsonPath("$.points", hasSize(24)))
                 .andExpect(jsonPath("$.points[0].deviationAbs").isNumber())
                 .andExpect(jsonPath("$.status").isString())
@@ -147,13 +152,13 @@ class ApiTest {
      */
     @Test
     void correctionCoefficientsChangeTheForecast() throws Exception {
-        String plain = mvc.perform(get("/api/routes/R1/stops/R1-S1/forecast"))
+        String plain = mvc.perform(get("/api/routes/R1/forecast"))
                 .andReturn().getResponse().getContentAsString();
-        String corrected = mvc.perform(get("/api/routes/R1/stops/R1-S1/forecast").param("event", "1.5"))
+        String corrected = mvc.perform(get("/api/routes/R1/forecast").param("event", "1.5"))
                 .andReturn().getResponse().getContentAsString();
         org.assertj.core.api.Assertions.assertThat(corrected).isNotEqualTo(plain);
 
-        mvc.perform(get("/api/routes/R1/stops/R1-S1/forecast").param("weather", "9"))
+        mvc.perform(get("/api/routes/R1/forecast").param("weather", "9"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value(containsString("between")));
     }
@@ -170,16 +175,16 @@ class ApiTest {
     }
 
     /**
-     * CSV export is an attachment with a header row and one row per stop and period.
+     * CSV export is an attachment with a header row and one row per route and period.
      */
     @Test
     void csvExportIsAnAttachmentWithOneRowPerPeriod() throws Exception {
-        mvc.perform(get("/api/export").param("horizon", "day").param("routeId", "R1").param("stopId", "R1-S1"))
+        mvc.perform(get("/api/export").param("horizon", "day").param("routeId", "R1"))
                 .andExpect(status().isOk())
                 .andExpect(header().string("Content-Disposition", containsString("forecast-day-2026-09-25.csv")))
                 .andExpect(content().contentTypeCompatibleWith("text/csv"))
-                .andExpect(content().string(startsWith("route_id,stop_id,horizon,date,period_start,baseline")))
-                .andExpect(content().string(containsString("R1,R1-S1,day,2026-09-25,2026-09-25T00:00:00+03:00")));
+                .andExpect(content().string(startsWith("route_id,horizon,date,period_start,baseline")))
+                .andExpect(content().string(containsString("R1,day,2026-09-25,2026-09-25T00:00:00+03:00")));
         mvc.perform(get("/api/export").param("format", "xlsx"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.detail").value(containsString("only csv")));
@@ -223,6 +228,69 @@ class ApiTest {
     }
 
     /**
+     * A period that is not entirely inside the model's range is a 400 with its own code and the range in
+     * the message (not a misleading "try again later"): a day before the range, a week or a month that
+     * sticks out of it. Periods inside are served.
+     */
+    @Test
+    void periodOutsideTheModelRangeIsA400WithItsOwnCode() throws Exception {
+        buildWith(new StubMlForecastClient(2, CLOCK, MOSCOW), LocalDate.of(2026, 9, 1), LocalDate.of(2026, 12, 31));
+
+        mvc.perform(get("/api/routes/R1/forecast").param("date", "2026-08-15"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentTypeCompatibleWith("application/problem+json"))
+                .andExpect(jsonPath("$.code").value("PERIOD_NOT_SUPPORTED"))
+                .andExpect(jsonPath("$.title").value("Period not supported"))
+                .andExpect(jsonPath("$.detail").value(containsString("2026-09-01 .. 2026-12-31")))
+                .andExpect(jsonPath("$.detail").value(containsString("day covers 2026-08-15 .. 2026-08-15")));
+        mvc.perform(get("/api/routes").param("horizon", "week").param("date", "2026-12-28"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("PERIOD_NOT_SUPPORTED"));
+        mvc.perform(get("/api/routes").param("horizon", "month").param("date", "2026-08-20"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("PERIOD_NOT_SUPPORTED"));
+
+        mvc.perform(get("/api/routes/R1/forecast").param("date", "2026-09-25")).andExpect(status().isOk());
+        mvc.perform(get("/api/routes").param("horizon", "week").param("date", "2026-12-25"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.routes[0].points", hasSize(7)));
+    }
+
+    /**
+     * The metadata reports the model's range so a client can limit the date picker; without a fixed
+     * range the fields are empty and the latest date is "today plus a year".
+     */
+    @Test
+    void metaReportsTheModelRangeOrNone() throws Exception {
+        buildWith(new StubMlForecastClient(2, CLOCK, MOSCOW), LocalDate.of(2026, 9, 1), LocalDate.of(2026, 12, 31));
+        mvc.perform(get("/api/meta"))
+                .andExpect(jsonPath("$.forecastFrom").value("2026-09-01"))
+                .andExpect(jsonPath("$.forecastTo").value("2026-12-31"))
+                .andExpect(jsonPath("$.latestDate").value("2026-12-31"));
+
+        buildWith(new StubMlForecastClient(2, CLOCK, MOSCOW));
+        mvc.perform(get("/api/meta"))
+                .andExpect(jsonPath("$.forecastFrom").value(nullValue()))
+                .andExpect(jsonPath("$.forecastTo").value(nullValue()))
+                .andExpect(jsonPath("$.latestDate").value("2027-09-25"));
+    }
+
+    /**
+     * The quality endpoint says where the numbers come from; without the ML service and without facts
+     * it has nothing to compare, so there are no values (not zeros) and the source is the facts.
+     */
+    @Test
+    void modelStatsSaysWhereTheNumbersComeFrom() throws Exception {
+        mvc.perform(get("/api/model/stats"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.source").value("facts"))
+                .andExpect(jsonPath("$.note").value(nullValue()))
+                .andExpect(jsonPath("$.platformScore").value(nullValue()))
+                .andExpect(jsonPath("$.wape").value(nullValue()))
+                .andExpect(jsonPath("$.history", hasSize(0)));
+    }
+
+    /**
      * Bad input yields a 400 with a readable message, an unknown route a 404.
      */
     @Test
@@ -246,18 +314,14 @@ class ApiTest {
     }
 
     /**
-     * An unknown stop on a known route, an unknown route on a stop request and a route without
-     * history each get their own code, so the client can say what exactly is missing.
+     * An unknown route and a route without history each get their own code, so the client can say
+     * what exactly is missing.
      */
     @Test
     void notFoundIsSpecificAboutWhatIsMissing() throws Exception {
-        mvc.perform(get("/api/routes/R1/stops/nope/forecast"))
+        mvc.perform(get("/api/routes/R1/stops/R1-S1/forecast"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value("STOP_NOT_FOUND"))
-                .andExpect(jsonPath("$.detail").value("Route 'R1' has no stop 'nope'"));
-        mvc.perform(get("/api/routes/NOPE/stops/ALL/forecast"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value("ROUTE_NOT_FOUND"));
+                .andExpect(jsonPath("$.code").value("ENDPOINT_NOT_FOUND"));
         mvc.perform(get("/api/routes/R1/load-matrix"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("NO_DATA"))
@@ -265,9 +329,6 @@ class ApiTest {
         mvc.perform(get("/api/export").param("routeId", "NOPE"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.code").value("ROUTE_NOT_FOUND"));
-        mvc.perform(get("/api/export").param("routeId", "R1").param("stopId", "nope"))
-                .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.code").value("STOP_NOT_FOUND"));
     }
 
     /**

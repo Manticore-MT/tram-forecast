@@ -18,12 +18,7 @@ export interface MapCanvasProps {
   routeColors?: Record<string, string>;
   /** Network level: raw forecast per routeId, shown in the tooltip when present. */
   routeValues?: Record<string, number>;
-  /** Route/stop level: color per stop index of the picked route. Missing stops are drawn neutral. */
-  stopColors?: string[];
-  /** Route/stop level: raw forecast per stop index, shown in the tooltip when present. */
-  stopValues?: number[];
   onRouteClick?: (routeId: string) => void;
-  onStopClick?: (stopIndex: number) => void;
   /** Click on empty map (not a line or a stop). */
   onBackgroundClick?: () => void;
   className?: string;
@@ -39,13 +34,13 @@ export interface MapHandle {
 
 function fitView(map: L.Map, routeId: string | undefined) {
   const lls = routeId ? routeStops(routeId).map((s) => s.ll) : Object.values(TRAM_ROUTES).flatMap((r) => r.stops.map((s) => s.ll));
-  if (lls.length) map.fitBounds(lls, routeId ? { padding: [48, 48], maxZoom: 15 } : { padding: [24, 24] });
+  if (lls.length) map.flyToBounds(lls, routeId ? { padding: [48, 48], maxZoom: 15 } : { padding: [24, 24] });
 }
 
 /** Leaflet/OSM map of the dataset's tram routes. Knows geometry and clicks, not forecasts:
  *  colors come in as props. */
 export const MapCanvas = React.forwardRef<MapHandle, MapCanvasProps>(function MapCanvas(
-  { place, caption, routeColors, routeValues, stopColors, stopValues, onRouteClick, onStopClick, onBackgroundClick, className },
+  { place, caption, routeColors, routeValues, onRouteClick, onBackgroundClick, className },
   handle,
 ) {
   const ref = React.useRef<HTMLDivElement>(null);
@@ -55,7 +50,8 @@ export const MapCanvas = React.forwardRef<MapHandle, MapCanvasProps>(function Ma
   React.useEffect(() => {
     if (mapRef.current || !ref.current) return;
     const el = ref.current;
-    const map = L.map(el, { zoomControl: false, attributionControl: true }).setView([55.779, 37.699], 13);
+    const map = L.map(el, { zoomControl: false, attributionControl: false }).setView([55.779, 37.699], 13);
+    L.control.attribution({ prefix: false }).addTo(map);
     L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "© OpenStreetMap contributors" }).addTo(map);
     mapRef.current = map;
     // The container can still be 0×0 at mount; Leaflet would cache that size and draw nothing.
@@ -67,7 +63,6 @@ export const MapCanvas = React.forwardRef<MapHandle, MapCanvasProps>(function Ma
   }, []);
 
   const routeId = place.level === "network" ? undefined : place.routeId;
-  const activeStop = place.level === "stop" ? place.stopIndex : -1;
 
   // Refit only when the viewed route changes, not on every recolor.
   React.useEffect(() => {
@@ -100,21 +95,19 @@ export const MapCanvas = React.forwardRef<MapHandle, MapCanvasProps>(function Ma
     } else {
       const stops = routeStops(routeId);
       for (let i = 0; i < stops.length - 1; i++) {
-        const color = stopColors?.[i] ?? ACCENT_HEX;
-        L.polyline([stops[i].ll, stops[i + 1].ll], { color, weight: 6, opacity: 0.85 }).addTo(g);
+        L.polyline([stops[i].ll, stops[i + 1].ll], { color: ACCENT_HEX, weight: 6, opacity: 0.85 }).addTo(g);
       }
-      stops.forEach((s, i) => {
-        const value = stopValues?.[i];
-        const label = value !== undefined ? `${s.name} · ${Math.round(value)}` : s.name;
-        L.circleMarker(s.ll, { radius: i === activeStop ? 11 : 7, color: "#0E1113", weight: 2, fillColor: stopColors?.[i] ?? NEUTRAL_HEX, fillOpacity: 1 })
-          .bindTooltip(label, { direction: "top" })
-          .on("click", (e) => { stopClicks(e); onStopClick?.(i); })
+      stops.forEach((s) => {
+        // Stops carry no forecast data (route-level only) — just geometry and a name tooltip.
+        L.circleMarker(s.ll, { radius: 7, color: "#0E1113", weight: 2, fillColor: NEUTRAL_HEX, fillOpacity: 1 })
+          .bindTooltip(s.name, { direction: "top" })
+          .on("click", stopClicks)
           .addTo(g);
       });
     }
     g.addTo(map);
     layerRef.current = g;
-  }, [routeId, activeStop, routeColors, routeValues, stopColors, stopValues, onRouteClick, onStopClick]);
+  }, [routeId, routeColors, routeValues, onRouteClick]);
 
   React.useEffect(() => {
     const map = mapRef.current;

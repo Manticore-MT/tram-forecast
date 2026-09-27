@@ -1,20 +1,16 @@
--- Demo facts for the synthetic network the stub serves (routes R1..R<routes>, stops R<r>-S1..S<stops>).
+-- Demo facts for the synthetic network the stub serves (routes R1..R<routes>).
 -- Hourly values from 2025-08-01 to 2026-09-25, Moscow time: two daily rush-hour peaks, lower
 -- weekends, a little noise. It exists only so the dashboards that need history (load matrix,
 -- "was / will be", accuracy) and the load tests have something to read before real data exists.
 --
 --   docker compose exec -T postgres psql -U tram_forecast -d tram_forecast < scripts/seed-demo-actuals.sql
---   ... psql -v routes=40 -v stops=15 ...   # a realistic size (~6 million rows)
+--   ... psql -v routes=40 ...   # a bigger network
 --
--- The network size must match the backend's TRAM_ML_STUB_ROUTES / TRAM_ML_STUB_STOPS_PER_ROUTE
--- (defaults 3 and 5). Idempotent: existing rows are kept.
+-- The network size must match the backend's TRAM_ML_STUB_ROUTES (default 3). Idempotent: existing
+-- rows are kept.
 \if :{?routes}
 \else
   \set routes 3
-\endif
-\if :{?stops}
-\else
-  \set stops 5
 \endif
 
 WITH hours AS (
@@ -32,13 +28,11 @@ times AS (
 ),
 network AS (
     SELECT 'R' || r AS route_id,
-           'R' || r || '-S' || s AS stop_id,
-           300.0 + 80.0 * (1 + (r - 1) % 3) + 25.0 * (1 + (s - 1) % 5) AS base
-    FROM generate_series(1, :routes) AS r, generate_series(1, :stops) AS s
+           1900.0 + 400.0 * (1 + (r - 1) % 3) AS base
+    FROM generate_series(1, :routes) AS r
 )
-INSERT INTO actual_value (route_id, stop_id, period_start, value)
+INSERT INTO actual_value (route_id, period_start, value)
 SELECT n.route_id,
-       n.stop_id,
        t.ts,
        round((n.base * h.profile * t.weekend * (0.95 + 0.10 * random()))::numeric, 1)
 FROM times t

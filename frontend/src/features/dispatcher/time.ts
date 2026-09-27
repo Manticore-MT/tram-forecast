@@ -12,7 +12,7 @@ export const SCALES: Scale[] = ["day", "week", "month", "year"];
 
 export const SCALE_LABELS: Record<Scale, string> = {
   day: "День",
-  week: "7 дней",
+  week: "Неделя",
   month: "Месяц",
   year: "Год",
 };

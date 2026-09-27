@@ -4,12 +4,9 @@ import { create } from "zustand";
 import { DEFAULT_CORRECTIONS, type Corrections } from "../../api/hooks";
 import { drillDown, scaleUp, shiftCursor, type Scale } from "./time";
 
-/** Where on the network we are. A stop is addressed by its position on the route, because the
- *  backend's stopId doesn't match the map's stop codes yet (see docs/open-questions.md). */
-export type Place =
-  | { level: "network" }
-  | { level: "route"; routeId: string }
-  | { level: "stop"; routeId: string; stopIndex: number };
+/** Where on the network we are. Stops have no forecast data (route-level only); clicking one
+ *  on the map just shows its name, it doesn't change place. */
+export type Place = { level: "network" } | { level: "route"; routeId: string };
 
 export type CorrectionKey = keyof Corrections;
 
@@ -31,13 +28,15 @@ interface DispatcherState {
   today: string | null;
   /** Furthest date the API accepts (one year ahead). */
   latestDate: string | null;
+  /** Earliest date the API accepts; null when the model has no fixed lower bound. */
+  forecastFrom: string | null;
 
   /** Seeds the clock from /api/meta once; later calls are no-ops. */
-  init(today: string, latestDate: string): void;
+  init(today: string, latestDate: string, forecastFrom: string | null): void;
 
   setView(view: View): void;
   goTo(place: Place): void;
-  /** stop → route → network. */
+  /** route → network. */
   placeUp(): void;
 
   setScale(scale: Scale): void;
@@ -65,10 +64,11 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
   corrections: DEFAULT_CORRECTIONS,
   today: null,
   latestDate: null,
+  forecastFrom: null,
 
-  init(today, latestDate) {
+  init(today, latestDate, forecastFrom) {
     if (get().cursor !== null) return;
-    set({ today, latestDate, cursor: today });
+    set({ today, latestDate, forecastFrom, cursor: today });
   },
 
   setView(view) {
@@ -81,8 +81,7 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
 
   placeUp() {
     const { place } = get();
-    if (place.level === "stop") set({ place: { level: "route", routeId: place.routeId } });
-    else if (place.level === "route") set({ place: { level: "network" } });
+    if (place.level === "route") set({ place: { level: "network" } });
   },
 
   setScale(scale) {
@@ -100,10 +99,11 @@ export const useDispatcher = create<DispatcherState>()((set, get) => ({
   },
 
   shift(dir) {
-    const { scale, cursor, latestDate } = get();
+    const { scale, cursor, latestDate, forecastFrom } = get();
     if (!cursor) return;
     const next = shiftCursor(scale, cursor, dir);
     if (latestDate && next > latestDate) return;
+    if (forecastFrom && next < forecastFrom) return;
     set({ cursor: next, focus: null, range: null });
   },
 

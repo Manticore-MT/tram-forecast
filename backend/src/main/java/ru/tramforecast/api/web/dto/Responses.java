@@ -72,36 +72,6 @@ public final class Responses {
     }
 
     /**
-     * Series of one stop inside a route response.
-     *
-     * @param stopId stop identifier
-     * @param points compact points
-     */
-    public record StopSeries(String stopId, List<SlimPoint> points) {
-    }
-
-    /**
-     * Response of {@code GET /api/routes/{routeId}/forecast}.
-     *
-     * @param routeId     route identifier
-     * @param horizon     {@code day}, {@code month} or {@code year}
-     * @param date        resolved anchor date
-     * @param lastUpdated when the oldest underlying snapshot was generated
-     * @param points      route total per period
-     * @param lastYear    route total a year earlier
-     * @param stops       series of every stop of the route
-     */
-    public record RouteForecast(
-            String routeId,
-            String horizon,
-            LocalDate date,
-            OffsetDateTime lastUpdated,
-            List<Point> points,
-            List<LastYearPoint> lastYear,
-            List<StopSeries> stops) {
-    }
-
-    /**
      * A suggested dispatcher action.
      *
      * @param action   {@code ADD_VEHICLE}, {@code REMOVE_VEHICLE} or {@code NONE}
@@ -111,10 +81,9 @@ public final class Responses {
     }
 
     /**
-     * Response of {@code GET /api/routes/{routeId}/stops/{stopId}/forecast}.
+     * Response of {@code GET /api/routes/{routeId}/forecast}.
      *
      * @param routeId        route identifier
-     * @param stopId         stop identifier
      * @param horizon        {@code day}, {@code month} or {@code year}
      * @param date           resolved anchor date
      * @param lastUpdated    when the snapshot was generated
@@ -127,9 +96,8 @@ public final class Responses {
      * @param lastYear       facts a year earlier
      * @param factors        factors the model took into account
      */
-    public record StopForecast(
+    public record RouteForecast(
             String routeId,
-            String stopId,
             String horizon,
             LocalDate date,
             OffsetDateTime lastUpdated,
@@ -147,7 +115,6 @@ public final class Responses {
      * One attention zone.
      *
      * @param routeId        route identifier
-     * @param stopId         stop identifier
      * @param level          {@code WARNING} or {@code CRITICAL}
      * @param deviationAbs   absolute deviation at the point of maximum deviation
      * @param deviationPct   percent deviation at that point
@@ -157,7 +124,6 @@ public final class Responses {
      */
     public record AttentionZone(
             String routeId,
-            String stopId,
             String level,
             double deviationAbs,
             double deviationPct,
@@ -212,7 +178,22 @@ public final class Responses {
      * @param wape      overall WAPE, {@code null} when there is nothing to compare
      * @param wapeScore overall WAPE-score, {@code null} when there is nothing to compare
      * @param history   accuracy per day, oldest first
+     * @param source    {@code ml-backtest} (measured by the ML side on a historical block) or {@code facts}
+     *                  (the backend's own stored forecasts against the facts)
+     * @param note      what the numbers are and are not, for a caption; {@code null} when there is none
+     * @param platformScore the score the platform gave the submitted contest file on its hidden check (as the
+     *                  team reports it), {@code null} when it is not known. A separate measurement: show it on
+     *                  its own and never mix it with the backtest above
+     * @param platformNote  what {@code platformScore} is and what it must not be used for (it is a route x hour
+     *                  score, not a stop score), {@code null} when there is no platform score
      */
-    public record ModelStats(Double wape, Double wapeScore, List<DailyAccuracy> history) {
+    public record ModelStats(
+            Double wape,
+            Double wapeScore,
+            List<DailyAccuracy> history,
+            String source,
+            String note,
+            Double platformScore,
+            String platformNote) {
     }
 }

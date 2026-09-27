@@ -1,5 +1,4 @@
 import { Card, Stat } from "../../../components";
-import { routeStops } from "../../../network/tramNetwork";
 import { Sparkline } from "../../../shared/charts";
 import { ErrorNotice, LoadingNotice } from "../../../shared/notices";
 import { useDispatcher, type Place } from "../store";
@@ -19,8 +18,7 @@ const FACTOR_LABELS: Record<string, string> = {
 
 function placeTitle(place: Place): string {
   if (place.level === "network") return "Вся сеть";
-  if (place.level === "route") return `Маршрут № ${place.routeId}`;
-  return routeStops(place.routeId)[place.stopIndex]?.name ?? `Остановка · маршрут № ${place.routeId}`;
+  return `Маршрут № ${place.routeId}`;
 }
 
 /** The picked object at the focused point of the time window. */
@@ -32,8 +30,8 @@ export function DetailsPanel() {
   const point = series.points[focus];
   const interval = useInterval(series.points);
   const unit = SCALE_UNITS[scale];
-  const recommendation = formatRecommendation(series.stop?.recommendation);
-  const factors = (series.stop?.factors ?? []).map((f) => ({ label: FACTOR_LABELS[f] ?? f }));
+  const recommendation = formatRecommendation(series.route?.recommendation);
+  const factors = (series.route?.factors ?? []).map((f) => ({ label: FACTOR_LABELS[f] ?? f }));
   const peak = series.points.reduce<(typeof series.points)[number] | undefined>(
     (best, p) => (!best || p.forecast > best.forecast ? p : best),
     undefined,

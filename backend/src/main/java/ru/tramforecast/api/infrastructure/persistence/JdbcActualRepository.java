@@ -10,7 +10,6 @@ import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.LoadMatrix;
 import ru.tramforecast.api.domain.model.LoadMatrixCell;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.domain.port.ActualRepository;
 import ru.tramforecast.api.domain.service.ForecastPeriod;
 
@@ -42,16 +41,15 @@ public class JdbcActualRepository implements ActualRepository {
             case DAY -> "day";
             case MONTH -> "month";
         };
-        String sql = "SELECT route_id, stop_id, "
+        String sql = "SELECT route_id, "
                 + "(date_trunc('" + unit + "', period_start AT TIME ZONE ?::text) AT TIME ZONE ?::text) AS bucket, "
                 + "SUM(value) AS total "
                 + "FROM actual_value WHERE period_start >= ? AND period_start < ? "
-                + "GROUP BY route_id, stop_id, bucket ORDER BY route_id, stop_id, bucket";
+                + "GROUP BY route_id, bucket ORDER BY route_id, bucket";
         return jdbc.query(
                 sql,
                 (rs, n) -> new ActualValue(
                         new RouteId(rs.getString("route_id")),
-                        new StopId(rs.getString("stop_id")),
                         rs.getObject("bucket", OffsetDateTime.class).toInstant(),
                         rs.getDouble("total")),
                 zone.getId(),

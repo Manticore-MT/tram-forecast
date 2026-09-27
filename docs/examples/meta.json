@@ -1,9 +1,11 @@
 {
-  "now": "2026-09-25T12:06:31.115068359+03:00",
-  "today": "2026-09-25",
-  "latestDate": "2027-09-25",
+  "now": "2025-11-01T09:00:00+03:00",
+  "today": "2025-11-01",
+  "latestDate": "2026-12-31",
+  "forecastFrom": "2025-11-01",
+  "forecastTo": "2026-12-31",
   "zone": "Europe/Moscow",
-  "dataSource": "stub",
+  "dataSource": "model",
   "horizons": [
     {
       "horizon": "day",

@@ -15,9 +15,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 import ru.tramforecast.api.domain.model.ForecastPoint;
 import ru.tramforecast.api.domain.model.Horizon;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopForecast;
-import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.domain.port.ForecastRepository;
 
 /**
@@ -28,18 +27,18 @@ import ru.tramforecast.api.domain.port.ForecastRepository;
 public class JdbcForecastRepository implements ForecastRepository {
 
     private static final String SELECT = """
-            SELECT route_id, stop_id, period_start, baseline, forecast, generated_at, model_version, factors
+            SELECT route_id, period_start, baseline, forecast, generated_at, model_version, factors
             FROM forecast_snapshot
             WHERE horizon = ? AND anchor_date = ?
               AND generated_at = (SELECT %s(generated_at) FROM forecast_snapshot WHERE horizon = ? AND anchor_date = ?)
-            ORDER BY route_id, stop_id, period_start
+            ORDER BY route_id, period_start
             """;
 
     private static final String INSERT = """
             INSERT INTO forecast_snapshot
-                (route_id, stop_id, horizon, anchor_date, period_start, baseline, forecast, generated_at,
+                (route_id, horizon, anchor_date, period_start, baseline, forecast, generated_at,
                  model_version, factors)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """;
 
     private final JdbcTemplate jdbc;
@@ -54,24 +53,23 @@ public class JdbcForecastRepository implements ForecastRepository {
     }
 
     @Override
-    public List<StopForecast> findLatest(Horizon horizon, LocalDate date) {
+    public List<RouteForecast> findLatest(Horizon horizon, LocalDate date) {
         return query(String.format(SELECT, "MAX"), horizon, date);
     }
 
     @Override
-    public List<StopForecast> findInitial(Horizon horizon, LocalDate date) {
+    public List<RouteForecast> findInitial(Horizon horizon, LocalDate date) {
         return query(String.format(SELECT, "MIN"), horizon, date);
     }
 
     @Override
     @Transactional
-    public void saveAll(List<StopForecast> forecasts) {
+    public void saveAll(List<RouteForecast> forecasts) {
         List<Object[]> rows = new ArrayList<>();
-        for (StopForecast forecast : forecasts) {
+        for (RouteForecast forecast : forecasts) {
             for (ForecastPoint point : forecast.points()) {
                 rows.add(new Object[] {
                     forecast.routeId().value(),
-                    forecast.stopId().value(),
                     forecast.horizon().name(),
                     forecast.date(),
                     utc(point.periodStart()),
@@ -84,10 +82,10 @@ public class JdbcForecastRepository implements ForecastRepository {
             }
         }
         jdbc.batchUpdate(INSERT, rows, 500, (ps, row) -> {
-            for (int i = 0; i < 9; i++) {
+            for (int i = 0; i < 8; i++) {
                 ps.setObject(i + 1, row[i]);
             }
-            ps.setArray(10, ps.getConnection().createArrayOf("text", (String[]) row[9]));
+            ps.setArray(9, ps.getConnection().createArrayOf("text", (String[]) row[8]));
         });
     }
 
@@ -100,12 +98,11 @@ public class JdbcForecastRepository implements ForecastRepository {
                 limit);
     }
 
-    private List<StopForecast> query(String sql, Horizon horizon, LocalDate date) {
+    private List<RouteForecast> query(String sql, Horizon horizon, LocalDate date) {
         Map<String, Builder> grouped = new LinkedHashMap<>();
         jdbc.query(sql, (ResultSet rs) -> {
             String route = rs.getString("route_id");
-            String stop = rs.getString("stop_id");
-            Builder builder = grouped.computeIfAbsent(route + "|" + stop, k -> new Builder(route, stop, rs));
+            Builder builder = grouped.computeIfAbsent(route, k -> new Builder(route, rs));
             builder.points.add(new ForecastPoint(
                     rs.getObject("period_start", OffsetDateTime.class).toInstant(),
                     rs.getDouble("baseline"),
@@ -119,19 +116,17 @@ public class JdbcForecastRepository implements ForecastRepository {
         return OffsetDateTime.ofInstant(instant, ZoneOffset.UTC);
     }
 
-    /** Accumulates the rows of one stop while a result set is read. */
+    /** Accumulates the rows of one route while a result set is read. */
     private static final class Builder {
         private final String route;
-        private final String stop;
         private final java.time.Instant generatedAt;
         private final String modelVersion;
         private final List<String> factors;
         private final List<ForecastPoint> points = new ArrayList<>();
 
-        Builder(String route, String stop, ResultSet rs) {
+        Builder(String route, ResultSet rs) {
             try {
                 this.route = route;
-                this.stop = stop;
                 this.generatedAt = rs.getObject("generated_at", OffsetDateTime.class).toInstant();
                 this.modelVersion = rs.getString("model_version");
                 Array array = rs.getArray("factors");
@@ -141,9 +136,9 @@ public class JdbcForecastRepository implements ForecastRepository {
             }
         }
 
-        StopForecast build(Horizon horizon, LocalDate date) {
-            return new StopForecast(
-                    new RouteId(route), new StopId(stop), horizon, date, generatedAt, modelVersion, points, factors);
+        RouteForecast build(Horizon horizon, LocalDate date) {
+            return new RouteForecast(
+                    new RouteId(route), horizon, date, generatedAt, modelVersion, points, factors);
         }
     }
 }

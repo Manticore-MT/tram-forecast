@@ -2,47 +2,31 @@ package ru.tramforecast.api.application;
 
 import java.time.LocalDate;
 import java.util.List;
-
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopForecast;
-import ru.tramforecast.api.domain.model.StopId;
 
 /**
- * Stop forecasts ready to be analysed: date resolved, facts filled in, correction applied,
- * interval filter applied.
+ * The forecasts a query resolved to: the anchor date the request meant and the route forecasts with
+ * the corrections and facts applied.
  *
- * @param date  the resolved anchor date
- * @param stops forecasts for every stop
+ * @param date   resolved anchor date
+ * @param routes route forecasts of that horizon and date, already restricted to the query interval
  */
-public record PreparedForecast(LocalDate date, List<StopForecast> stops) {
+public record PreparedForecast(LocalDate date, List<RouteForecast> routes) {
 
     /**
-     * Makes the stops immutable.
+     * Makes the routes immutable.
      */
     public PreparedForecast {
-        stops = List.copyOf(stops);
+        routes = List.copyOf(routes);
     }
 
     /**
-     * The routes that have a forecast.
+     * Lists the routes the forecast covers.
      *
-     * @return the distinct route ids
+     * @return route ids
      */
     public List<RouteId> knownRoutes() {
-        return stops.stream().map(StopForecast::routeId).distinct().toList();
-    }
-
-    /**
-     * Explains why a route and stop could not be found: the route is unknown, or it exists and
-     * the stop does not.
-     *
-     * @param routeId the route that was asked for
-     * @param stopId  the stop that was asked for
-     * @return the matching exception
-     */
-    public NotFoundException missing(RouteId routeId, StopId stopId) {
-        List<RouteId> known = knownRoutes();
-        return known.contains(routeId) ? NotFoundException.stop(routeId, stopId)
-                : NotFoundException.route(routeId, known);
+        return routes.stream().map(RouteForecast::routeId).distinct().toList();
     }
 }

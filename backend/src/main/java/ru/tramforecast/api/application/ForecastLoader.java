@@ -4,10 +4,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 import ru.tramforecast.api.domain.model.Horizon;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.SnapshotKind;
-import ru.tramforecast.api.domain.model.StopForecast;
 import ru.tramforecast.api.domain.port.ForecastRepository;
 import ru.tramforecast.api.domain.port.MlForecastClient;
+import ru.tramforecast.api.domain.port.MlRequestRejectedException;
 import ru.tramforecast.api.domain.port.MlUnavailableException;
 
 /**
@@ -46,8 +47,8 @@ public class ForecastLoader {
      * @return forecasts for every stop, never empty
      * @throws ForecastUnavailableException when nothing is stored and ML cannot produce a forecast
      */
-    public List<StopForecast> load(Horizon horizon, LocalDate date, SnapshotKind kind) {
-        List<StopForecast> stored = read(horizon, date, kind);
+    public List<RouteForecast> load(Horizon horizon, LocalDate date, SnapshotKind kind) {
+        List<RouteForecast> stored = read(horizon, date, kind);
         if (!stored.isEmpty()) {
             return stored;
         }
@@ -72,13 +73,18 @@ public class ForecastLoader {
     private void fetchAndStore(Horizon horizon, LocalDate date) {
         try {
             repository.saveAll(ml.predict(horizon, date));
+        } catch (MlRequestRejectedException e) {
+            if ("UNSUPPORTED_PERIOD".equals(e.code()) || "SCENARIO_DISABLED".equals(e.code())) {
+                throw new PeriodNotSupportedException(e.getMessage());
+            }
+            throw new InvalidRequestException(e.getMessage());
         } catch (MlUnavailableException e) {
             throw new ForecastUnavailableException(
                     "The forecast is not ready and the ML service is unavailable, try again later", e);
         }
     }
 
-    private List<StopForecast> read(Horizon horizon, LocalDate date, SnapshotKind kind) {
+    private List<RouteForecast> read(Horizon horizon, LocalDate date, SnapshotKind kind) {
         return kind == SnapshotKind.INITIAL
                 ? repository.findInitial(horizon, date)
                 : repository.findLatest(horizon, date);

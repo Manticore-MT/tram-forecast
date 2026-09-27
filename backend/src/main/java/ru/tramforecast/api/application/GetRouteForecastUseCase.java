@@ -3,12 +3,13 @@ package ru.tramforecast.api.application;
 import ru.tramforecast.api.domain.model.RouteId;
 
 /**
- * Use case: the forecast of one route with all of its stops, for the map and the time slider.
+ * Use case: the forecast of one route with its deviation, status, peak, recommendation, facts a year
+ * earlier and the factors behind it, for the route detail and the time slider.
  */
 public interface GetRouteForecastUseCase {
 
     /**
-     * Returns the route total and the per-stop series.
+     * Returns the route forecast.
      *
      * @param routeId the route
      * @param query   horizon, date and other read parameters

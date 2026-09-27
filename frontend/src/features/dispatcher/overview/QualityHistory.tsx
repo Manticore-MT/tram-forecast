@@ -20,7 +20,8 @@ export function QualityHistory({ stats }: { stats: ReturnType<typeof useModelSta
         {() => {
           const history = stats.data?.history ?? [];
           if (history.length === 0) return <Empty>История качества пока пуста</Empty>;
-          const max = Math.max(1, ...history.map((h) => h.wape ?? 0));
+          const wapePct = history.map((h) => (h.wape == null ? null : h.wape * 100));
+          const max = Math.max(1, ...wapePct.filter((v): v is number => v !== null));
           const n = history.length;
           const ticks = new Set([0, Math.floor((n - 1) / 2), n - 1]);
           return (
@@ -31,14 +32,17 @@ export function QualityHistory({ stats }: { stats: ReturnType<typeof useModelSta
                 className="grid h-28 items-end gap-0.5"
                 style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}
               >
-                {history.map((h, i) => (
-                  <div
-                    key={h.date ?? i}
-                    title={`${dayLabel(h.date)} · WAPE ${h.wape?.toFixed(1) ?? "—"} % · оценка ${h.wapeScore?.toFixed(2) ?? "—"}`}
-                    className="rounded-t-xs bg-cyan-500/70 hover:bg-cyan-500"
-                    style={{ height: `${((h.wape ?? 0) / max) * 100}%`, minHeight: h.wape ? 2 : 0 }}
-                  />
-                ))}
+                {history.map((h, i) => {
+                  const pct = wapePct[i];
+                  return (
+                    <div
+                      key={h.date ?? i}
+                      title={`${dayLabel(h.date)} · WAPE ${pct?.toFixed(1) ?? "—"} % · оценка ${h.wapeScore?.toFixed(2) ?? "—"}`}
+                      className={cn("rounded-t-xs", pct === null ? "bg-text-muted/20" : "bg-cyan-500/70 hover:bg-cyan-500")}
+                      style={{ height: pct === null ? "4%" : `${(pct / max) * 100}%`, minHeight: pct ? 2 : 0 }}
+                    />
+                  );
+                })}
               </div>
               <div className="grid" style={{ gridTemplateColumns: `repeat(${n}, minmax(0, 1fr))` }}>
                 {history.map((h, i) => (

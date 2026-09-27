@@ -9,7 +9,6 @@ import ru.tramforecast.api.application.AttentionResult;
 import ru.tramforecast.api.application.HistoryPoint;
 import ru.tramforecast.api.application.NetworkOverview;
 import ru.tramforecast.api.application.RouteForecastResult;
-import ru.tramforecast.api.application.StopForecastResult;
 import ru.tramforecast.api.domain.model.AttentionZone;
 import ru.tramforecast.api.domain.model.ForecastPoint;
 import ru.tramforecast.api.domain.model.Horizon;
@@ -17,7 +16,6 @@ import ru.tramforecast.api.domain.model.LoadMatrix;
 import ru.tramforecast.api.domain.model.ModelStats;
 import ru.tramforecast.api.domain.model.Recommendation;
 import ru.tramforecast.api.domain.model.RouteForecast;
-import ru.tramforecast.api.domain.model.StopForecast;
 import ru.tramforecast.api.web.dto.Responses;
 
 /**
@@ -60,30 +58,9 @@ public class ApiMapper {
      * @return the response
      */
     public Responses.RouteForecast toResponse(RouteForecastResult result) {
-        RouteForecast route = result.route();
+        RouteForecast forecast = result.forecast();
         return new Responses.RouteForecast(
-                route.routeId().value(),
-                horizon(route.horizon()),
-                route.date(),
-                time(route.generatedAt()),
-                points(route.points()),
-                lastYear(result.lastYear()),
-                result.stops().stream()
-                        .map(s -> new Responses.StopSeries(s.stopId().value(), slim(s.points())))
-                        .toList());
-    }
-
-    /**
-     * Maps a stop forecast.
-     *
-     * @param result the stop details
-     * @return the response
-     */
-    public Responses.StopForecast toResponse(StopForecastResult result) {
-        StopForecast forecast = result.forecast();
-        return new Responses.StopForecast(
                 forecast.routeId().value(),
-                forecast.stopId().value(),
                 horizon(forecast.horizon()),
                 result.date(),
                 time(forecast.generatedAt()),
@@ -137,7 +114,11 @@ public class ApiMapper {
                 stats.wapeScore(),
                 stats.history().stream()
                         .map(d -> new Responses.DailyAccuracy(d.date(), d.wape(), d.wapeScore()))
-                        .toList());
+                        .toList(),
+                stats.source(),
+                stats.note(),
+                stats.platformScore(),
+                stats.platformNote());
     }
 
     /**
@@ -163,7 +144,6 @@ public class ApiMapper {
     private Responses.AttentionZone zone(AttentionZone zone) {
         return new Responses.AttentionZone(
                 zone.routeId().value(),
-                zone.stopId().value(),
                 zone.level().name(),
                 round(zone.deviationAbs()),
                 round(zone.deviationPct()),

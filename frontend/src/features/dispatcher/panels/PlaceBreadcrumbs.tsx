@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
 import { Badge, Card, Icon } from "../../../components";
-import { routeStops } from "../../../network/tramNetwork";
 import { useDispatcher } from "../store";
 import { useScenarioActive } from "../forecast";
 
@@ -10,7 +9,6 @@ export function PlaceBreadcrumbs() {
   const place = useDispatcher((s) => s.place);
   const goTo = useDispatcher((s) => s.goTo);
   const scenario = useScenarioActive();
-  const stopName = place.level === "stop" ? routeStops(place.routeId)[place.stopIndex]?.name : undefined;
 
   return (
     <Card tone="glass" padding="var(--space-2) var(--space-4)">
@@ -27,12 +25,6 @@ export function PlaceBreadcrumbs() {
             >
               Маршрут № {place.routeId}
             </button>
-          </>
-        )}
-        {stopName && (
-          <>
-            <Icon name="chevron-right" size={14} />
-            <span className="text-text-primary">{stopName}</span>
           </>
         )}
         {scenario && <span className="ml-2"><Badge tone="accent">Сценарий изменён</Badge></span>}

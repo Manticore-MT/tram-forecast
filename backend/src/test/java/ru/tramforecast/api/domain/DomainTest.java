@@ -17,11 +17,8 @@ import ru.tramforecast.api.domain.model.Horizon;
 import ru.tramforecast.api.domain.model.RecommendationAction;
 import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopForecast;
-import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.domain.service.AttentionPolicy;
 import ru.tramforecast.api.domain.service.AttentionZoneCalculator;
-import ru.tramforecast.api.domain.service.ForecastAggregator;
 import ru.tramforecast.api.domain.service.ForecastPeriod;
 import ru.tramforecast.api.domain.service.RecommendationPolicy;
 import ru.tramforecast.api.domain.service.SeriesAnalytics;
@@ -68,19 +65,19 @@ class DomainTest {
     }
 
     /**
-     * Only stops beyond the threshold become zones, ranked by deviation, with a recommendation.
+     * Only routes beyond the threshold become zones, ranked by deviation, with a recommendation.
      */
     @Test
     void attentionZonesAreThresholdedRankedAndCarryRecommendations() {
         AttentionZoneCalculator calculator = new AttentionZoneCalculator(
                 new AttentionPolicy(10, 25), new RecommendationPolicy(10));
-        StopForecast calm = stop("R1", "S1", new ForecastPoint(T0, 100, 105, null));
-        StopForecast busy = stop("R1", "S2", new ForecastPoint(T0, 100, 130, null));
-        StopForecast quiet = stop("R2", "S3", new ForecastPoint(T0, 100, 85, null));
+        RouteForecast calm = route("R1", new ForecastPoint(T0, 100, 105, null));
+        RouteForecast busy = route("R2", new ForecastPoint(T0, 100, 130, null));
+        RouteForecast quiet = route("R3", new ForecastPoint(T0, 100, 85, null));
 
         List<AttentionZone> zones = calculator.calculate(List.of(calm, busy, quiet));
 
-        assertThat(zones).extracting(z -> z.stopId().value()).containsExactly("S2", "S3");
+        assertThat(zones).extracting(z -> z.routeId().value()).containsExactly("R2", "R3");
         assertThat(zones.get(0).level()).isEqualTo(AttentionLevel.CRITICAL);
         assertThat(zones.get(0).recommendation().action()).isEqualTo(RecommendationAction.ADD_VEHICLE);
         assertThat(zones.get(1).level()).isEqualTo(AttentionLevel.WARNING);
@@ -88,20 +85,19 @@ class DomainTest {
     }
 
     /**
-     * Stop series are summed per period into route series, and freshness is the oldest snapshot.
+     * A route forecast can swap its points and keeps everything else.
      */
     @Test
-    void routeForecastSumsStopsPerPeriod() {
-        StopForecast a = stop("R1", "S1", new ForecastPoint(T0, 100, 120, 110.0));
-        StopForecast b = stop("R1", "S2", new ForecastPoint(T0, 50, 60, null));
+    void routeForecastKeepsItsIdentityWhenPointsAreReplaced() {
+        RouteForecast original = route("R1", new ForecastPoint(T0, 100, 120, null));
 
-        List<RouteForecast> routes = ForecastAggregator.byRoute(List.of(a, b));
+        RouteForecast changed = original.withPoints(List.of(new ForecastPoint(T0, 100, 150, null)));
 
-        assertThat(routes).hasSize(1);
-        ForecastPoint total = routes.get(0).points().get(0);
-        assertThat(total.baseline()).isEqualTo(150);
-        assertThat(total.forecast()).isEqualTo(180);
-        assertThat(total.actual()).isEqualTo(110.0);
+        assertThat(changed.routeId()).isEqualTo(original.routeId());
+        assertThat(changed.modelVersion()).isEqualTo("test");
+        assertThat(changed.factors()).containsExactly("factor");
+        assertThat(changed.points().get(0).forecast()).isEqualTo(150);
+        assertThat(original.points().get(0).forecast()).isEqualTo(120);
     }
 
     /**
@@ -162,9 +158,9 @@ class DomainTest {
         assertThat(Horizon.WEEK.granularity()).isEqualTo(ru.tramforecast.api.domain.model.Granularity.DAY);
     }
 
-    private static StopForecast stop(String route, String stop, ForecastPoint point) {
-        return new StopForecast(
-                new RouteId(route), new StopId(stop), Horizon.DAY, LocalDate.of(2026, 9, 25),
-                T0, "test", List.of(point), List.of());
+    private static RouteForecast route(String route, ForecastPoint point) {
+        return new RouteForecast(
+                new RouteId(route), Horizon.DAY, LocalDate.of(2026, 9, 25), T0, "test", List.of(point),
+                List.of("factor"));
     }
 }

@@ -2,6 +2,7 @@ package ru.tramforecast.api.infrastructure.config;
 
 import java.time.Clock;
 import java.time.ZoneId;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import ru.tramforecast.api.application.ExportForecastService;
@@ -21,14 +22,13 @@ import ru.tramforecast.api.application.GetNetworkOverviewService;
 import ru.tramforecast.api.application.GetNetworkOverviewUseCase;
 import ru.tramforecast.api.application.GetRouteForecastService;
 import ru.tramforecast.api.application.GetRouteForecastUseCase;
-import ru.tramforecast.api.application.GetStopForecastService;
-import ru.tramforecast.api.application.GetStopForecastUseCase;
 import ru.tramforecast.api.application.HistoryAligner;
 import ru.tramforecast.api.application.RefreshForecastService;
 import ru.tramforecast.api.application.RefreshForecastUseCase;
 import ru.tramforecast.api.domain.port.ActualRepository;
 import ru.tramforecast.api.domain.port.ForecastRepository;
 import ru.tramforecast.api.domain.port.MlForecastClient;
+import ru.tramforecast.api.domain.port.MlMetricsClient;
 import ru.tramforecast.api.domain.service.AttentionPolicy;
 import ru.tramforecast.api.domain.service.AttentionZoneCalculator;
 import ru.tramforecast.api.domain.service.RecommendationPolicy;
@@ -85,7 +85,9 @@ public class UseCaseConfig {
      */
     @Bean
     public ForecastDates forecastDates(Clock clock, ZoneId zone, TramProperties properties) {
-        return new ForecastDates(clock, zone, properties.forecast().maxYearsAhead());
+        return new ForecastDates(
+                clock, zone, properties.forecast().maxYearsAhead(), properties.forecast().from(),
+                properties.forecast().to());
     }
 
     /**
@@ -139,18 +141,6 @@ public class UseCaseConfig {
     /**
      * Route forecast use case.
      *
-     * @param preparer forecast preparer
-     * @param history  year-ago facts
-     * @return the use case
-     */
-    @Bean
-    public GetRouteForecastUseCase getRouteForecastUseCase(ForecastPreparer preparer, HistoryAligner history) {
-        return new GetRouteForecastService(preparer, history);
-    }
-
-    /**
-     * Stop forecast use case.
-     *
      * @param preparer       forecast preparer
      * @param history        year-ago facts
      * @param attention      attention policy
@@ -158,12 +148,12 @@ public class UseCaseConfig {
      * @return the use case
      */
     @Bean
-    public GetStopForecastUseCase getStopForecastUseCase(
+    public GetRouteForecastUseCase getRouteForecastUseCase(
             ForecastPreparer preparer,
             HistoryAligner history,
             AttentionPolicy attention,
             RecommendationPolicy recommendation) {
-        return new GetStopForecastService(preparer, history, attention, recommendation);
+        return new GetRouteForecastService(preparer, history, attention, recommendation);
     }
 
     /**
@@ -202,15 +192,22 @@ public class UseCaseConfig {
     }
 
     /**
-     * Model statistics use case.
+     * Model statistics use case. With the ML service connected its own quality measurements are used;
+     * without it (the stub) the backend measures from its stored forecasts and the facts.
      *
      * @param forecasts stored snapshots
      * @param actuals   observed values
+     * @param ml        the ML service's quality measurements, present only in {@code http} mode
+     * @param dates     what "today" is
      * @return the use case
      */
     @Bean
-    public GetModelStatsUseCase getModelStatsUseCase(ForecastRepository forecasts, ActualRepository actuals) {
-        return new GetModelStatsService(forecasts, actuals);
+    public GetModelStatsUseCase getModelStatsUseCase(
+            ForecastRepository forecasts,
+            ActualRepository actuals,
+            ObjectProvider<MlMetricsClient> ml,
+            ForecastDates dates) {
+        return new GetModelStatsService(forecasts, actuals, ml.getIfAvailable(), dates);
     }
 
     /**

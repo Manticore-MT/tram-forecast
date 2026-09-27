@@ -126,14 +126,39 @@ export function QualityCard({ stats }: { stats: ReturnType<typeof useModelStats>
   return (
     <KpiCard>
       <QueryGate q={stats}>
-        {() => (
-          <Stat
-            label="Качество прогноза"
-            value={(stats.data?.wapeScore ?? 0).toFixed(2)}
-            unit="WAPE-score"
-            caption={`WAPE ${(stats.data?.wape ?? 0).toFixed(1)} % · за 30 дней · от 0 до 1, выше — точнее`}
-          />
-        )}
+        {() => {
+          const data = stats.data;
+          const wape = data?.wape;
+          const wapeScore = data?.wapeScore;
+          const wapePct = wape == null ? null : wape * 100;
+          return (
+            <>
+              <Stat
+                label="Качество прогноза"
+                value={wapeScore == null ? "—" : wapeScore.toFixed(2)}
+                unit="WAPE-score"
+                caption={
+                  <span>
+                    WAPE {wapePct == null ? "—" : wapePct.toFixed(1)} % · за 30 дней · от 0 до 1, выше — точнее
+                    {data?.note && (
+                      <>
+                        <br />
+                        {data.note}
+                      </>
+                    )}
+                  </span>
+                }
+              />
+              {data?.platformScore != null && (
+                <Stat
+                  label="Оценка платформы"
+                  value={data.platformScore.toFixed(2)}
+                  caption={data?.platformNote}
+                />
+              )}
+            </>
+          );
+        }}
       </QueryGate>
     </KpiCard>
   );

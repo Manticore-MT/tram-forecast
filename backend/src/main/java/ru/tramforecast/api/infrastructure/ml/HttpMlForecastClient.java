@@ -6,20 +6,25 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Locale;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClient;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 import ru.tramforecast.api.domain.model.ForecastPoint;
 import ru.tramforecast.api.domain.model.Horizon;
+import ru.tramforecast.api.domain.model.RouteForecast;
 import ru.tramforecast.api.domain.model.RouteId;
-import ru.tramforecast.api.domain.model.StopForecast;
-import ru.tramforecast.api.domain.model.StopId;
 import ru.tramforecast.api.domain.port.MlForecastClient;
+import ru.tramforecast.api.domain.port.MlRequestRejectedException;
 import ru.tramforecast.api.domain.port.MlUnavailableException;
 
 /**
- * Calls the real ML service over HTTP: {@code POST /predict} with a horizon and a date, answered
- * with finished aggregates for every stop. The contract is documented in {@code ml/README.md}.
+ * Calls the real ML service over HTTP: {@code POST /predict/routes} with a horizon and a date, answered
+ * with finished aggregates for every route. The contract is documented in {@code docs/ml-contract.md}.
  */
 public class HttpMlForecastClient implements MlForecastClient {
+
+    private static final JsonMapper MAPPER = JsonMapper.builder().build();
 
     private final RestClient client;
 
@@ -33,10 +38,10 @@ public class HttpMlForecastClient implements MlForecastClient {
     }
 
     @Override
-    public List<StopForecast> predict(Horizon horizon, LocalDate date) {
+    public List<RouteForecast> predict(Horizon horizon, LocalDate date) {
         try {
             PredictResponse response = client.post()
-                    .uri("/predict")
+                    .uri("/predict/routes")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(new PredictRequest(horizon.name().toLowerCase(Locale.ROOT), date.toString()))
                     .retrieve()
@@ -45,19 +50,45 @@ public class HttpMlForecastClient implements MlForecastClient {
                 throw new MlUnavailableException("The ML service returned an empty answer", null);
             }
             return map(response, horizon, date);
-        } catch (MlUnavailableException e) {
+        } catch (MlUnavailableException | MlRequestRejectedException e) {
             throw e;
+        } catch (HttpClientErrorException e) {
+            // 422 is a refusal of this request; any other client error is treated like an outage
+            if (e.getStatusCode().value() == 422) {
+                throw rejection(e);
+            }
+            throw new MlUnavailableException("The ML service request failed: " + e.getMessage(), e);
         } catch (RuntimeException e) {
             throw new MlUnavailableException("The ML service request failed: " + e.getMessage(), e);
         }
     }
 
-    private static List<StopForecast> map(PredictResponse response, Horizon horizon, LocalDate date) {
+    /**
+     * Reads a 422 answer. The ML service explains a refusal as {@code {"detail": {"code": ..., "message":
+     * ...}}}; a validation error of its framework has a list under {@code detail} instead.
+     */
+    private static MlRequestRejectedException rejection(HttpClientErrorException e) {
+        String code = "REJECTED";
+        String message = "The ML service refused the request";
+        try {
+            JsonNode detail = MAPPER.readTree(e.getResponseBodyAsString()).path("detail");
+            if (detail.isObject()) {
+                code = detail.path("code").asString(code);
+                message = detail.path("message").asString(message);
+            } else if (detail.isArray() && !detail.isEmpty()) {
+                message = detail.get(0).path("msg").asString(message);
+            }
+        } catch (RuntimeException ignored) {
+            // the body was not the documented shape: keep the generic explanation
+        }
+        return new MlRequestRejectedException(code, message);
+    }
+
+    private static List<RouteForecast> map(PredictResponse response, Horizon horizon, LocalDate date) {
         Instant generatedAt = response.generatedAt().toInstant();
         return response.forecasts().stream()
-                .map(item -> new StopForecast(
+                .map(item -> new RouteForecast(
                         new RouteId(item.routeId()),
-                        new StopId(item.stopId()),
                         horizon,
                         date,
                         generatedAt,
@@ -79,24 +110,23 @@ public class HttpMlForecastClient implements MlForecastClient {
     }
 
     /**
-     * Response body of {@code POST /predict}.
+     * Response body of {@code POST /predict/routes}.
      *
      * @param generatedAt  when the forecast was computed
      * @param modelVersion version of the model
-     * @param forecasts    one entry per stop
+     * @param forecasts    one entry per route
      */
-    record PredictResponse(OffsetDateTime generatedAt, String modelVersion, List<StopItem> forecasts) {
+    record PredictResponse(OffsetDateTime generatedAt, String modelVersion, List<RouteItem> forecasts) {
     }
 
     /**
-     * Forecast of one stop in the ML response.
+     * Forecast of one route in the ML response.
      *
      * @param routeId route identifier
-     * @param stopId  stop identifier
      * @param points  ordered points
      * @param factors factors the model took into account, may be absent
      */
-    record StopItem(String routeId, String stopId, List<PointItem> points, List<String> factors) {
+    record RouteItem(String routeId, List<PointItem> points, List<String> factors) {
     }
 
     /**

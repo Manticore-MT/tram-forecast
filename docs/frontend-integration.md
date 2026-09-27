@@ -1,7 +1,7 @@
 # Integrating a frontend with the backend
 
-The frontend draws the map and the routes/stops from its own static data (OpenData mos.ru). The
-backend never returns geometry, only values keyed by `routeId` and `stopId`, so those IDs must match
+The frontend draws the map and the routes from its own static data (OpenData mos.ru). The
+backend never returns geometry, only values keyed by `routeId`, so those IDs must match
 the ones used by the ML service and the backend.
 
 **Authentication.** When access control is on (the deployed stand), every request under `/api/**`
@@ -12,6 +12,44 @@ browser does not open its own login dialog. Only `/api/**` is protected; `/actua
 `/v3/api-docs` and the static frontend stay open. Locally (`docker compose up` or the backend run
 by hand) access control is off and no header is needed. The user name and password of the stand
 are not in the repository: ask the person who runs the server.
+
+**Quality (`GET /api/model/stats?days=30`).** `wape` is a **fraction** (0.11 means 11 %; multiply by 100 to
+show a percent) and `wapeScore` is `1 - wape` (0 to 1, higher is better); `history` has one entry per day,
+oldest first. With the ML service connected the numbers are **its own backtest** (`source: "ml-backtest"`,
+the block 1 Sep - 31 Oct 2025 measured on route x hour): the last `days` days of the block that lie before
+"today" (on the frozen day 1 Nov 2025 that is 2 - 31 Oct), and the overall value is the exact ratio of the
+summed errors to the summed observed values. `note` is a sentence to show as a caption (the blocks were
+used to tune the model, so this is not an independent test). If nothing falls in the window, `wape` and
+`wapeScore` are `null` (not zero) and `history` is empty. If the ML service cannot be asked, `source` is
+`facts` (the backend's own stored forecasts against the facts, empty today).
+
+`platformScore` (for example 0.88226) is a **different measurement**: the score the platform gave the submitted
+contest file on its hidden check, as the team reports it (`platformNote` says so). Show it on its own line,
+**never merge it with the backtest** (the backtest is about 0.89, a historical estimate whose blocks were used
+to tune the model). Both are route x hour scores. `platformScore` is `null` when the ML service does not report it.
+
+**The date range.** `GET /api/meta` reports `forecastFrom` and `forecastTo` (the range the model covers, for
+the stand 2025-11-01 .. 2026-12-31; both are `null` when the model has no fixed range) and `latestDate` (the
+end of the range). Limit the date picker to it: a period that is not **entirely** inside is refused with `400`
+`PERIOD_NOT_SUPPORTED` (a day before the range, a week that ends after it, a month or the year 2025). A week
+is seven days from `date`, a month and a year are the calendar month and year that contain it. The clock of
+the stand is frozen (`now`/`today` in `/api/meta`), so "today" is the same day for every request.
+
+**Route level only.** The load is forecast per route and hour, and that is the smallest unit: the dataset
+has no link between validations and stops, so there is no stop endpoint, no `stops` in a route answer, no
+`stopId` in a zone or in the export, and no `STOP_NOT_FOUND` code. Draw the network and the routes; a stop
+has no value of its own.
+
+**Route forecast (`GET /api/routes/{routeId}/forecast`).** `points` (baseline, forecast, deviation, and the
+fact once it is known), `status` (`NORMAL`, `WARNING`, `CRITICAL`, from the largest deviation), `peakAt`,
+`maxDeviationAt`, `recommendation`, `lastYear`, `modelVersion` and `factors` (what the model took into
+account; `-scenario` in `modelVersion` and a scenario factor mark forecasts after 2025-12-31).
+
+**Attention zones (`GET /api/attention`).** One zone per route, computed from the route forecast. A zone
+drills into its route (`routeId`); `deviationAbs` and
+`deviationPct` are at the period of the largest deviation (`maxDeviationAt`), `peakAt` is the period with the
+highest forecast, `level` is `WARNING` or `CRITICAL`, and `recommendation` is a suggested action with a vehicle
+count.
 
 **Lockout after wrong passwords.** Three failed login attempts in a row from one client address lock
 that client out for 10 seconds: every `/api/**` request from it, **even with the right password**, gets
@@ -43,8 +81,9 @@ fields, so one error window can show them all:
 | `instance` | the request path that failed |
 
 Codes (added over time, never renamed): `INVALID_REQUEST` (400), `INVALID_PARAMETER` (400),
-`UNAUTHORIZED` (401), `TOO_MANY_ATTEMPTS` (429, see below), `ROUTE_NOT_FOUND` (404, no such route; `detail` lists the known routes),
-`STOP_NOT_FOUND` (404, the route exists but has no such stop), `NO_DATA` (404, route and stop exist
+`PERIOD_NOT_SUPPORTED` (400, the period is outside the range the model covers; retrying does not help, pick
+another date, see `forecastFrom`/`forecastTo` in `/api/meta`), `UNAUTHORIZED` (401), `TOO_MANY_ATTEMPTS` (429, see below), `ROUTE_NOT_FOUND` (404, no such route; `detail` lists the known routes),
+`NO_DATA` (404, the route exists
 but there is nothing to answer with, for example no history for a load matrix),
 `ENDPOINT_NOT_FOUND` (404, not an endpoint), `METHOD_NOT_ALLOWED` (405), `FORECAST_NOT_READY` (503, nothing stored and ML is
 unavailable: try again later), `INTERNAL_ERROR` (500, nothing internal is revealed). Samples:

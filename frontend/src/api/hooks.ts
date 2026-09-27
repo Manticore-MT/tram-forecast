@@ -6,7 +6,6 @@ import {
   getModelStats,
   getRouteForecast,
   getRoutes,
-  getStopForecast,
 } from "./client";
 
 export type Horizon = "day" | "week" | "month" | "year";
@@ -68,16 +67,6 @@ export function useRouteForecast(routeId: string | undefined, params: CommonPara
     queryKey: ["routeForecast", routeId, params],
     queryFn: () => getRouteForecast(routeId!, toQuery(params!)),
     enabled: !!routeId && !!params,
-    refetchInterval: refetchInterval(params),
-    placeholderData: keepPreviousData,
-  });
-}
-
-export function useStopForecast(routeId: string | undefined, stopId: string | undefined, params: CommonParams | undefined) {
-  return useQuery({
-    queryKey: ["stopForecast", routeId, stopId, params],
-    queryFn: () => getStopForecast(routeId!, stopId!, toQuery(params!)),
-    enabled: !!routeId && !!stopId && !!params,
     refetchInterval: refetchInterval(params),
     placeholderData: keepPreviousData,
   });
